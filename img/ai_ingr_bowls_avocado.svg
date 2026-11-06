@@ -1,0 +1,26 @@
+<svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 400 400" width="400" height="400">
+            <defs>
+                <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2E3D28"/><stop offset="100%" stop-color="#4A5D3B"/></linearGradient>
+                <radialGradient id="gl1" cx="50%" cy="45%" r="50%"><stop offset="0%" stop-color="#F2B880" stop-opacity="0.35"/><stop offset="100%" stop-color="#2E3D28" stop-opacity="0"/></radialGradient>
+            </defs>
+            <rect width="400" height="400" fill="url(#bg1)"/>
+            <circle cx="200" cy="180" r="170" fill="url(#gl1)"/>
+            <!-- Тарелка боула, авокадо, нут, черри и ростки -->
+            <circle cx="200" cy="195" r="115" fill="#F6E4CE" stroke="#D48238" stroke-width="5"/>
+            <circle cx="200" cy="195" r="98" fill="#FDF8F2"/>
+            <!-- Дольки авокадо -->
+            <path d="M135 160 C150 120, 210 125, 200 180 C190 215, 130 200, 135 160 Z" fill="#6B8E3D" stroke="#3B5323" stroke-width="4"/>
+            <path d="M145 163 C156 132, 198 136, 192 176 C185 202, 140 192, 145 163 Z" fill="#A7C957"/>
+            <circle cx="170" cy="170" r="16" fill="#7F4F24"/>
+            <!-- Нут и киноа -->
+            <circle cx="235" cy="155" r="12" fill="#E9C46A"/><circle cx="258" cy="168" r="11" fill="#E9C46A"/><circle cx="242" cy="182" r="12" fill="#F4A261"/>
+            <!-- Томаты черри -->
+            <circle cx="165" cy="235" r="18" fill="#E63946"/><circle cx="202" cy="248" r="16" fill="#E63946"/>
+            <circle cx="160" cy="230" r="4" fill="#FFF" opacity="0.6"/>
+            <!-- Листья микрозелени -->
+            <path d="M225 225 Q255 200 275 230 Q245 255 225 225 Z" fill="#556432"/>
+            <path d="M210 245 Q240 230 260 255 Q230 275 210 245 Z" fill="#788646"/>
+            <rect x="24" y="24" width="352" height="36" rx="18" fill="#1E2819" opacity="0.85"/>
+            <text x="200" y="47" text-anchor="middle" fill="#F2B880" font-family="sans-serif" font-weight="bold" font-size="14">🎨 ИИ-ИЛЛЮСТРАЦИЯ СОСТАВА (НЕ ФОТО БЛЮДА)</text>
+            <text x="200" y="362" text-anchor="middle" fill="#FFFDF9" font-family="serif" font-weight="bold" font-size="22">Авокадо • Киноа • Томаты • Нут • Зелень</text>
+        </svg>
