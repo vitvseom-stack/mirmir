@@ -47,7 +47,7 @@ def get_run_version():
             pass
     with open(p, "w", encoding="utf-8") as f:
         f.write(str(c))
-    return f"v21.0 [Сборка #{c}]", c
+    return f"v22.0 [Сборка #{c}]", c
 
 
 def load_key(filename):
@@ -252,7 +252,7 @@ def generate_html(announcements, wall_photos, menu_scans, menu_list, qa_report, 
     fn = P_HTTPS + HOST_FONTS + "/css2?family=Cormorant+Garamond:ital,wght@0,700;1,600&family=Manrope:wght@400;600;800&display=swap"
     ym = P_HTTPS + HOST_YANDEX + "/map-widget/v1/?text=%D0%9D%D0%B8%D0%B6%D0%BD%D0%B8%D0%B9%20%D0%9D%D0%BE%D0%B2%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%2C%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%20%D0%98%D0%BB%D1%8C%D0%B8%D0%BD%D1%81%D0%BA%D0%B0%D1%8F%2C%2045&z=18"
     yr = P_HTTPS + HOST_YANDEX + "/maps/?text=%D0%9D%D0%B8%D0%B6%D0%BD%D0%B8%D0%B9%20%D0%9D%D0%BE%D0%B2%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%2C%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%20%D0%98%D0%BB%D1%8C%D0%B8%D0%BD%D1%81%D0%BA%D0%B0%D1%8F%2C%2045"
-    ygo_taxi = P_HTTPS + HOST_TAXI + "/route?end-lat=56.322150&end-lon=43.990680&appmetrica_tracking_id=1178268795219780156"
+    ygo_taxi = P_HTTPS + HOST_TAXI + "/route?end-lat=56.322355&end-lon=43.990383&appmetrica_tracking_id=1178268795219780156"
 
     dove_watermark_svg = """<svg width="490" height="490" style="width:490px;height:490px;max-width:none;display:block;" viewBox="0 0 120 120" fill="none"><circle cx="60" cy="60" r="57" stroke="#F2B880" stroke-width="3"/><circle cx="60" cy="60" r="51" stroke="#FFFDF9" stroke-width="2" stroke-dasharray="5 4"/><circle cx="60" cy="62" r="26" stroke="#F2B880" stroke-width="2.5" fill="rgba(242,184,128,0.18)"/><path d="M32 58 C24 44, 34 26, 52 34 C46 40, 42 48, 42 58 C38 60, 34 60, 32 58 Z" fill="#FFFDF9"/><path d="M88 58 C96 44, 86 26, 68 34 C74 40, 78 48, 78 58 C82 60, 86 60, 88 58 Z" fill="#FFFDF9"/><path d="M35 52 C30 68, 44 88, 60 90 C76 88, 90 68, 85 52 C82 66, 72 78, 60 80 C48 78, 38 66, 35 52 Z" fill="#FFFDF9"/><circle cx="48" cy="36" r="6.5" fill="#FFFDF9"/><text x="60" y="106" text-anchor="middle" fill="#F2B880" font-family="Cormorant Garamond, serif" font-weight="bold" font-size="11" letter-spacing="3.5">• MIR MIR •</text></svg>"""
 
