@@ -1,0 +1,5 @@
+*.txt
+cache_*.json
+menu_database.json
+app.py
+run.bat

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мир Мир — Веган-кафе & Чайная | Нижний Новгород, Ильинская 45</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #FAF6F0;
+            --bg-dark: #3E1F14;
+            --accent: #D96B27;
+            --text-main: #1F1610;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+        }
+        .font-serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-emerald-900 selection:text-white">
+
+    <!-- Навигация -->
+    <nav class="sticky top-0 z-40 backdrop-blur-xl bg-white/80 border-b border-stone-900/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-white font-serif font-bold text-2xl shadow-md" style="background-color: var(--bg-dark);">М</div>
+                <div>
+                    <span class="font-serif font-bold text-2xl tracking-tight block leading-none">Мир Мир</span>
+                    <span class="text-xs text-stone-500 font-medium">Ильинская, 45 • Нижний Новгород</span>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm font-semibold text-stone-600">
+                <a href="#menu-gallery" class="hover:text-black transition">Фото-меню и витрина (67)</a>
+                <a href="#vk-feed" class="hover:text-black transition">Свежие посты (20)</a>
+                <a href="#contacts" class="hover:text-black transition">Карта и контакты</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://t.me/mirmir_chef" target="_blank" class="px-5 py-2.5 rounded-2xl text-white text-sm font-bold shadow-lg hover:opacity-90 transition" style="background-color: var(--accent);">
+                    Написать шефу ✈️
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-8 py-10">
+
+        <!-- HERO БЛОК (Главное со стены ВК) -->
+        <section class="rounded-[2.5rem] overflow-hidden shadow-2xl mb-14 text-white relative" style="background-color: var(--bg-dark);">
+            <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[480px]">
+                <div class="lg:col-span-7 p-8 sm:p-14 flex flex-col justify-between z-10">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6 bg-white/10 backdrop-blur-md border border-white/15">
+                            <span>✨ Терракотовая Осень & Пряности 🎃</span>
+                        </div>
+                        <h1 class="font-serif text-4xl sm:text-5xl font-bold leading-[1.12] mb-6">
+                            Прикрепляю наше актуальное меню 📕
+                        </h1>
+                        <p class="text-white/85 text-base sm:text-lg leading-relaxed mb-8 max-w-2xl">
+                            Номер кафе для связи: +7(920)028-28-58 Мы работаем каждый день с 12:00 до 21:00 Ланч по будням с 12:00 до 16:00
+                        </p>
+                    </div>
+                    <div>
+                        <p class="font-serif italic text-xl text-white/75 mb-6 border-l-2 pl-4" style="border-color: var(--accent);">
+                            «Растительная гастрономия, ремесленные десерты и глубокие чайные состояния в сердце Нижнего.»
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="#menu-gallery" class="px-7 py-3.5 rounded-2xl font-bold text-sm text-white shadow-lg hover:opacity-95 transition" style="background-color: var(--accent);">
+                                Открыть фото-меню и блюда 📸
+                            </a>
+                            <a href="https://vk.com/mirmir.cafe" target="_blank" class="px-7 py-3.5 rounded-2xl font-bold text-sm bg-white/10 hover:bg-white/20 backdrop-blur-md transition">
+                                Паблик ВКонтакте ↗
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div onclick="openLightbox('img/vk_5047_0.jpg', 'Главный кадр свежего поста')" class="lg:col-span-5 relative min-h-[340px] bg-stone-900 cursor-pointer group overflow-hidden">
+                    <img src="img/vk_5047_0.jpg" alt="Главное блюдо дня" class="w-full h-full object-cover opacity-95 group-hover:scale-105 transition duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/60 via-transparent to-transparent"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ХАЙЛАЙТЫ ИЗ СВЕЖИХ ПОСТОВ -->
+        <section class="mb-16">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                
+        <div class="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-stone-900/5 shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <span class="inline-block text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3" style="background: #FAF6F0; color: #3E1F14;">Свежак дня</span>
+                <h4 class="text-2xl font-serif font-bold mb-2 leading-snug">Прикрепляю наше актуальное меню 📕</h4>
+            </div>
+            <p class="text-stone-600 text-sm leading-relaxed mt-2">Номер кафе для связи: +7(920)028-28-58 Мы работаем каждый день с 12:00 до 21:00 Ланч по будням с 12:00 до 16:0...</p>
+        </div>
+        
+        <div class="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-stone-900/5 shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <span class="inline-block text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3" style="background: #FAF6F0; color: #3E1F14;">Кухня & Меню</span>
+                <h4 class="text-2xl font-serif font-bold mb-2 leading-snug">Ура! У нас юбилей - 100 живых растений, </h4>
+            </div>
+            <p class="text-stone-600 text-sm leading-relaxed mt-2">Все наши зеленые жители прошли через мои руки, а многие из них не просто были пересажены или востановлены, а в...</p>
+        </div>
+        
+        <div class="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-stone-900/5 shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <span class="inline-block text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3" style="background: #FAF6F0; color: #3E1F14;">Чайная культура</span>
+                <h4 class="text-2xl font-serif font-bold mb-2 leading-snug">Доброго воскресного!</h4>
+            </div>
+            <p class="text-stone-600 text-sm leading-relaxed mt-2">Парочка новостей ✨ 🌿 1. Сегодня приготовил суп выходного дня из корня пастернака, груздей и томатов 🌿 2. Еще о...</p>
+        </div>
+        
+        <div class="bg-white/90 backdrop-blur-md p-6 rounded-3xl border border-stone-900/5 shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <span class="inline-block text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3" style="background: #FAF6F0; color: #3E1F14;">Атмосфера</span>
+                <h4 class="text-2xl font-serif font-bold mb-2 leading-snug">Поговорим о пряностях и мастер класс чая</h4>
+            </div>
+            <p class="text-stone-600 text-sm leading-relaxed mt-2">По многочисленным просьбам, а иногда требованиям, расскажу о специях, смесях, где найти и как выбрать. Также с...</p>
+        </div>
+        
+            </div>
+        </section>
+
+        <!-- МЕНЮ И БЛЮДА В ФОТОГРАФИЯХ ИЗ ВК -->
+        <section id="menu-gallery" class="mb-20">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+                <div>
+                    <span class="text-xs font-extrabold uppercase tracking-widest" style="color: var(--accent);">Реальные фото со стены ВК</span>
+                    <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-1">Меню, спешлы и блюда в кадре</h2>
+                </div>
+                <p class="text-stone-500 text-sm mt-2 md:mt-0">Кликни на любое фото, чтобы открыть меню или блюдо в полный размер 🔍</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                
+        <div onclick="openLightbox('img/vk_5047_0.jpg', 'Прикрепляю наше актуальное меню 📕 ')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5047_0.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 27.05.2026 • ❤️ 52</span>
+                <p class="text-sm font-medium line-clamp-2">Прикрепляю наше актуальное меню 📕 </p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5047_1.jpg', 'Прикрепляю наше актуальное меню 📕 ')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5047_1.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 27.05.2026 • ❤️ 52</span>
+                <p class="text-sm font-medium line-clamp-2">Прикрепляю наше актуальное меню 📕 </p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5047_2.jpg', 'Прикрепляю наше актуальное меню 📕 ')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5047_2.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 27.05.2026 • ❤️ 52</span>
+                <p class="text-sm font-medium line-clamp-2">Прикрепляю наше актуальное меню 📕 </p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5047_3.jpg', 'Прикрепляю наше актуальное меню 📕 ')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5047_3.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 27.05.2026 • ❤️ 52</span>
+                <p class="text-sm font-medium line-clamp-2">Прикрепляю наше актуальное меню 📕 </p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5129_0.jpg', 'Ура! У нас юбилей - 100 живых растений, и это только начало…🌿')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5129_0.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 25.10.2026 • ❤️ 32</span>
+                <p class="text-sm font-medium line-clamp-2">Ура! У нас юбилей - 100 живых растений, и это только начало…🌿</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5129_1.jpg', 'Ура! У нас юбилей - 100 живых растений, и это только начало…🌿')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5129_1.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 25.10.2026 • ❤️ 32</span>
+                <p class="text-sm font-medium line-clamp-2">Ура! У нас юбилей - 100 живых растений, и это только начало…🌿</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5129_2.jpg', 'Ура! У нас юбилей - 100 живых растений, и это только начало…🌿')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5129_2.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 25.10.2026 • ❤️ 32</span>
+                <p class="text-sm font-medium line-clamp-2">Ура! У нас юбилей - 100 живых растений, и это только начало…🌿</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5129_3.jpg', 'Ура! У нас юбилей - 100 живых растений, и это только начало…🌿')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5129_3.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 25.10.2026 • ❤️ 32</span>
+                <p class="text-sm font-medium line-clamp-2">Ура! У нас юбилей - 100 живых растений, и это только начало…🌿</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5129_4.jpg', 'Ура! У нас юбилей - 100 живых растений, и это только начало…🌿')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5129_4.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 25.10.2026 • ❤️ 32</span>
+                <p class="text-sm font-medium line-clamp-2">Ура! У нас юбилей - 100 живых растений, и это только начало…🌿</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5128_0.jpg', 'Доброго воскресного!')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5128_0.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 25.10.2026 • ❤️ 14</span>
+                <p class="text-sm font-medium line-clamp-2">Доброго воскресного!</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5128_1.jpg', 'Доброго воскресного!')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5128_1.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 25.10.2026 • ❤️ 14</span>
+                <p class="text-sm font-medium line-clamp-2">Доброго воскресного!</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5123_0.jpg', 'Поговорим о пряностях и мастер класс чая &quot;Масала&quot; 🍵')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5123_0.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 14.10.2026 • ❤️ 50</span>
+                <p class="text-sm font-medium line-clamp-2">Поговорим о пряностях и мастер класс чая "Масала" 🍵</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5122_0.jpg', 'Всем теплых дней!')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5122_0.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 11.10.2026 • ❤️ 40</span>
+                <p class="text-sm font-medium line-clamp-2">Всем теплых дней!</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5122_1.jpg', 'Всем теплых дней!')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5122_1.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 11.10.2026 • ❤️ 40</span>
+                <p class="text-sm font-medium line-clamp-2">Всем теплых дней!</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5122_2.jpg', 'Всем теплых дней!')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5122_2.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 11.10.2026 • ❤️ 40</span>
+                <p class="text-sm font-medium line-clamp-2">Всем теплых дней!</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5121_0.jpg', 'Йоу ган!')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5121_0.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 06.10.2026 • ❤️ 25</span>
+                <p class="text-sm font-medium line-clamp-2">Йоу ган!</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5118_0.jpg', 'Ола ола!  ')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5118_0.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 02.10.2026 • ❤️ 35</span>
+                <p class="text-sm font-medium line-clamp-2">Ола ола!  </p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5118_1.jpg', 'Ола ола!  ')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5118_1.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 02.10.2026 • ❤️ 35</span>
+                <p class="text-sm font-medium line-clamp-2">Ола ола!  </p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5118_2.jpg', 'Ола ола!  ')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5118_2.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 02.10.2026 • ❤️ 35</span>
+                <p class="text-sm font-medium line-clamp-2">Ола ола!  </p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5117_0.jpg', 'Доброго дня, немного новостей на сегодня! 🕊️')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5117_0.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 24.09.2026 • ❤️ 18</span>
+                <p class="text-sm font-medium line-clamp-2">Доброго дня, немного новостей на сегодня! 🕊️</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5117_1.jpg', 'Доброго дня, немного новостей на сегодня! 🕊️')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5117_1.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 24.09.2026 • ❤️ 18</span>
+                <p class="text-sm font-medium line-clamp-2">Доброго дня, немного новостей на сегодня! 🕊️</p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('https://sun9-84.userapi.com/s/v1/ig2/UF-x0MdNJ1hdLOZmUxDj74Pp_XeUqO_tMvlkXNueWgJzcorhcO47tCNx7tIMEXiNEiE4zu3ZJEo7i9VVIDkTJ4bg.jpg?quality=95&as=32x42,48x63,72x94,108x141,160x209,240x313,360x469,480x626,540x704,640x834,720x939,896x1168&from=bu', 'А у нас привоз деревенской облепихи, фенхеля и брокколи...ну и конечно же все это я решил соединить ')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="https://sun9-84.userapi.com/s/v1/ig2/UF-x0MdNJ1hdLOZmUxDj74Pp_XeUqO_tMvlkXNueWgJzcorhcO47tCNx7tIMEXiNEiE4zu3ZJEo7i9VVIDkTJ4bg.jpg?quality=95&as=32x42,48x63,72x94,108x141,160x209,240x313,360x469,480x626,540x704,640x834,720x939,896x1168&from=bu" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 20.09.2026 • ❤️ 34</span>
+                <p class="text-sm font-medium line-clamp-2">А у нас привоз деревенской облепихи, фенхеля и брокколи...ну и конечно же все это я решил соединить </p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('img/vk_5116_1.jpg', 'А у нас привоз деревенской облепихи, фенхеля и брокколи...ну и конечно же все это я решил соединить ')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="img/vk_5116_1.jpg" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 20.09.2026 • ❤️ 34</span>
+                <p class="text-sm font-medium line-clamp-2">А у нас привоз деревенской облепихи, фенхеля и брокколи...ну и конечно же все это я решил соединить </p>
+            </div>
+        </div>
+        
+        <div onclick="openLightbox('https://sun9-68.userapi.com/s/v1/ig2/ywBoMqmVkB4QfayYPKyPTk6MhW2y4UScEpRdtkZksVaj6hnA5QLQid8yP_En28p7V_k87vQJiQavVDq6sV_YXD7i.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu', 'Троечка свежих новостей из Мирной кухни! 🐞')" class="group cursor-pointer relative overflow-hidden rounded-3xl shadow-md aspect-square bg-stone-200">
+            <img src="https://sun9-68.userapi.com/s/v1/ig2/ywBoMqmVkB4QfayYPKyPTk6MhW2y4UScEpRdtkZksVaj6hnA5QLQid8yP_En28p7V_k87vQJiQavVDq6sV_YXD7i.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu" alt="Меню и блюда Мир Мир" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col justify-end p-5 text-white">
+                <span class="text-xs opacity-75 mb-1">📅 16.09.2026 • ❤️ 23</span>
+                <p class="text-sm font-medium line-clamp-2">Троечка свежих новостей из Мирной кухни! 🐞</p>
+            </div>
+        </div>
+        
+            </div>
+        </section>
+
+        <!-- ЖИВАЯ ЛЕНТА ПОСТОВ ВК (Bento Grid) -->
+        <section id="vk-feed" class="mb-20">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+                <div>
+                    <span class="text-xs font-extrabold uppercase tracking-widest" style="color: var(--accent);">Автоматический парсинг</span>
+                    <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-1">Лента новостей и событий «Мир Мир»</h2>
+                </div>
+                <span class="text-xs text-stone-400 font-semibold mt-2 md:mt-0">Синхронизировано с ВК: 29.10.2026 в 15:28</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+        <article class="md:col-span-2 bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 27.05.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 52</span>
+                </div>
+                
+            <div onclick="openLightbox('img/vk_5047_0.jpg', 'Фото из поста от 27.05.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="img/vk_5047_0.jpg" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                <div class="flex gap-2 mb-4 flex-wrap">
+                <img onclick="openLightbox('img/vk_5047_1.jpg', 'Кадр меню из поста от 27.05.2026')" src="img/vk_5047_1.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                
+                <img onclick="openLightbox('img/vk_5047_2.jpg', 'Кадр меню из поста от 27.05.2026')" src="img/vk_5047_2.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                
+                <img onclick="openLightbox('img/vk_5047_3.jpg', 'Кадр меню из поста от 27.05.2026')" src="img/vk_5047_3.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                </div>
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    Прикрепляю наше актуальное меню 📕 <br><br>Номер кафе для связи: +7(920)028-28-58<br><br>Мы работаем каждый день с 12:00 до 21:00<br><br>Ланч по будням с 12:00 до 16:00<br><br>СУП ДНЯ + ЛЮБОЕ БЛЮДО + ЛЮБОЙ НАПИТОК = 30% скидка<br><br>📍Наш адрес: ул. Ильинская 45
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5047" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 4 шт.</span>
+            </div>
+        </article>
+        
+        <article class=" bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 25.10.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 32</span>
+                </div>
+                
+            <div onclick="openLightbox('img/vk_5129_0.jpg', 'Фото из поста от 25.10.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="img/vk_5129_0.jpg" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                <div class="flex gap-2 mb-4 flex-wrap">
+                <img onclick="openLightbox('img/vk_5129_1.jpg', 'Кадр меню из поста от 25.10.2026')" src="img/vk_5129_1.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                
+                <img onclick="openLightbox('img/vk_5129_2.jpg', 'Кадр меню из поста от 25.10.2026')" src="img/vk_5129_2.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                
+                <img onclick="openLightbox('img/vk_5129_3.jpg', 'Кадр меню из поста от 25.10.2026')" src="img/vk_5129_3.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                
+                <img onclick="openLightbox('img/vk_5129_4.jpg', 'Кадр меню из поста от 25.10.2026')" src="img/vk_5129_4.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                </div>
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    Ура! У нас юбилей - 100 живых растений, и это только начало…🌿<br><br>Все наши зеленые жители прошли через мои руки, а многие из них не просто были пересажены или востановлены, а выращены прямо с листочка.<br> <br>Ну а теперь в следующем этапе нашего озеленения можете поучавствовать и вы! 🕊️<br><br>Приносите нам горшочек с растением, а мы угостим вас кружкой иван-чая и монеткой шу пуэра от "Унесеные чаем" 🍵<br><br>На фото: я с монстерой деликатесной, наш сотый паренек - комнатный банан, распустившаяся амазонская лилия 🌱
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5129" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 5 шт.</span>
+            </div>
+        </article>
+        
+        <article class=" bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 25.10.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 14</span>
+                </div>
+                
+            <div onclick="openLightbox('img/vk_5128_0.jpg', 'Фото из поста от 25.10.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="img/vk_5128_0.jpg" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                <div class="flex gap-2 mb-4 flex-wrap">
+                <img onclick="openLightbox('img/vk_5128_1.jpg', 'Кадр меню из поста от 25.10.2026')" src="img/vk_5128_1.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                </div>
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    Доброго воскресного!<br>Парочка новостей ✨<br><br>🌿 1. Сегодня приготовил суп выходного дня из корня пастернака, груздей и томатов<br><br>🌿 2. Еще одна карибская новинка<br><br>🔹 Тропикал кубана<br>Салат с авокадо, ананасом, помидорками, листьями романо, черными бобами и заправкой на основе грейпфпрута и тмина
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5128" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 2 шт.</span>
+            </div>
+        </article>
+        
+        <article class=" bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 14.10.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 50</span>
+                </div>
+                
+            <div onclick="openLightbox('img/vk_5123_0.jpg', 'Фото из поста от 14.10.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="img/vk_5123_0.jpg" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    Поговорим о пряностях и мастер класс чая "Масала" 🍵<br><br>По многочисленным просьбам, а иногда требованиям, расскажу о специях, смесях, где найти и как выбрать. <br><br>Также сварю легендарный пряный чай и всех угощу!<br><br>Воскресенье <br>18 октября<br>15-00<br><br>Чайная комната<br>Кафе Мир Мир<br><br>Стоимость - свободная (free donation)
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5123" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 1 шт.</span>
+            </div>
+        </article>
+        
+        <article class=" bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 11.10.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 40</span>
+                </div>
+                
+            <div onclick="openLightbox('img/vk_5122_0.jpg', 'Фото из поста от 11.10.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="img/vk_5122_0.jpg" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                <div class="flex gap-2 mb-4 flex-wrap">
+                <img onclick="openLightbox('img/vk_5122_1.jpg', 'Кадр меню из поста от 11.10.2026')" src="img/vk_5122_1.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                
+                <img onclick="openLightbox('img/vk_5122_2.jpg', 'Кадр меню из поста от 11.10.2026')" src="img/vk_5122_2.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                </div>
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    Всем теплых дней!<br>Три новости на сегодня 🕊️<br><br>▫️ 1. В следующее воскресенье приглашаю вас на разговор о пряностях и мастер-класс легендарного чая "Масала". Подробности в следующем посте<br><br>▫️ 2. Учёл пожелания по облепиховому чаю, теперь у него медово-апельсиновый вкус с нотками имбиря и корицы<br><br>До конца осени к каждому чайнику дарим батончик "Нутс"! <br><br>▫️ 3. А теперь о новинке!<br><br>🍲 Арос кон каморонос<br><br>Карибский плов, вобравший в себя традиции стран карибского океана. Пряный рассыпчатый рис с "морскими" грибами, сейтаном, черной фасолью и свежей паприкой, подается с овощами пиклс, авокадо и с лепешкой джонни-кейк<br><br>Хотели больше гибкости в порциях? Теперь у нас два размера плова: стандартный и большой — берите тот, что по душе!<br><br>Ждём в гости! 🌿
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5122" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 3 шт.</span>
+            </div>
+        </article>
+        
+        <article class="md:col-span-2 bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 06.10.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 25</span>
+                </div>
+                
+            <div onclick="openLightbox('img/vk_5121_0.jpg', 'Фото из поста от 06.10.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="img/vk_5121_0.jpg" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    Йоу ган!<br>Пришло время пробовать легендарные Ямайские пирожки! 🥙<br><br> Патти мит<br><br>Культурный «коктейль» в одной выпечке, эмиграционная карта ямайки. <br><br>Британское влияни - форма и идея ручной лепки, африканское влияние-смелые сочетания, использование острого перца и местных трав, а индийские эмигранты дали пирожкам пряные специи. <br><br> Так же Патти стали главным гастрономическим сувениром в ямайской диаспоры. <br><br>У нас классическая версия Патти - готовится на цельнозерновом, бездрожжевом тесте. Лепим, конечно, руками и из-под ножа<br><br>Все к нам на Ильинскую 45! 🌿
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5121" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 1 шт.</span>
+            </div>
+        </article>
+        
+        <article class=" bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 02.10.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 35</span>
+                </div>
+                
+            <div onclick="openLightbox('img/vk_5118_0.jpg', 'Фото из поста от 02.10.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="img/vk_5118_0.jpg" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                <div class="flex gap-2 mb-4 flex-wrap">
+                <img onclick="openLightbox('img/vk_5118_1.jpg', 'Кадр меню из поста от 02.10.2026')" src="img/vk_5118_1.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                
+                <img onclick="openLightbox('img/vk_5118_2.jpg', 'Кадр меню из поста от 02.10.2026')" src="img/vk_5118_2.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                </div>
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    Ола ола!  <br>Вот и октябрь, а это значит что настало время новой кухни! 🐚<br>  <br>В этот раз я решил взять не одну страну, а сразу большое содружество стран Карибского басейна. <br>  <br>Карибская кухня - зто слияние африканской, европейской, индейской и азиатских культур. Микс пряностей и тропических продуктов, ароматы дыма и трав. <br>Мы воплотим кухни Ямайки, Кубы, Гаити, Коста-Рики и других...<br><br>Начнем с трех спешелов<br><br>✨ "Революция"<br><br>Сытная кубинская пицца, со множеством начинки, здесь и грибы и колбаски и растительное мясо, ананас и даже сосиска, завернутая в бортики. Пару лет назад ее часто просили повторить и да - это стоит того!<br><br>✨ Елена Руз<br><br>Хрустящий сэндвич с игрой соленых и сладких вкусов, за первое отвечают маринованные вешенки, за второе- клубничный дайкири<br><br>✨ Раста-паста<br><br>Сливочно - душистая лапша с печеными джерками, сочными овощами и растительным пармезаном<br><br>Ко всем спешелам подаем карибский пряный аперетив на основе ананаса и свежих трав! 🌿
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5118" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 3 шт.</span>
+            </div>
+        </article>
+        
+        <article class=" bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 24.09.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 18</span>
+                </div>
+                
+            <div onclick="openLightbox('img/vk_5117_0.jpg', 'Фото из поста от 24.09.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="img/vk_5117_0.jpg" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                <div class="flex gap-2 mb-4 flex-wrap">
+                <img onclick="openLightbox('img/vk_5117_1.jpg', 'Кадр меню из поста от 24.09.2026')" src="img/vk_5117_1.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                </div>
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    Доброго дня, немного новостей на сегодня! 🕊️<br><br>✨ 1. Вот и подходит к концу тайская кухня! Кисло-сладко-остро- соленое уже на следующей неделе сменится на что то новое...<br><br>✨ 2. Уже вовсю идет капустный сезон, и вот сегодня у нас крем суп из капусты романеско и шпинатом. Не пропустите!<br><br>✨ 3. А так же сегодня с 18-00 у нас пройдет поэтический вечер "Лето не уходи..." нашего гостя и Виталия Аннушкина. На прошлой встрече было битком, так что сегодня бронируйте столики!<br><br>Ждем вас на Ильинской 45<br>Брони, предзаказ и доставка по номеру 89200282858 🌿
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5117" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 2 шт.</span>
+            </div>
+        </article>
+        
+        <article class=" bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 20.09.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 34</span>
+                </div>
+                
+            <div onclick="openLightbox('https://sun9-84.userapi.com/s/v1/ig2/UF-x0MdNJ1hdLOZmUxDj74Pp_XeUqO_tMvlkXNueWgJzcorhcO47tCNx7tIMEXiNEiE4zu3ZJEo7i9VVIDkTJ4bg.jpg?quality=95&as=32x42,48x63,72x94,108x141,160x209,240x313,360x469,480x626,540x704,640x834,720x939,896x1168&from=bu', 'Фото из поста от 20.09.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="https://sun9-84.userapi.com/s/v1/ig2/UF-x0MdNJ1hdLOZmUxDj74Pp_XeUqO_tMvlkXNueWgJzcorhcO47tCNx7tIMEXiNEiE4zu3ZJEo7i9VVIDkTJ4bg.jpg?quality=95&as=32x42,48x63,72x94,108x141,160x209,240x313,360x469,480x626,540x704,640x834,720x939,896x1168&from=bu" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                <div class="flex gap-2 mb-4 flex-wrap">
+                <img onclick="openLightbox('img/vk_5116_1.jpg', 'Кадр меню из поста от 20.09.2026')" src="img/vk_5116_1.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                </div>
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    А у нас привоз деревенской облепихи, фенхеля и брокколи...ну и конечно же все это я решил соединить в супе выходного дня!  🌿<br><br>Два вида капусты, печеный кабачок и морковь, для пряности ароматные травы, чеснок, имбирь и свежайшая облепиха. <br><br>Все это в крем с кокосовыми сливками и с капелькой мицукана! <br><br>Забегайте на супчик! 🍜
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5116" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 2 шт.</span>
+            </div>
+        </article>
+        
+        <article class=" bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 16.09.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 23</span>
+                </div>
+                
+            <div onclick="openLightbox('https://sun9-68.userapi.com/s/v1/ig2/ywBoMqmVkB4QfayYPKyPTk6MhW2y4UScEpRdtkZksVaj6hnA5QLQid8yP_En28p7V_k87vQJiQavVDq6sV_YXD7i.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu', 'Фото из поста от 16.09.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="https://sun9-68.userapi.com/s/v1/ig2/ywBoMqmVkB4QfayYPKyPTk6MhW2y4UScEpRdtkZksVaj6hnA5QLQid8yP_En28p7V_k87vQJiQavVDq6sV_YXD7i.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                <div class="flex gap-2 mb-4 flex-wrap">
+                <img onclick="openLightbox('img/vk_5115_1.jpg', 'Кадр меню из поста от 16.09.2026')" src="img/vk_5115_1.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                
+                <img onclick="openLightbox('img/vk_5115_2.jpg', 'Кадр меню из поста от 16.09.2026')" src="img/vk_5115_2.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                
+                <img onclick="openLightbox('img/vk_5115_3.jpg', 'Кадр меню из поста от 16.09.2026')" src="img/vk_5115_3.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                </div>
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    Троечка свежих новостей из Мирной кухни! 🐞<br><br>▫️ 1. Наша Ксения наготовила безглютеновых шарлоток из деревенских яблок, и это точно сочно!<br><br>▫️ 2. Важный факт! Мы сами растим микрозелень, без химии, гмо, без глютена и под хорошим светом. <br><br>Добавили на постояную основу редис Санго, который богат витаминами и минералами;<br>содержит антиоксиданты и антоцианы;<br>укрепляет иммунитет<br>улучшает пищеварение;<br>низкокалориный,<br>добавляет блюдам пикантный вкус и яркий вид.<br>Ищите в нашем магазинчике<br><br>▫️ 3. На канале "Унесенные чаем" вышло видео со мной о том, как мы строили ресторан, а еще о чае, о жизни и о многом другом <br><br>https://www.youtube.com/watch?v=ll-Uvdt3Rvc
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5115" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 4 шт.</span>
+            </div>
+        </article>
+        
+        <article class=" bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 10.09.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 21</span>
+                </div>
+                
+            <div onclick="openLightbox('img/vk_5111_0.jpg', 'Фото из поста от 10.09.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="img/vk_5111_0.jpg" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                <div class="flex gap-2 mb-4 flex-wrap">
+                <img onclick="openLightbox('img/vk_5111_1.jpg', 'Кадр меню из поста от 10.09.2026')" src="img/vk_5111_1.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                </div>
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    Привет, Мир! 🕊️ <br><br>Сегодня для подписчиков у нас счастливые часы с 16 до 21 🕐<br><br>Каждая четвертая позиция в чеке - бесплатно <br><br>Ждем в гости на Ильинскую 45 🌿
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5111" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 2 шт.</span>
+            </div>
+        </article>
+        
+        <article class=" bg-white rounded-3xl p-7 shadow-sm border border-stone-900/5 hover:shadow-xl transition duration-300 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between text-xs text-stone-400 font-semibold uppercase tracking-wider mb-4">
+                    <span>📅 28.08.2026</span>
+                    <span class="px-2.5 py-1 rounded-full bg-stone-100 text-stone-600">❤️ 39</span>
+                </div>
+                
+            <div onclick="openLightbox('img/vk_5110_0.jpg', 'Фото из поста от 28.08.2026')" class="cursor-pointer overflow-hidden rounded-2xl mb-4 bg-stone-100">
+                <img src="img/vk_5110_0.jpg" alt="Пост ВК" loading="lazy" class="w-full h-72 object-cover hover:scale-105 transition duration-500">
+            </div>
+            
+                <div class="flex gap-2 mb-4 flex-wrap">
+                <img onclick="openLightbox('img/vk_5110_1.jpg', 'Кадр меню из поста от 28.08.2026')" src="img/vk_5110_1.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                
+                <img onclick="openLightbox('img/vk_5110_2.jpg', 'Кадр меню из поста от 28.08.2026')" src="img/vk_5110_2.jpg" class="w-16 h-16 object-cover rounded-xl cursor-pointer border-2 border-white shadow hover:scale-110 transition">
+                </div>
+                <div class="text-stone-700 text-sm sm:text-base leading-relaxed max-h-60 overflow-y-auto pr-2">
+                    Вакансии 📣<br><br>Мы открываем вакансии Повара<br><br>Что необходимо от вас:<br>🔹 умение работать в команде<br>🔹 коммуникабельность, доброжелательность<br>🔹 интерес к новым знаниям<br>🔹 опыт работы не обязателен, мы обучим всему необходимому<br><br>А что предлагаем мы:<br>⚪️ гибкий график<br>⚪️ выплаты ЗП каждую неделю<br>⚪️ разнообразное служебное питание<br>⚪️ совместные выезды на фестивали и мероприятия<br>⚪️ работа в дружной, растущей команде (совместный отдых, тусич и общение по желанию😛), выезды на фестивали<br>⚪️ новые познания о растительной кухне и разных кухнях мира<br>⚪️ доступ к интересным ингредиентам по приятным ценам<br><br>Если чувствуешь, что это твоё,  пиши в лс или позвони по номеру +7(999)139-90-98 🌞<br><br>Если вам нравится наше дело и вы знаете тех, кому будет интересно стать частью нашей команды, будем благодарны репосту и рекомендациям ❤️
+                </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-stone-100 flex justify-between items-center text-xs font-bold" style="color: #D96B27;">
+                <a href="https://vk.com/mirmir.cafe?w=wall-191992548_5110" target="_blank" class="hover:underline">Открыть пост в ВК ↗</a>
+                <span class="text-stone-400 font-normal">Фото в посте: 3 шт.</span>
+            </div>
+        </article>
+        
+            </div>
+        </section>
+
+        <!-- КОНТАКТЫ И КАРТА -->
+        <section id="contacts" class="rounded-[2.5rem] p-8 sm:p-12 text-white shadow-xl" style="background-color: var(--bg-dark);">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-white/10">Локация силы</span>
+                    <h2 class="font-serif text-4xl sm:text-5xl font-bold mt-4 mb-4">Ждем вас на Ильинской, 45</h2>
+                    <p class="text-white/80 leading-relaxed mb-6">
+                        Веган-кафе и чайная в сердце Нижнего Новгорода. Сбалансированная растительная кухня, полезные десерты без белого сахара, спешелти-кофе и китайский чай проливом.
+                    </p>
+                    <div class="space-y-3 text-sm text-white/90 mb-8">
+                        <p>📍 <strong>Адрес:</strong> Нижний Новгород, ул. Ильинская, 45</p>
+                        <p>💬 <strong>Связь и бронь:</strong> напрямую через Telegram шефа или группу ВК</p>
+                    </div>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="https://t.me/mirmir_chef" target="_blank" class="px-6 py-3.5 rounded-2xl font-bold text-sm text-white shadow-lg" style="background-color: var(--accent);">
+                            Написать в Telegram (@mirmir_chef)
+                        </a>
+                        <a href="https://yandex.ru/maps/?text=Нижний+Новгород+Ильинская+45+Мир+Мир" target="_blank" class="px-6 py-3.5 rounded-2xl font-bold text-sm bg-white text-stone-900 hover:bg-stone-100 transition">
+                            Открыть в Яндекс.Картах 🗺️
+                        </a>
+                    </div>
+                </div>
+                <div class="rounded-3xl overflow-hidden h-80 shadow-inner bg-stone-800 border border-white/10">
+                    <iframe src="https://yandex.ru/map-widget/v1/?ll=43.991243%2C56.320455&z=17&pt=43.991243,56.320455,pm2rdm" width="100%" height="100%" frameborder="0" allowfullscreen="true"></iframe>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="max-w-7xl mx-auto px-4 sm:px-8 py-10 text-center text-xs text-stone-400 border-t border-stone-900/5">
+        <p>© 2026 Веган-кафе «Мир Мир» (vk.com/mirmir.cafe) • Кибер-лендинг Сира с автопарсингом ВК ⚡️</p>
+    </footer>
+
+    <!-- ЛАЙТБОКС ДЛЯ ПРОСМОТРА ФОТО-МЕНЮ В ПОЛНЫЙ РАЗМЕР -->
+    <div id="lightbox" onclick="closeLightbox()" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden items-center justify-center p-4 cursor-zoom-out">
+        <div class="max-w-5xl max-h-[92vh] flex flex-col items-center">
+            <img id="lightbox-img" src="" alt="Увеличенное фото" class="max-w-full max-h-[82vh] object-contain rounded-2xl shadow-2xl">
+            <p id="lightbox-caption" class="text-white/90 text-center mt-4 text-base font-medium max-w-2xl"></p>
+        </div>
+    </div>
+
+    <script>
+        function openLightbox(src, caption) {
+            const lb = document.getElementById('lightbox');
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-caption').innerText = caption;
+            lb.classList.remove('hidden');
+            lb.classList.add('flex');
+        }
+        function closeLightbox() {
+            const lb = document.getElementById('lightbox');
+            lb.classList.add('hidden');
+            lb.classList.remove('flex');
+        }
+    </script>
+</body>
+</html>
