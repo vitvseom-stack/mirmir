@@ -1,5 +1,5 @@
-*.txt
-cache_*.json
-menu_database.json
-app.py
-run.bat
+vk key.txt
+goog api k.txt
+__pycache__/
+olds versions/
+*.pyc

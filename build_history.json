@@ -1,5 +1,12 @@
 [
   {
+    "version": "v21.0 [Сборка #38]",
+    "timestamp": "06.11.2026 18:50:08",
+    "model": "gemini-3-flash-preview",
+    "status": "CACHED / OFFLINE",
+    "stats": "Сборка v21.0 [Сборка #38]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
+  },
+  {
     "version": "v18.0 [Сборка #37]",
     "timestamp": "06.11.2026 18:30:26",
     "model": "gemini-3-flash-preview",
