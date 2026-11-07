@@ -1,5 +1,12 @@
 [
   {
+    "version": "v25.0 [Сборка #44]",
+    "timestamp": "07.11.2026 09:30:46",
+    "model": "gemini-3-flash-preview",
+    "status": "CACHED / OFFLINE",
+    "stats": "Сборка v25.0 [Сборка #44]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
+  },
+  {
     "version": "v24.0 [Сборка #43]",
     "timestamp": "07.11.2026 09:10:55",
     "model": "gemini-3-flash-preview",
@@ -75,12 +82,5 @@
     "model": "gemini-3-flash-preview",
     "status": "CACHED / OFFLINE",
     "stats": "Сборка v18.0 [Сборка #34]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v16.0 [Сборка #33]",
-    "timestamp": "06.11.2026 13:38:33",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
-    "stats": "Сборка v16.0 [Сборка #33]: 72 точных блюд с бланков. Позиций с выбором Малой/Большой порции: 29 шт. | Фото ВК: 25 | Макро-состав: 25 | Юмор: 22."
   }
 ]
