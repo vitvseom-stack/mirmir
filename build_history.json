@@ -1,5 +1,19 @@
 [
   {
+    "version": "v24.0 [Сборка #43]",
+    "timestamp": "07.11.2026 09:10:55",
+    "model": "gemini-3-flash-preview",
+    "status": "ONLINE (HTTP 200 OK)",
+    "stats": "Сборка v24.0 [Сборка #43]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
+  },
+  {
+    "version": "v23.0 [Сборка #42]",
+    "timestamp": "06.11.2026 20:22:39",
+    "model": "gemini-3-flash-preview",
+    "status": "CACHED / OFFLINE",
+    "stats": "Сборка v23.0 [Сборка #42]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
+  },
+  {
     "version": "v23.0 [Сборка #41]",
     "timestamp": "06.11.2026 20:19:44",
     "model": "gemini-3-flash-preview",
@@ -68,20 +82,5 @@
     "model": "gemini-3-flash-preview",
     "status": "ONLINE (HTTP 200 OK)",
     "stats": "Сборка v16.0 [Сборка #33]: 72 точных блюд с бланков. Позиций с выбором Малой/Большой порции: 29 шт. | Фото ВК: 25 | Макро-состав: 25 | Юмор: 22."
-  },
-  {
-    "version": "v15.5 [Сборка #32]",
-    "timestamp": "06.11.2026 13:23:45",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
-    "stats": "Сборка v15.5 [Сборка #32]: 58 блюд. Золотой реестр ВК: 26 фото | ИИ-фото состава (Flux AI Generator, Unsplash Macro Fallback): 18 шт. | Юмор-превью: 14 шт."
-  },
-  {
-    "version": "v14.0 [Сборка #31]",
-    "timestamp": "06.11.2026 11:25:10",
-    "model": "gemini-3-flash-preview",
-    "status": "OFFLINE / CACHED",
-    "stats": "Блюд: 58 (Золотой реестр ВК: 26 | Макро-ингредиенты: 18 | Юмор: 14)",
-    "verdict": "Сборка v14.0: 58 блюд. В Золотом реестре закреплено 26 проверенных фото ВК (повторное сканирование отключено!), 18 макро-фото ингредиентов (без Пикассо!) и 14 юмор-превью."
   }
 ]
