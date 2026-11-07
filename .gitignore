@@ -3,3 +3,5 @@ goog api k.txt
 __pycache__/
 olds versions/
 *.pyc
+
+local_ai_key.js
