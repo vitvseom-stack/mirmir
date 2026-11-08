@@ -47,7 +47,7 @@ def get_run_version():
             pass
     with open(p, "w", encoding="utf-8") as f:
         f.write(str(c))
-    return f"v37.0 [Сборка #{c}]", c
+    return f"v38.0 [Сборка #{c}]", c
 
 
 def load_key(filename):
