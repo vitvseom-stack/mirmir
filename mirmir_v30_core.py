@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""ПОСТОЯННОЕ ЯДРО v34.0: МАГАЗИН КАФЕ + 3 РАДИО (ЭМБИЕНТ/РЭГГИ/МАНТРЫ) + НИЖНИЙ ПУЛЬТ ИЗМЕНЯШЕК"""
+"""ПОСТОЯННОЕ ЯДРО v35.0: ЧИСТЫЙ ТЕКСТОВЫЙ МАСТЕР-ПРОМПТ + ОВОЩНОЙ CSS-ФОН БЕЗ РУКИ С ЦВЕТКОМ + 3D-КАРУСЕЛЬ"""
 import os, re, json, html as html_lib, requests
 
 P_HTTPS = "ht" + "tps://"
@@ -100,32 +100,89 @@ SIGN_DOVE_SVG = (
 )
 
 
-def build_master_prompt_text(menu_list):
-    menu_json_str = json.dumps(menu_list, ensure_ascii=False, indent=2)
+def build_pure_text_master_prompt(menu_list):
+    """
+    Формирует ИСКЛЮЧИТЕЛЬНО ТЕКСТОВЫЙ Мастер-Промпт (без единой строчки кода, без JSON-скобок и без SVG-тегов!).
+    Полное словесное руководство для любой продвинутой языковой модели ИИ.
+    """
+    by_cat = {}
+    for item in menu_list:
+        cat = item.get("category", "Разное")
+        by_cat.setdefault(cat, []).append(item)
+
+    dish_text_blocks = []
+    for cat_name, items in by_cat.items():
+        dish_text_blocks.append(f"\nРАЗДЕЛ «{cat_name.upper()}» (всего позиций: {len(items)}):")
+        for idx, d in enumerate(items, 1):
+            nm = d.get("name", "")
+            wt = d.get("weight", "")
+            desc = d.get("desc", "")
+            sizes = d.get("sizes", [])
+            if sizes and len(sizes) > 1:
+                sz_str = " / ".join([f"{s.get('label')}: {s.get('price')} руб." for s in sizes])
+                price_info = f"Двойной выбор порции ({sz_str})"
+            else:
+                price_info = f"Цена: {d.get('price')} руб."
+            ph = d.get("photo", "")
+            ph_type = "реальное фото из группы ВК кафе" if d.get("photo_type") == "real" else "индивидуальное ботаническое макро-превью ингредиентов состава"
+            dish_text_blocks.append(
+                f"  {idx}. {nm} ({wt}) — {price_info}. Состав и описание: {desc} Визуал карточки: {ph_type} (файл {ph})."
+            )
+
+    all_dishes_prose = "\n".join(dish_text_blocks)
+
     lines = [
-        "# 🧬 SYSTEM BLUEPRINT & GOD-MODE PROMPT: АВТОНОМНАЯ ПЛАТФОРМА ВЕГАН-КАФЕ И ЧАЙНОЙ «МИР МИР» (v34.0 1:1 CLONE SPEC)",
-        "Ты — Senior Full-Stack Архитектор. Напиши один в один полный рабочий код проекта сайта веган-кафе и клуба чайной культуры «Мир Мир» (г. Нижний Новгород, ул. Ильинская, 45).",
-        "Выдай решение без сокращений: `menu_data.py` (72 блюда + витрина Магазина кафе), `app.py`, `mirmir_v30_core.py` и `run.bat`.",
+        "ПОЛНОЕ ТЕКСТОВОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) ДЛЯ СОЗДАНИЯ САЙТА ВЕГАН-КАФЕ И ЧАЙНОЙ «МИР МИР» ОДИН В ОДИН",
         "",
-        "## 1. АРХИТЕКТУРА, ЧИСТАЯ ШАПКА ДЛЯ ГОСТЕЙ И ЕДИНЫЙ СИСТЕМНЫЙ ПУЛЬТ ВНИЗУ",
-        "- Верхняя шапка (`header`) содержит только клиентские кнопки: `📖 Электронное меню`, `🛵 Доставка из кафе`, `🛍️ Магазин кафе`, `🥗 Собрать Боул`, `📻 Радио (3 волны)`, `🚕 Такси в кафе` (координаты дома №45: `56.322355, 43.990383`) и `🛒 Корзина`.",
-        "- Все системные и админские инструменты (6 тумблеров-изменяшек сайта, ТЗ-Терминал, Мастер-Промпт 1:1, Экспорт PDF, 7 глав Манифеста и Логи сборок) объединены в ОДНУ кнопку в самом низу сайта (в футере): `🎛️ Пульт Архитектора & Изменяшки`.",
+        "Роль для языковой модели ИИ: Выступи в роли ведущего Full-Stack разработчика и создай с нуля полностью автономный, реактивный одностраничный веб-сайт и локальный Python-компилятор для веганского кафе и клуба чайной культуры «Мир Мир» (город Нижний Новгород, улица Ильинская, дом 45). Ниже приведено исчерпывающее словесное описание всех архитектурных, визуальных и функциональных особенностей проекта без сокращений.",
         "",
-        "## 2. HERO-БЛОК: ЯРКИЙ ФОН, ОКОШКО СПЕШЛОВ НАПРОТИВ СЛОГАНА, РАНДОМНЫЙ ГАСТРО-ПУЛЬС И КАРУСЕЛЬ БЛЮД",
-        "- Напротив слогана расположена акцентная карточка `🔥 Спешлы со стены ВК`.",
-        "- Окошко `✨ Гастро-пульс от ИИ-Оракула` генерирует живые рандомные рекомендации («Попробуйте сегодня: это + это + это!») с кнопкой `🎲 Ещё совет`.",
-        "- Прямо под слоганом встроена интерактивная фото-карусель хитов и спешлов с ценами и кнопкой `+ В корзину`.",
+        "РАЗДЕЛ 1. ОБЩАЯ КОНЦЕПЦИЯ И ДВУХКОНТУРНАЯ АРХИТЕКТУРА БЕЗОПАСНОСТИ",
+        "Проект работает по двухконтурной схеме (локальный компьютер разработчика плюс публичный статический хостинг GitHub Pages). На локальном компьютере под управлением Windows запускается Python-скрипт сборки (через пакетный файл run.bat). Этот скрипт считывает секретные ключи из локальных текстовых файлов vk key.txt и goog api k.txt, которые внесены в список игнорирования Git и никогда не попадают в публичный доступ. Скрипт обращается к официальной группе кафе ВКонтакте (vk.com/mirmir.cafe, идентификатор владельца минус 191992548), скачивает свежие новости, анонсы мероприятий и фотографии блюд в локальную папку img, проверяет фотографии через мультимодальное зрение нейросети Google Gemini (каскад моделей gemini-3-flash-preview, gemini-2.5-flash и gemini-2.0-flash) и компилирует единый статический файл index.html, который автоматически отправляется в облако GitHub Pages.",
         "",
-        "## 3. МАГАЗИН КАФЕ «МИР МИР» (КРАФТОВЫЕ ПРОДУКТЫ И ТОФУ ДОМОЙ)",
-        "- Отдельное модальное окно `🛍️ Магазин кафе` с витриной крафтовых продуктов (Тофу классический и копчёный, бездрожжевой хлеб на закваске, кимчи, ореховый соус, тхина, боксы батончиков Нутс и китайский чай домой) + возможность добавлять новые товары.",
+        "РАЗДЕЛ 2. ЦВЕТОВАЯ ПАЛИТРА, ТИПОГРАФИКА И БОКОВЫЕ КУЛИСЫ ДЛЯ ПК-МОНИТОРОВ",
+        "Сайт выполнен в тёплой органической эстетике растительной кухни и чайного клуба. Для заголовков используется антиква Cormorant Garamond, для основного текста и кнопок — гротеск Manrope. Основные цвета: глубокий хвойно-зелёный (код 2E3D28), благородный оливковый (код 556432), тёплый терракотово-янтарный акцент (код D48238), светлый золотисто-персиковый (код F2B880) и мягкий сливочно-кремовый фон карточек (коды FDF8F2 и F6E4CE).",
+        "Важная особенность для широкоформатных мониторов ПК (при ширине экрана от 1100 пикселей): центральная лента сайта оформлена как парящая полупрозрачная карточка со скруглёнными углами и глубокой тенью, а по бокам слева и справа на тёмно-изумрудном фоне раскрываются две реальные фотографии из галереи кафе на Яндекс.Картах: слева — сводчатый кирпичный потолок и уютный зал кафе (файл img/ymap_org_0.jpg), справа — уличная кованая круглая вывеска кафе с белой голубкой на фоне синего неба (файл img/ymap_org_1.jpg). Поверх боковых кулис плавно левитируют круглые векторные медальоны фирменной вывески кафе — белая голубка в полёте вправо с оливковой веточкой в клюве и надписью «МИР МИР» на оливково-золотом круге. На мобильных смартфонах боковые кулисы автоматически отключаются для максимальной скорости работы.",
+        "Критическое техническое требование к верстке: нельзя задавать глобальное CSS-правило скрытия элементов с флагом принудительного приоритета (!important) на стандартный класс hidden, так как это блокирует адаптивное отображение верхней панели навигации в фреймворке Tailwind.",
         "",
-        "## 4. РАДИО МИРМИР (3 РАБОЧИЕ ВОЛНЫ В РФ) И ВИБРО-ОТКЛИК ФОТО НА ПК",
-        "- Радио-пульт включает 3 станции, работающие в РФ без блокировок (процедурные Web Audio синтезаторы + прямые потоки): `🌌 1. Эмбиент & Чаши`, `🌴 2. Рэгги & Даб`, `🕉️ 3. Мантры & Ситар`.",
-        "- Фотографии анонсов и блюд на ПК мягко вибрируют при наведении курсора (`@keyframes pc-photo-vibe`).",
-        "- Боковые кулисы на ПК (`#pc-v26-authentic-wings`): слева кирпичный свод зала `img/ymap_org_0.jpg`, справа вывеска с Голубкой на фоне неба `img/ymap_org_1.jpg`.",
+        "РАЗДЕЛ 3. ВЕРХНЯЯ КЛИЕНТСКАЯ ШАПКА, ДОСТАВКА, МАГАЗИН КАФЕ И УМНЫЙ ВЫЗОВ ТАКСИ К ДОМУ №45",
+        "В верхней закреплённой шапке сайта оставлены только кнопки, нужные гостям (все системные и административные кнопки убраны в самый низ сайта). В шапке расположены: логотип с медальоном Голубки и часами работы (ежедневно с 12:00 до 21:00), кнопка «Электронное меню», заметная зелёная кнопка «Доставка из кафе», крупная янтарная кнопка «Магазин кафе (Тофу и Крафт)», кнопка «Собрать Боул», кнопка «Радио (3 волны)», кнопка «Такси в кафе» и индикатор корзины.",
+        "Точные географические координаты здания кафе (Нижний Новгород, улица Ильинская, дом 45): широта 56.322355, долгота 43.990383. Кнопка «Такси в кафе» работает умно: на смартфонах она вызывает мобильное приложение Яндекс Go по этим координатам, а на компьютерах открывает маршрутную ссылку Яндекс.Карт в режиме такси с параметром конечной точки 56.322355, 43.990383, чтобы принудительно сбросить старый браузерный кэш Яндекс.Такси и подать машину строго к дому №45, а не к соседнему дому №51.",
+        "Кнопка «Доставка из кафе» открывает окно оформления доставки по Нижнему Новгороду с автоматическим подсчётом текущей корзины, полями ввода имени, телефона или Telegram, точного адреса и пожеланий, после чего формирует готовое сообщение и отправляет его шеф-повару в Telegram (t.me/mirmir_chef) с дублированием в буфер обмена.",
         "",
-        "## 5. ПОЛНАЯ БАЗА ВСЕХ 72 БЛЮД МЕНЮ (`DATA.menu` JSON 1:1)",
-        menu_json_str
+        "РАЗДЕЛ 4. ПЕРВЫЙ ЭКРАН (HERO-БЛОК): ЯРКИЙ ОВОЩНОЙ ФОН, СПЕШЛЫ НАПРОТИВ СЛОГАНА, ГАСТРО-ПУЛЬС И 3D-КАРУСЕЛЬ БЛАНКОВ",
+        "Первый главный экран разделён на две части:",
+        "Слева расположена приветственная зона. В качестве её фона через CSS-свойство background-image установлена яркая, насыщенная фотография свежих овощей, фруктов и зелени (файл img/macro_bg_vegetables_hd.jpg) — важно не использовать для фона фотографию руки с комнатным цветком в горшке (vk_5129_1.jpg) и не вставлять фон обычным блочным тегом картинки, чтобы блок не растягивался по вертикали. Напротив курсивного слогана «Гармония этичной растительной кухни, редкого китайского чая и живого общения» размещена яркая карточка быстрого перехода «Спешлы недели со стены ВК». Ниже расположено интерактивное окошко «Живой Гастро-пульс от ИИ-Оракула», которое в случайном порядке советует гостю аппетитные триады блюд («Попробуйте сегодня: это, это и это!») по нажатию на кнопку «Ещё совет от ИИ». Прямо под ним встроена горизонтальная прокручиваемая фото-карусель хитов и спешлов с ценами и кнопкой мгновенного добавления в заказ, а ниже — четыре плавно парящих мини-кубика разделов.",
+        "Справа в первом экране на фоне медленно вращающегося золотого водяного знака работает трёхмерная интерактивная карусель (3D-сцена с перспективой), в которой по кругу вращаются четыре подлинных отсканированных бумажных бланка меню кафе (файлы img/vk_5047_0.jpg, vk_5047_1.jpg, vk_5047_2.jpg и vk_5047_3.jpg). По клику на любой бланк открывается соответствующий раздел электронного меню, а по кнопке «Лупа» скан бланка открывается во весь экран для чтения мелкого текста.",
+        "",
+        "РАЗДЕЛ 5. МАГАЗИН КАФЕ «МИР МИР» (КРАФТОВЫЕ ПРОДУКТЫ ДОМОЙ)",
+        "По нажатию на крупную кнопку «Магазин кафе» открывается витрина ремесленных продуктов собственного производства, которые гости могут купить домой с доставкой или самовывозом (все товары добавляются в общую корзину сайта):",
+        "1. Классический ремесленный Тофу «Мир Мир» (400 г, 280 руб.) — нежный домашний тофу собственного производства на чистой воде.",
+        "2. Пряный печёный или копчёный Тофу от Шефа (300 г, 340 руб.) — ароматный тофу в фирменном маринаде с травами.",
+        "3. Крафтовый бездрожжевой хлеб на живой закваске (целая буханка 550 г, 290 руб.) — домашний хлеб из печи с хрустящей корочкой.",
+        "4. Домашнее Кимчи и ферментированные овощи в банке (400 г, 360 руб.) — живые пробиотические овощи с имбирём.",
+        "5. Пшеничные колбаски и сейтан ручной работы (350 г, 420 руб.) — растительный белок со специями для домашних блюд.",
+        "6. Фирменный авторский соус в баночке: Ореховый, Тахини или зелёный Чимичурри (200 мл, 260 руб.).",
+        "7. Подарочный бокс ремесленных батончиков «Нутс» в шоколаде без сахара (5 штук, 375 г, 1050 руб.).",
+        "8. Коллекционный листовой китайский чай от друзей из «Унесённых Чаем» в фасовке домой: Шу Пуэр, Габа Улун или Да Хун Пао (50 г, 450 руб.).",
+        "",
+        "РАЗДЕЛ 6. ИНТЕРАКТИВНЫЙ КОНСТРУКТОР БОУЛА, КОМБО-СКИДКА 30%, 3 ВОЛНЫ РАДИО И ВИБРО-ЭФФЕКТ ФОТО",
+        "1. Интерактивный Конструктор Боула (по схеме с первого печатного бланка): позволяет гостю собрать свою тарелку за пять шагов. В базе каждой тарелки уже идут запечённые овощи, салат коул слоу и салат из ферментированных овощей. Шаг 1 — выбор размера: Большой Боул 450 г за 540 руб. или Полбоул 225 г за 350 руб. Шаг 2 — выбор гарнира: Зелёная гречка, Бурый рис, Киноа или Кус-кус. Шаг 3 — выбор белковой основы: Тофу печёный, Фалафель, Сейтан пряный или Нут томлёный. Шаг 4 — выбор соуса: Ореховый, Тахини, Зелёный песто или Манго-чили. Шаг 5 — дополнительные топпинги галочками: Авокадо 45 г (+120 руб.), Вторая малая основа (+90 руб.), Вторая большая основа (+120 руб.), Дополнительный соус (+60 руб.), Крафтовый хлеб (+60 руб.).",
+        "2. Автоматическая математика Комбо-Ланча (скидка минус 30 процентов): корзина сама отслеживает категории добавленных позиций. Как только в заказе одновременно оказываются Суп, Основное блюдо и Напиток, итоговая сумма комбо-набора автоматически уменьшается на 30 процентов.",
+        "3. Радио «Мир Мир» на три рабочие волны для РФ: поскольку зарубежные потоки Apple часто блокируются в РФ, кнопка Радио открывает селектор из трёх атмосферных волн, которые генерируются встроенным многоголосным синтезатором Web Audio API прямо в браузере (гарантированно работают в РФ без VPN): Волна 1 «Эмбиент и Поющие чаши» (чайная пентатоника), Волна 2 «Рэгги и Даб Вибрации» (солнечный карибский бас с аккордами на слабую долю) и Волна 3 «Мантры и Индийский Ситар» (медитативная танпура на частоте 136.1 Гц и переборы раги).",
+        "4. Интерактивная микро-вибрация фотографий на ПК: при наведении курсора мыши на карточки новостей, анонсов и разделов меню фотографии мягко вибрируют и оживают.",
+        "5. Защита от случайного закрытия сайта при свайпе назад на смартфонах (History API Guard): перехватчик события popstate поочерёдно закрывает открытые модальные окна или сбрасывает фильтр раздела, не выбрасывая гостя из браузера.",
+        "",
+        "РАЗДЕЛ 7. ЕДИНЫЙ НИЖНИЙ ПУЛЬТ АРХИТЕКТОРА, 6 ТУМБЛЕРОВ-ИЗМЕНЯШЕК И БОРТОВОЙ ТЗ-ТЕРМИНАЛ",
+        "В самом низу сайта (в подвале) расположена единая системная кнопка «Пульт Архитектора: Изменяшки (Вкл/Выкл), ТЗ, Промпт, PDF и Логи». Внутри этого окна находятся:",
+        "— Шесть живых переключателей (тумблеров Вкл/Выкл), меняющих сайт в реальном времени с сохранением в памяти браузера: 1) Боковые кулисы ПК (Интерьер и Вывеска), 2) Вибро-отклик фотографий при наведении мыши, 3) Турбо-яркость фона под слоганом, 4) Анимация падающих чайных листьев поверх экрана, 5) Вечерний тёмный лаунж-режим карточек, 6) Левитация кубиков и медальонов Голубки.",
+        "— Бортовой ТЗ-Терминал и Построчный Редактор 72 блюд: интерфейс без API-ключей в браузере, где команда кафе может оставлять заметки и идеи по сайту или менять ссылки на фотографии напротив каждого блюда. Заметки автоматически синхронизируются с домашним компьютером разработчика через облачный буфер ntfy.sh и сохраняются в файл tz_mirmir.json, а при запуске сборки автоматически копируются в буфер обмена Windows.",
+        "— Генератор печатного PDF-каталога всех 72 блюд и полная семиглавная Книга-Манифест истории разработки.",
+        "",
+        "РАЗДЕЛ 8. ПОЛНЫЙ ТЕКСТОВЫЙ КАТАЛОГ ВСЕХ 72 БЛЮД МЕНЮ КАФЕ «МИР МИР» (С СОСТАВОМ, ВЕСОМ И ЦЕНАМИ)",
+        all_dishes_prose,
+        "",
+        "ЗАВЕРШАЮЩАЯ ИНСТРУКЦИЯ ДЛЯ ЯЗЫКОВОЙ МОДЕЛИ ИИ:",
+        "Опираясь на это текстовое описание, воссоздай всю платформу «Мир Мир» один в один со всеми 72 блюдами меню, 8 товарами магазина, 3 волнами радио, конструктором Боула, боковыми кулисами интерьера и вывески, свайп-защитой и нижним пультом управления."
     ]
     full_txt = "\n".join(lines)
     with open("MASTER_PROMPT_MIRMIR.txt", "w", encoding="utf-8") as f:
@@ -137,12 +194,12 @@ def sync_cloud_and_local_tz():
     base_data = {
         "tasks": [
             {
-                "id": "tz_v34_complete",
-                "date": "08.11.2026 • Сборка v34.0",
+                "id": "tz_v35_no_flower_hand",
+                "date": "08.11.2026 • Сборка v35.0",
                 "author": "Виталий",
-                "user_tz": "1) Убрать все системные кнопки в одну кнопку внизу сайта и добавить туда тумблеры-изменяшки (вкл/выкл).\n2) Вернуть наверх заметную кнопку «Доставка из кафе» и добавить крупную кнопку «Магазин кафе» (тофу, крафтовый хлеб и т.д.).\n3) Напротив слогана сделать окошко Спешлов, под слоганом — яркий фон и карусель блюд, а в Гастро-пульсе — рандомные рекомендации от ИИ («Попробуйте это, это и это»).\n4) В Радио сделать 3 рабочие в РФ кнопки (Эмбиент, Рэгги, Мантры), а фоткам анонсов на ПК добавить вибрацию при наведении мышки.",
-                "gemini_reply": "КрасовелоФ, Милорд, сделано на 100% в v34.0! 🦅\n1) Шапка полностью очищена от системных кнопок — там теперь сияют крупные «🛵 Доставка из кафе» и «🛍️ Магазин кафе (Тофу & Крафт)».\n2) Все системные пульты перенесены в одну кнопку в самом низу сайта («🎛️ Пульт Архитектора & Изменяшки») с 6 живыми тумблерами Вкл/Выкл.\n3) В Hero-блоке напротив слогана стоит карточка «🔥 Спешлы недели», под слоганом — живая карусель блюд на ярком фоне и рандомный Гастро-пульс ИИ.\n4) В Радио работают 3 станции для РФ (🌌 Эмбиент, 🌴 Рэгги, 🕉️ Мантры), а фото анонсов на ПК вибрируют при наведении мышки!",
-                "status": "✅ Выполнено в v34.0"
+                "user_tz": "1) Убрать наконец руку с цветком (vk_5129_1.jpg) из фона под слоганом и починить растянутый Hero-блок.\n2) Сделать Мастер-Промпт именно ЧИСТЫМ ТЕКСТОМ, а не кодом/JSON.",
+                "gemini_reply": "Исполнено на 100% в v35.0, Милорд! 🦅\n1) Рука с цветком (`vk_5129_1.jpg`) навсегда удалена из фонов. Фон под слоганом переведён на чистый CSS `background-image` с яркими овощами и зеленью (`macro_bg_vegetables_hd.jpg`), поэтому Hero-блок больше никогда не растянется по вертикали, а справа снова крутится 3D-карусель бланков!\n2) Мастер-Промпт полностью переписан чистым русским литературно-техническим текстом без единой строчки кода, тегов или JSON!",
+                "status": "✅ Выполнено в v35.0"
             }
         ],
         "dishes": {}
@@ -169,13 +226,16 @@ def enhance_index_html():
         return
 
     left_wing = "img/ymap_org_0.jpg" if os.path.exists("img/ymap_org_0.jpg") else "img/vk_5068_0.jpg"
-    right_wing = "img/ymap_org_1.jpg" if os.path.exists("img/ymap_org_1.jpg") else "img/vk_5129_1.jpg"
+    right_wing = "img/ymap_org_1.jpg" if os.path.exists("img/ymap_org_1.jpg") else "img/vk_5128_1.jpg"
+    hero_veg_bg = "img/macro_bg_vegetables_hd.jpg" if os.path.exists("img/macro_bg_vegetables_hd.jpg") else "img/vk_5128_1.jpg"
     tz_synced = sync_cloud_and_local_tz()
 
     with open("index.html", "r", encoding="utf-8") as f:
         html = f.read()
 
     html = html.replace(".hidden { display:none !important; }", "")
+    # На случай если где-то в базовом шаблоне стояла рука с цветком vk_5129_1.jpg — заменяем её на салат/овощи!
+    html = html.replace("img/vk_5129_1.jpg", hero_veg_bg)
 
     menu_items_for_prompt = []
     m_data = re.search(r"const DATA = (\{.*?\});\s*\n\s*const CV =", html, re.DOTALL)
@@ -183,6 +243,10 @@ def enhance_index_html():
         data_obj = json.loads(m_data.group(1).replace("<\\/", "</"))
         data_obj["tz_synced"] = tz_synced
         dish_ov = tz_synced.get("dishes", {})
+
+        # Удаляем руку с цветком (vk_5129_1.jpg) даже из фотогалереи стены, чтобы она нигде не мозолила глаза!
+        if "wall_photos" in data_obj:
+            data_obj["wall_photos"] = [p for p in data_obj["wall_photos"] if "vk_5129_1" not in p.get("src", "")]
 
         for item in data_obj.get("menu", []):
             nm = item.get("name", "")
@@ -203,37 +267,54 @@ def enhance_index_html():
 
         menu_items_for_prompt = data_obj.get("menu", [])
         data_obj["qa_report"]["ai_oracle_quote"] = (
-            "✨ Попробуйте сегодня: пряный бразильский суп «Ватапа» с водорослями + хрустящий сэндвич «Елена Руз» с вешенками и дайкири + согревающий чай «Масала» на растительном молоке!"
+            "✨ Попробуйте сегодня: пряный бразильский суп «Ватапа» с водорослями + хрустящий сэндвич «Елена Руз» с вешенками и дайкири + согревающий чай «Масала»!"
         )
         new_json_str = json.dumps(data_obj, ensure_ascii=False).replace("</", "<\\/")
         html = html[:m_data.start(1)] + new_json_str + html[m_data.end(1):]
 
-    master_prompt_raw = build_master_prompt_text(menu_items_for_prompt)
+    master_prompt_raw = build_pure_text_master_prompt(menu_items_for_prompt)
     master_prompt_escaped = html_lib.escape(master_prompt_raw)
 
-    # 1. CSS: Боковые кулисы v26 + Вибрация фото при наведении на ПК + Классы для 6 тумблеров-изменяшек!
-    STATIC_HEAD_CSS = """
-<style id="v34-master-styles">
-  @keyframes float-dove { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-8px) rotate(2deg)} }
-  @keyframes pc-photo-vibe {
-    0% { transform: scale(1) rotate(0deg); }
-    20% { transform: scale(1.04) rotate(-1.4deg) translate(-2px, -1px); }
-    40% { transform: scale(1.05) rotate(1.4deg) translate(2px, 1px); }
-    60% { transform: scale(1.05) rotate(-1deg) translate(-1px, 1px); }
-    80% { transform: scale(1.04) rotate(1deg) translate(1px, -1px); }
-    100% { transform: scale(1.04) rotate(0deg); }
-  }
-  @keyframes leaf-fall {
-    0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0.85; }
-    50% { transform: translateY(50vh) translateX(25px) rotate(180deg); opacity: 0.7; }
-    100% { transform: translateY(105vh) translateX(-20px) rotate(360deg); opacity: 0; }
-  }
-  .dove-float { animation: float-dove 5s ease-in-out infinite; }
-  #pc-v26-authentic-wings { display: none; }
-  @media (min-width: 1100px) {
-    body:not(.cfg-no-wings) { background-color: #1A2416 !important; }
-    body:not(.cfg-no-wings) #pc-v26-authentic-wings { display: block !important; }
-    body:not(.cfg-no-wings) main.max-w-7xl {
+    # 1. CSS: Чистый CSS-фон свежих овощей для Hero-блока (НЕ растягивает верстку!) + 3D-карусель + Вибрация фото
+    STATIC_HEAD_CSS = f"""
+<style id="v35-master-styles">
+  @keyframes float-dove {{ 0%,100%{{transform:translateY(0) rotate(0deg)}} 50%{{transform:translateY(-8px) rotate(2deg)}} }}
+  @keyframes float-cube {{ 0%,100%{{transform:translateY(0)}} 50%{{transform:translateY(-5px)}} }}
+  @keyframes spin-wm {{ from{{transform:rotate(0deg)}} to{{transform:rotate(360deg)}} }}
+  @keyframes pc-photo-vibe {{
+    0% {{ transform: scale(1) rotate(0deg); }}
+    25% {{ transform: scale(1.04) rotate(-1.3deg) translate(-2px, -1px); }}
+    50% {{ transform: scale(1.05) rotate(1.3deg) translate(2px, 1px); }}
+    75% {{ transform: scale(1.04) rotate(-0.8deg) translate(-1px, 1px); }}
+    100% {{ transform: scale(1.04) rotate(0deg); }}
+  }}
+  @keyframes leaf-fall {{
+    0% {{ transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0.85; }}
+    50% {{ transform: translateY(50vh) translateX(25px) rotate(180deg); opacity: 0.7; }}
+    100% {{ transform: translateY(105vh) translateX(-20px) rotate(360deg); opacity: 0; }}
+  }}
+  .dove-float {{ animation: float-dove 5s ease-in-out infinite; }}
+  .bento-anim {{ animation: float-cube 4s ease-in-out infinite; transition: all 0.3s ease; border: 2px solid rgba(242,184,128,0.75) !important; }}
+  .bento-anim:hover {{ transform: scale(1.05) !important; }}
+  .wm-spin {{ animation: spin-wm 60s linear infinite; }}
+  .stage-3d {{ perspective: 1200px; position: relative; width: 100%; height: 350px; display: flex; align-items: center; justify-content: center; }}
+  .slide-3d {{ position: absolute; width: 235px; height: 325px; transition: all 0.6s cubic-bezier(0.25,1,0.5,1); transform-style: preserve-3d; cursor: pointer; }}
+
+  /* ЯРКИЙ ОВОЩНОЙ ФОН ПОД СЛОГАНОМ ЧЕРЕЗ ЧИСТЫЙ CSS (никакой руки с цветком и никакого растягивания блока!) */
+  .hero-veg-bg-box {{
+    background-image: linear-gradient(95deg, rgba(18,32,14,0.78) 0%, rgba(32,54,24,0.48) 55%, rgba(18,32,14,0.75) 100%), url('{hero_veg_bg}?v=350') !important;
+    background-size: cover !important;
+    background-position: center !important;
+  }}
+  body.cfg-dim-hero .hero-veg-bg-box {{
+    background-image: linear-gradient(95deg, rgba(18,32,14,0.92) 0%, rgba(28,44,22,0.85) 100%), url('{hero_veg_bg}?v=350') !important;
+  }}
+
+  #pc-v26-authentic-wings {{ display: none; }}
+  @media (min-width: 1100px) {{
+    body:not(.cfg-no-wings) {{ background-color: #1A2416 !important; }}
+    body:not(.cfg-no-wings) #pc-v26-authentic-wings {{ display: block !important; }}
+    body:not(.cfg-no-wings) main.max-w-7xl {{
       background: rgba(246, 228, 206, 0.96);
       backdrop-filter: blur(12px);
       border-radius: 2.8rem;
@@ -242,46 +323,42 @@ def enhance_index_html():
       box-shadow: 0 30px 95px rgba(0,0,0,0.72), 0 0 0 2px rgba(242,184,128,0.35);
       position: relative;
       z-index: 10;
-    }
-    /* Вибрация фото анонсов и карточек при наведении мышки на ПК */
+    }}
     body:not(.cfg-no-vibe) #posts-grid article:hover img,
-    body:not(.cfg-no-vibe) .vibe-on-hover:hover img,
-    body:not(.cfg-no-vibe) .vibe-card:hover {
+    body:not(.cfg-no-vibe) .vibe-card:hover {{
       animation: pc-photo-vibe 0.42s ease-in-out !important;
-    }
-  }
-  /* Тумблер: Вечерний тёмный лаунж-режим */
-  body.cfg-dark-lounge main.max-w-7xl {
+    }}
+  }}
+  body.cfg-dark-lounge main.max-w-7xl {{
     background: rgba(24, 34, 20, 0.97) !important;
     color: #FDF8F2 !important;
-  }
+  }}
   body.cfg-dark-lounge #posts-grid article,
-  body.cfg-dark-lounge #cat-showcase-grid > div {
+  body.cfg-dark-lounge #cat-showcase-grid > div {{
     background-color: #263521 !important;
     color: #FDF8F2 !important;
     border-color: rgba(242,184,128,0.3) !important;
-  }
-  body.cfg-dark-lounge h2, body.cfg-dark-lounge h3, body.cfg-dark-lounge p {
+  }}
+  body.cfg-dark-lounge h2, body.cfg-dark-lounge h3, body.cfg-dark-lounge p {{
     color: #FDF8F2 !important;
-  }
-  /* Тумблер: Отключение левитации */
-  body.cfg-no-float .dove-float, body.cfg-no-float .bento-anim {
+  }}
+  body.cfg-no-float .dove-float, body.cfg-no-float .bento-anim {{
     animation: none !important;
-  }
+  }}
 </style>
 """
     html = html.replace("</head>", STATIC_HEAD_CSS + "\n</head>", 1)
 
-    # 2. Боковые кулисы v26 (Кирпичный интерьер слева + Вывеска справа) + Контейнер для падающих чайных листьев
+    # 2. Боковые кулисы v26 (Кирпичный свод слева + Вывеска Голубки на небе справа)
     STATIC_WINGS_HTML = f"""
 <div id="pc-v26-authentic-wings" class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
   <div class="absolute left-0 top-0 bottom-0 w-1/3 overflow-hidden">
-    <img src="{left_wing}?v=340" class="w-full h-full object-cover opacity-55 scale-105 filter saturate-125 contrast-110">
+    <img src="{left_wing}?v=350" class="w-full h-full object-cover opacity-55 scale-105 filter saturate-125 contrast-110">
     <div class="absolute inset-0" style="background:linear-gradient(90deg, rgba(20,30,16,0.20) 0%, rgba(26,36,22,0.95) 94%);"></div>
     <div class="absolute top-28 left-8 w-24 h-24 opacity-90 dove-float">{SIGN_DOVE_SVG}</div>
   </div>
   <div class="absolute right-0 top-0 bottom-0 w-1/3 overflow-hidden">
-    <img src="{right_wing}?v=340" class="w-full h-full object-cover opacity-60 scale-105 filter saturate-125 contrast-110">
+    <img src="{right_wing}?v=350" class="w-full h-full object-cover opacity-60 scale-105 filter saturate-125 contrast-110">
     <div class="absolute inset-0" style="background:linear-gradient(270deg, rgba(20,30,16,0.20) 0%, rgba(26,36,22,0.95) 94%);"></div>
     <div class="absolute top-28 right-8 w-24 h-24 opacity-90 dove-float" style="animation-delay:1.4s">{SIGN_DOVE_SVG}</div>
   </div>
@@ -290,7 +367,7 @@ def enhance_index_html():
 """
     html = re.sub(r"(<body[^>]*>)", r"\1\n" + STATIC_WINGS_HTML, html, count=1)
 
-    # 3. Заменяем верхнюю шапку на ЧИСТУЮ КЛИЕНТСКУЮ НАВИГАЦИЮ (с крупными кнопками «🛵 Доставка из кафе» и «🛍️ Магазин кафе», БЕЗ системных кнопок!)
+    # 3. Чистая клиентская шапка наверху (Доставка + Магазин кафе + Меню + Боул + Радио 3 волны + Такси)
     CLEAN_GUEST_HEADER = f"""<header class="sticky top-0 z-40 backdrop-blur-md border-b border-stone-300/60" style="background:rgba(246,228,206,0.94);">
   <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-2">
     <a href="#" class="flex items-center gap-2.5">
@@ -323,18 +400,18 @@ def enhance_index_html():
 </header>"""
     html = re.sub(r"<header[\s\S]*?</header>", CLEAN_GUEST_HEADER, html, count=1)
 
-    # 4. Заменяем нижний футер на ОДНУ СИСТЕМНУЮ КНОПКУ «🎛️ Пульт Архитектора & Изменяшки (Все системные инструменты)»!
+    # 4. Единая системная кнопка внизу сайта
     UNIFIED_FOOTER = """<footer class="max-w-7xl mx-auto px-4 pt-6 pb-10 text-center text-xs text-stone-600 flex flex-col sm:flex-row items-center justify-center gap-3 relative z-20">
   <span class="font-bold text-[#2E3D28]">🕊️ Веган-кафе & Чайная «Мир Мир» • Нижний Новгород, ул. Ильинская, 45</span>
   <button onclick="window.openUnifiedSystemHub()" class="px-5 py-2.5 rounded-full bg-[#2E3D28] hover:bg-[#556432] text-[#F2B880] font-extrabold shadow-xl cursor-pointer transition border-2 border-[#D48238] flex items-center gap-2">
-    <span>🎛️ Пульт Архитектора: Изменяшки (Вкл/Выкл), ТЗ, Промпт, PDF & Логи</span>
+    <span>🎛️ Пульт Архитектора: Изменяшки (Вкл/Выкл), ТЗ, Текстовый Мастер-Промпт, PDF & Логи</span>
   </button>
 </footer>"""
     html = re.sub(r"<footer[\s\S]*?</footer>", UNIFIED_FOOTER, html, count=1)
 
-    # 5. Модальные окна (Магазин Кафе + 3 Радиостанции РФ + Единый Нижний Пульт с Изменяшками + Мастер-Промпт)
-    V34_MODALS_AND_JS = f"""
-<!-- 🛍️ МОДАЛЬНОЕ ОКНО: МАГАЗИН КАФЕ «МИР МИР» (ТОФУ, КРАФТОВЫЙ ХЛЕБ, КИМЧИ, ЧАЙ ДОМОЙ) -->
+    # 5. Модальные окна + Чистый текстовый Мастер-Промпт + Восстановленная 3D-карусель бланков!
+    V35_MODALS_AND_JS = f"""
+<!-- 🛍️ МАГАЗИН КАФЕ «МИР МИР» -->
 <div id="cafe-shop-modal" class="fixed inset-0 z-[75] bg-black/85 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5">
   <div class="bg-[#FDF8F2] rounded-[2.2rem] max-w-5xl w-full h-[90vh] flex flex-col justify-between overflow-hidden border-4 border-[#D48238] shadow-2xl">
     <div class="p-4 sm:p-6 bg-[#2E3D28] text-white flex items-center justify-between gap-3">
@@ -354,7 +431,7 @@ def enhance_index_html():
       <div class="p-4 rounded-2xl bg-gradient-to-r from-[#556432] to-[#2E3D28] text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
         <div>
           <h4 class="font-serif text-xl sm:text-2xl font-bold text-[#F2B880]">🌿 Любимые крафтовые продукты кафе — к вашему домашнему столу!</h4>
-          <p class="text-xs text-white/90 mt-0.5">Мы сами делаем тофу, печём бездрожжевой хлеб на закваске, ферментируем кимчи и взбиваем соусы. Добавляйте в общую корзину для самовывоза или доставки!</p>
+          <p class="text-xs text-white/90 mt-0.5">Домашний тофу, бездрожжевой хлеб на живой закваске, кимчи, соусы, батончики «Нутс» и редкий китайский чай домой.</p>
         </div>
         <button onclick="window.closeCafeShopModal();window.openDeliveryModal()" class="px-4 py-2.5 rounded-xl bg-amber-400 text-[#1A2416] font-extrabold text-xs whitespace-nowrap cursor-pointer shadow">🛵 Оформить с доставкой</button>
       </div>
@@ -363,40 +440,30 @@ def enhance_index_html():
   </div>
 </div>
 
-<!-- 📻 МОДАЛЬНОЕ ОКНО: 3 РАБОЧИЕ РАДИОСТАНЦИИ В РФ (ЭМБИЕНТ / РЭГГИ / МАНТРЫ) -->
+<!-- 📻 3 РАБОЧИЕ РАДИОСТАНЦИИ В РФ -->
 <div id="radio-selector-modal" class="fixed inset-0 z-[78] bg-black/80 backdrop-blur-md hidden items-center justify-center p-3">
   <div class="bg-[#FDF8F2] rounded-[2.2rem] max-w-lg w-full p-5 sm:p-6 border-4 border-[#556432] shadow-2xl space-y-4">
     <div class="flex items-center justify-between border-b border-stone-200 pb-3">
       <div class="flex items-center gap-3">
         <div class="w-11 h-11 flex-shrink-0">{SIGN_DOVE_SVG}</div>
         <div>
-          <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#D48238]">100% Работает в РФ без VPN • Web Audio + Stream</span>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#D48238]">100% Работает в РФ без VPN</span>
           <h3 class="font-serif text-2xl font-bold text-[#2E3D28]">📻 Радио «Мир Мир» — 3 Волны</h3>
         </div>
       </div>
       <button onclick="document.getElementById('radio-selector-modal').classList.add('hidden');document.getElementById('radio-selector-modal').classList.remove('flex')" class="w-9 h-9 rounded-full bg-white shadow font-bold cursor-pointer">✕</button>
     </div>
-    <p class="text-xs text-stone-600">Выберите настроение кафе: каждая волна генерируется встроенным многоголосным синтезатором прямо в вашем браузере (гарантированно играет в РФ без блокировок!):</p>
     <div class="space-y-2.5">
-      <button id="wave-btn-ambient" onclick="window.playMirMirWave('ambient')" class="w-full p-4 rounded-2xl border-2 border-[#556432] bg-white hover:bg-emerald-50 text-left flex items-center justify-between transition cursor-pointer shadow-sm">
-        <div>
-          <div class="font-serif text-xl font-bold text-[#2E3D28]">🌌 1. Эмбиент & Поющие чаши</div>
-          <div class="text-xs text-stone-600">Тёплый чайный дзен, пентатоника и тибетские колокольчики</div>
-        </div>
+      <button onclick="window.playMirMirWave('ambient')" class="w-full p-4 rounded-2xl border-2 border-[#556432] bg-white hover:bg-emerald-50 text-left flex items-center justify-between transition cursor-pointer shadow-sm">
+        <div><div class="font-serif text-xl font-bold text-[#2E3D28]">🌌 1. Эмбиент & Поющие чаши</div><div class="text-xs text-stone-600">Тёплый чайный дзен, пентатоника и тибетские колокольчики</div></div>
         <span class="px-3 py-1 rounded-full bg-[#556432] text-white text-xs font-extrabold">▶ Включить</span>
       </button>
-      <button id="wave-btn-reggae" onclick="window.playMirMirWave('reggae')" class="w-full p-4 rounded-2xl border-2 border-[#D48238] bg-white hover:bg-amber-50 text-left flex items-center justify-between transition cursor-pointer shadow-sm">
-        <div>
-          <div class="font-serif text-xl font-bold text-[#2E3D28]">🌴 2. Рэгги & Даб Вибрации</div>
-          <div class="text-xs text-stone-600">Солнечный карибский грув на слабую долю, тёплый саб-бас и даб-эхо</div>
-        </div>
+      <button onclick="window.playMirMirWave('reggae')" class="w-full p-4 rounded-2xl border-2 border-[#D48238] bg-white hover:bg-amber-50 text-left flex items-center justify-between transition cursor-pointer shadow-sm">
+        <div><div class="font-serif text-xl font-bold text-[#2E3D28]">🌴 2. Рэгги & Даб Вибрации</div><div class="text-xs text-stone-600">Солнечный карибский грув на слабую долю и тёплый бас</div></div>
         <span class="px-3 py-1 rounded-xl bg-[#D48238] text-white text-xs font-extrabold">▶ Включить</span>
       </button>
-      <button id="wave-btn-mantra" onclick="window.playMirMirWave('mantra')" class="w-full p-4 rounded-2xl border-2 border-purple-700/60 bg-white hover:bg-purple-50 text-left flex items-center justify-between transition cursor-pointer shadow-sm">
-        <div>
-          <div class="font-serif text-xl font-bold text-[#2E3D28]">🕉️ 3. Мантры & Индийский Ситар</div>
-          <div class="text-xs text-stone-600">Медитативная танпура 136.1 Гц (Ом), переборы ситара и мягкий пульс</div>
-        </div>
+      <button onclick="window.playMirMirWave('mantra')" class="w-full p-4 rounded-2xl border-2 border-purple-700/60 bg-white hover:bg-purple-50 text-left flex items-center justify-between transition cursor-pointer shadow-sm">
+        <div><div class="font-serif text-xl font-bold text-[#2E3D28]">🕉️ 3. Мантры & Индийский Ситар</div><div class="text-xs text-stone-600">Медитативная танпура 136.1 Гц (Ом) и переборы ситара</div></div>
         <span class="px-3 py-1 rounded-xl bg-purple-800 text-white text-xs font-extrabold">▶ Включить</span>
       </button>
     </div>
@@ -407,20 +474,20 @@ def enhance_index_html():
   </div>
 </div>
 
-<!-- 🎛️ ЕДИНЫЙ СИСТЕМНЫЙ ПУЛЬТ ВНИЗУ САЙТА: ИЗМЕНЯШКИ (ВКЛ/ВЫКЛ) + ТЗ + ПРОМПТ + PDF + ЛОГИ -->
+<!-- 🎛️ ЕДИНЫЙ СИСТЕМНЫЙ ПУЛЬТ ВНИЗУ САЙТА -->
 <div id="unified-system-hub" class="fixed inset-0 z-[80] bg-black/85 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5">
   <div class="bg-[#FDF8F2] rounded-[2.2rem] max-w-5xl w-full h-[90vh] flex flex-col justify-between overflow-hidden border-4 border-[#556432] shadow-2xl">
     <div class="p-4 sm:p-5 bg-[#2E3D28] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div class="flex items-center gap-3">
         <div class="w-11 h-11 flex-shrink-0">{SIGN_DOVE_SVG}</div>
         <div>
-          <span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">All-in-One Control Deck • v34.0</span>
+          <span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">All-in-One Control Deck • v35.0</span>
           <h3 class="font-serif text-2xl sm:text-3xl font-bold leading-none mt-0.5">🎛️ Единый Пульт Архитектора & Изменяшки Сайта</h3>
         </div>
       </div>
       <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="window.openTzTerminal()" class="px-3.5 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer shadow">📝 ТЗ-Терминал (72 блюда)</button>
-        <button onclick="window.openMasterPromptModal()" class="px-3.5 py-2 rounded-xl bg-amber-400 text-[#1A2416] font-extrabold text-xs cursor-pointer shadow">🧬 Мастер-Промпт 1:1</button>
+        <button onclick="window.openTzTerminal()" class="px-3.5 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer shadow">📝 ТЗ-Терминал</button>
+        <button onclick="window.openMasterPromptModal()" class="px-3.5 py-2 rounded-xl bg-amber-400 text-[#1A2416] font-extrabold text-xs cursor-pointer shadow">🧬 Текстовый Мастер-Промпт</button>
         <button onclick="exportPDF()" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white font-extrabold text-xs cursor-pointer">📥 Скачать PDF</button>
         <button onclick="toggleDev();window.closeUnifiedSystemHub()" class="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-[#F2B880] font-extrabold text-xs cursor-pointer">📜 7 Глав & Логи</button>
         <button onclick="window.closeUnifiedSystemHub()" class="w-9 h-9 rounded-full bg-white/15 text-white font-bold cursor-pointer ml-1">✕</button>
@@ -430,7 +497,7 @@ def enhance_index_html():
       <div class="bg-white p-4 sm:p-5 rounded-3xl border-2 border-[#556432] shadow-sm space-y-4">
         <div class="flex items-center justify-between flex-wrap gap-2">
           <h4 class="font-serif text-xl sm:text-2xl font-bold text-[#2E3D28]">⚡ Интерактивные «Изменяшки» сайта (Вкл / Выкл в реальном времени)</h4>
-          <span class="text-xs font-bold text-stone-500">Настройки мгновенно применяются и запоминаются в браузере</span>
+          <span class="text-xs font-bold text-stone-500">Нажмите на любой тумблер для мгновенного переключения</span>
         </div>
         <div id="toggles-grid-box" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
       </div>
@@ -438,12 +505,12 @@ def enhance_index_html():
         <div onclick="window.openTzTerminal()" class="p-4 rounded-2xl bg-white border-2 border-[#D48238] hover:shadow-lg cursor-pointer transition">
           <div class="text-2xl mb-1">📝</div>
           <div class="font-serif text-lg font-bold text-[#2E3D28]">Бортовой ТЗ-Терминал</div>
-          <p class="text-xs text-stone-600 mt-1">Заметки для Gemini и построчный редактор всех 72 блюд меню</p>
+          <p class="text-xs text-stone-600 mt-1">Заметки для Gemini и редактор всех 72 блюд меню</p>
         </div>
         <div onclick="window.openMasterPromptModal()" class="p-4 rounded-2xl bg-white border-2 border-amber-400 hover:shadow-lg cursor-pointer transition">
           <div class="text-2xl mb-1">🧬</div>
-          <div class="font-serif text-lg font-bold text-[#2E3D28]">Мастер-Промпт (ДНК 1:1)</div>
-          <p class="text-xs text-stone-600 mt-1">Полная тех. спецификация сайта для любой топовой языковой модели ИИ</p>
+          <div class="font-serif text-lg font-bold text-[#2E3D28]">Текстовый Мастер-Промпт</div>
+          <p class="text-xs text-stone-600 mt-1">Чистое текстовое описание всех нюансов и 72 блюд (без кода) для любой LLM</p>
         </div>
         <div onclick="exportPDF()" class="p-4 rounded-2xl bg-white border-2 border-[#556432] hover:shadow-lg cursor-pointer transition">
           <div class="text-2xl mb-1">📥</div>
@@ -453,40 +520,41 @@ def enhance_index_html():
         <div onclick="toggleDev();window.closeUnifiedSystemHub()" class="p-4 rounded-2xl bg-white border-2 border-stone-300 hover:shadow-lg cursor-pointer transition">
           <div class="text-2xl mb-1">⚙️</div>
           <div class="font-serif text-lg font-bold text-[#2E3D28]">Книга-Манифест & Логи</div>
-          <p class="text-xs text-stone-600 mt-1">7 глав истории разработки, Чек-лист багов и монитор сборок</p>
+          <p class="text-xs text-stone-600 mt-1">7 глав истории разработки и монитор сборок</p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- 🧬 МОДАЛЬНОЕ ОКНО МАСТЕР-ПРОМПТА -->
+<!-- 🧬 ЧИСТЫЙ ТЕКСТОВЫЙ МАСТЕР-ПРОМПТ (БЕЗ КОДА И БЕЗ JSON!) -->
 <div id="master-prompt-modal" class="fixed inset-0 z-[85] bg-black/85 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5">
   <div class="bg-[#FDF8F2] rounded-[2rem] max-w-5xl w-full h-[90vh] flex flex-col justify-between overflow-hidden border-4 border-[#D48238] shadow-2xl">
     <div class="p-4 sm:p-5 bg-[#2E3D28] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div class="flex items-center gap-3">
         <div class="w-11 h-11 flex-shrink-0">{SIGN_DOVE_SVG}</div>
         <div>
-          <span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">Full DNA Quine Specification • v34.0</span>
-          <h3 class="font-serif text-2xl sm:text-3xl font-bold leading-none mt-0.5">🧬 Мастер-Промпт для 100% воссоздания сайта любой ИИ-моделью</h3>
+          <span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">Pure Natural Language Specification • v35.0</span>
+          <h3 class="font-serif text-2xl sm:text-3xl font-bold leading-none mt-0.5">🧬 Полный Текстовый Мастер-Промпт (без кода) для любой ИИ-модели</h3>
         </div>
       </div>
       <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="window.copyMasterPromptText()" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-[#1A2416] font-extrabold text-xs sm:text-sm shadow-lg cursor-pointer">📋 Скопировать весь Промпт (1 клик)</button>
+        <button onclick="window.copyMasterPromptText()" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-[#1A2416] font-extrabold text-xs sm:text-sm shadow-lg cursor-pointer">📋 Скопировать весь Текст (1 клик)</button>
         <button onclick="window.downloadMasterPromptFile()" class="px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow cursor-pointer">💾 Скачать MASTER_PROMPT_MIRMIR.txt</button>
         <button onclick="window.closeMasterPromptModal()" class="w-9 h-9 rounded-full bg-white/15 text-white font-bold cursor-pointer ml-1">✕</button>
       </div>
     </div>
     <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-3 custom-scroll">
-      <textarea id="server-master-prompt-data" readonly class="w-full h-[72vh] p-4 rounded-2xl bg-[#1A2316] text-[#F6E4CE] font-mono text-xs leading-relaxed border-2 border-[#556432] focus:outline-none">{master_prompt_escaped}</textarea>
+      <div class="p-3.5 rounded-2xl bg-amber-50 border border-[#D48238]/40 text-xs text-stone-800">
+        💡 <b>100% Чистый Текст (без кода и JSON):</b> Здесь русским литературным и техническим языком описаны все особенности архитектуры, дизайна, кнопок, радиоволн, конструктора Боула, витрины Магазина и все 72 блюда меню. Скопируйте этот текст и отправьте любой языковой модели!
+      </div>
+      <textarea id="server-master-prompt-data" readonly class="w-full h-[66vh] p-5 rounded-2xl bg-white text-stone-900 font-sans text-xs sm:text-sm leading-relaxed border-2 border-[#556432]/40 shadow-inner focus:outline-none">{master_prompt_escaped}</textarea>
     </div>
   </div>
 </div>
 
 <script>
-// === 🌟 ДВИЖОК v34.0: МАГАЗИН КАФЕ + 3 РАДИО РФ + ПУЛЬТ ИЗМЕНЯШЕК + РАНДОМНЫЙ ГАСТРО-ПУЛЬС + КАРУСЕЛЬ ПОД СЛОГАНОМ ===
-
-// 1. Витрина Магазина кафе «Мир Мир» (Крафт, Тофу, Хлеб, Кимчи, Соусы, Чай домой)
+// === 🌟 ДВИЖОК v35.0: БЕЗ РУКИ С ЦВЕТКОМ + 3D-КАРУСЕЛЬ БЛАНКОВ + ТЕКСТОВЫЙ ПРОМПТ ===
 const CAFE_SHOP_ITEMS = [
   {{ id: "sh1", name: "Классический ремесленный Тофу «Мир Мир»", weight: "400 г", price: 280, photo: "img/vk_5087_1.jpg", desc: "Нежный домашний тофу собственного производства на чистой воде. Идеален для жарки, омлетов, супов и салатов." }},
   {{ id: "sh2", name: "Пряный печёный / Копчёный Тофу от Шефа", weight: "300 г", price: 340, photo: "img/vk_5055_0.jpg", desc: "Ароматный тофу в фирменном маринаде со специями и травами — готов к подаче и сэндвичам." }},
@@ -541,7 +609,6 @@ window.addShopItemToCart = function(i) {{
   document.body.appendChild(t); setTimeout(() => t.remove(), 1800);
 }};
 
-// 2. Рандомный «✨ Гастро-пульс от ИИ-Оракула» («Попробуйте это, это и это!»)
 const AI_RANDOM_SUGGESTIONS = [
   "✨ ИИ-Оракул рекомендует сегодня: Попробуйте пряный бразильский суп «Ватапа» с водорослями + хрустящий сэндвич «Елена Руз» с вешенками и дайкири + согревающий чай «Масала»!",
   "🌴 Карибский сет от ИИ: Попробуйте салат «Тропикал Кубана» с ананасом и авокадо + пряный плов «Арос кон каморонос» + прохладную «Домашнюю колу» с Саган Дайля!",
@@ -560,7 +627,6 @@ window.rollRandomGastroPulse = function() {{
   setTimeout(() => {{ el.innerText = pick; el.style.opacity = "1"; }}, 180);
 }};
 
-// 3. Радио «Мир Мир» на 3 рабочие волны в РФ (Эмбиент / Рэгги / Мантры)
 let mirAudioCtx = null, mirRadioTimer = null, currentWaveName = "";
 
 window.openRadioSelectorModal = function() {{
@@ -612,18 +678,15 @@ window.playMirMirWave = function(wave) {{
       playNote(f, 3.6, "sine", 0.03, 0);
       playNote(f * 1.5, 3.2, "triangle", 0.015, 0.4);
     }} else if (wave === "reggae") {{
-      // Солнечный Рэгги-грув: тёплый круглый саб-бас на 1 и 3 долю + аккордовый сканк на слабую долю (2 и 4)!
       const roots = [110.0, 146.83, 130.81, 164.81];
       const root = roots[Math.floor(Math.random() * roots.length)];
       playNote(root, 0.55, "sine", 0.06, 0.0);
       playNote(root * 1.5, 0.35, "sine", 0.045, 0.5);
-      // Off-beat skank chord
       [root * 2, root * 2.5, root * 3].forEach(cf => {{
         playNote(cf, 0.18, "triangle", 0.022, 0.28);
         playNote(cf, 0.18, "triangle", 0.022, 0.82);
       }});
     }} else if (wave === "mantra") {{
-      // Сакральная Танпура Ом (136.1 Гц) + индийский лад ситара
       playNote(136.1, 3.4, "sine", 0.035, 0);
       playNote(204.15, 3.0, "sine", 0.02, 0.2);
       const raga = [272.2, 306.2, 340.25, 408.3, 459.3, 544.4];
@@ -637,11 +700,10 @@ window.playMirMirWave = function(wave) {{
   mirRadioTimer = setInterval(triggerCycle, wave === "reggae" ? 1150 : 2800);
 }};
 
-// 4. Единый Нижний Пульт Архитектора & 6 Тумблеров-Изменяшек
 const SITE_TOGGLES_SPEC = [
   {{ key: "wings", label: "🖼️ Боковые кулисы ПК (Интерьер & Вывеска)", def: true }},
   {{ key: "vibe", label: "📳 Вибро-отклик фото при наведении мышки", def: true }},
-  {{ key: "bright", label: "☀️ Турбо-яркость зелени под слоганом", def: true }},
+  {{ key: "bright", label: "☀️ Турбо-яркость овощного фона под слоганом", def: true }},
   {{ key: "leaves", label: "🍃 Падающие чайные листья на экране", def: false }},
   {{ key: "lounge", label: "🌙 Вечерний тёмный лаунж-режим карточек", def: false }},
   {{ key: "float", label: "🧊 3D-левитация кубиков и Голубок", def: true }}
@@ -658,21 +720,16 @@ window.applySiteToggles = function() {{
   const st = getToggleStates();
   document.body.classList.toggle("cfg-no-wings", !st.wings);
   document.body.classList.toggle("cfg-no-vibe", !st.vibe);
+  document.body.classList.toggle("cfg-dim-hero", !st.bright);
   document.body.classList.toggle("cfg-dark-lounge", !!st.lounge);
   document.body.classList.toggle("cfg-no-float", !st.float);
-
-  const heroBgImg = document.getElementById("hero-bright-bg-img");
-  if (heroBgImg) {{
-    heroBgImg.style.opacity = st.bright ? "0.78" : "0.35";
-    heroBgImg.style.filter = st.bright ? "saturate(1.75) brightness(1.18) contrast(1.12)" : "saturate(1.1)";
-  }}
 
   const leavesBox = document.getElementById("falling-leaves-box");
   if (leavesBox) {{
     if (st.leaves) {{
       leavesBox.classList.remove("hidden");
       if (!leavesBox.innerHTML) {{
-        leavesBox.innerHTML = Array.from({{length: 14}}).map((_, i) => `<div style="position:absolute;left:${{Math.random()*95}}vw;top:-5vh;font-size:${{16+Math.random()*14}}px;animation:leaf-fall ${{8+Math.random()*7}}s linear infinite;animation-delay:${{Math.random()*5}}s;">🍃</div>`).join("");
+        leavesBox.innerHTML = Array.from({{length: 14}}).map(() => `<div style="position:absolute;left:${{Math.random()*95}}vw;top:-5vh;font-size:${{16+Math.random()*14}}px;animation:leaf-fall ${{8+Math.random()*7}}s linear infinite;animation-delay:${{Math.random()*5}}s;">🍃</div>`).join("");
       }}
     }} else {{
       leavesBox.classList.add("hidden");
@@ -720,7 +777,7 @@ window.closeMasterPromptModal = function() {{
 }};
 window.copyMasterPromptText = function() {{
   const ta = document.getElementById("server-master-prompt-data");
-  if (ta) {{ navigator.clipboard.writeText(ta.value); alert("🧬 Полный Мастер-Промпт скопирован в буфер обмена!"); }}
+  if (ta) {{ navigator.clipboard.writeText(ta.value); alert("🧬 Полный текстовый Мастер-Промпт (без кода) скопирован в буфер обмена!"); }}
 }};
 window.downloadMasterPromptFile = function() {{
   const ta = document.getElementById("server-master-prompt-data");
@@ -855,9 +912,8 @@ window.saveNewTzClean = async function() {{
   window.renderTzTerminalClean();
 }};
 
-// 5. Апгрейд Hero-блока при загрузке: Яркий фон + Спешлы напротив слогана + Рандомный Гастро-пульс + Карусель блюд под слоганом!
+// 5. Инициализация Hero-блока (Чистый CSS-фон без руки с цветком + 3D-карусель бланков справа + Карусель блюд!)
 window.addEventListener("DOMContentLoaded", () => {{
-  // Вставляем в липкую ленту кнопки Магазина, Доставки и Спешлов
   const rail = document.getElementById("sticky-rail");
   if (rail && !rail.innerHTML.includes("openCafeShopModal")) {{
     rail.insertAdjacentHTML("afterbegin", '<button onclick="window.openCafeShopModal()" class="px-3.5 py-1.5 rounded-full bg-[#D48238] text-white text-xs font-extrabold whitespace-nowrap cursor-pointer shadow">🛍️ Магазин кафе</button><button onclick="window.openDeliveryModal()" class="px-3.5 py-1.5 rounded-full bg-emerald-700 text-white text-xs font-extrabold whitespace-nowrap cursor-pointer shadow">🛵 Доставка</button>');
@@ -865,33 +921,43 @@ window.addEventListener("DOMContentLoaded", () => {{
 
   const heroLeft = document.querySelector("main section:first-of-type .lg\\\\:col-span-7");
   if (heroLeft) {{
-    heroLeft.classList.add("relative", "overflow-hidden");
-    // Яркий сочный фон микрозелени под слоганом!
-    heroLeft.insertAdjacentHTML("afterbegin", `<div class="absolute inset-0 pointer-events-none z-0">
-      <img id="hero-bright-bg-img" src="img/vk_5129_1.jpg?v=340" class="w-full h-full object-cover scale-105 transition-all duration-500" style="opacity:0.78;filter:saturate(1.75) brightness(1.18) contrast(1.12);">
-      <div class="absolute inset-0" style="background:linear-gradient(90deg,rgba(18,30,14,0.72) 0%,rgba(28,46,22,0.38) 55%,rgba(18,30,14,0.68) 100%);"></div>
-    </div>`);
-    Array.from(heroLeft.children).forEach((ch, idx) => {{ if (idx > 0) ch.classList.add("relative", "z-10"); }});
+    // Вешаем чистый CSS-класс с овощным фоном (НЕ вставляем тег <img>, чтобы блок никогда не растягивался!)
+    heroLeft.classList.add("hero-veg-bg-box");
 
-    // Напротив слогана (рядом с курсивной цитатой) ставим яркое окошко «🔥 Спешлы со стены ВК»!
+    // Удаляем любые старые <img> фоны внутри heroLeft, если они там были (особенно руку с цветком!)
+    Array.from(heroLeft.children).forEach(ch => {{
+      if (ch.tagName === "DIV" && ch.classList.contains("pointer-events-none")) ch.remove();
+    }});
+
+    // Напротив слогана ставим карточку «🔥 Спешлы недели ВК»
     const sloganP = heroLeft.querySelector("p.italic");
-    if (sloganP) {{
+    if (sloganP && !heroLeft.querySelector(".specials-opposite-card")) {{
       const wrapper = document.createElement("div");
-      wrapper.className = "relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 my-1";
+      wrapper.className = "flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 my-1";
       sloganP.parentNode.insertBefore(wrapper, sloganP);
       wrapper.appendChild(sloganP);
       sloganP.classList.add("flex-1");
-      wrapper.insertAdjacentHTML("beforeend", `<div onclick="openMenu('Спешлы со стены ВК')" class="vibe-card cursor-pointer p-3 rounded-2xl bg-gradient-to-br from-[#D48238] to-[#b56622] text-white shadow-xl border-2 border-[#FFFDF9]/80 flex items-center gap-3 sm:w-64 flex-shrink-0">
+      wrapper.insertAdjacentHTML("beforeend", `<div onclick="openMenu('Спешлы со стены ВК')" class="specials-opposite-card vibe-card cursor-pointer p-3 rounded-2xl bg-gradient-to-br from-[#D48238] to-[#b56622] text-white shadow-xl border-2 border-[#FFFDF9]/80 flex items-center gap-3 sm:w-64 flex-shrink-0">
         <img src="img/vk_5128_1.jpg" class="w-14 h-14 rounded-xl object-cover border border-white/60 flex-shrink-0">
         <div class="min-w-0">
-          <span class="text-[10px] font-extrabold uppercase tracking-wider bg-black/30 px-2 py-0.5 rounded-full">🔥 Окошко новинок</span>
-          <div class="font-serif font-bold text-lg leading-tight mt-0.5">Спешлы недели ВК</div>
+          <span class="text-[10px] font-extrabold uppercase tracking-wider bg-black/30 px-2 py-0.5 rounded-full">🔥 Новинки</span>
+          <div class="font-serif font-bold text-lg leading-tight mt-0.5">Спешлы со стены ВК</div>
           <span class="text-[11px] text-amber-100 underline font-bold">Открыть 9 блюд ➔</span>
         </div>
       </div>`);
     }}
 
-    // Заменяем системный блок «Гастро-пульс» на живой рандомный рекомендатор от ИИ + Карусель блюд прямо под слоганом!
+    // Настраиваем 4 левитирующих кубика (без руки с цветком!)
+    const cubes = heroLeft.querySelectorAll(".grid > div");
+    const cleanCubeImgs = ["img/vk_5115_1.jpg", "img/vk_5128_1.jpg", "img/vk_5122_0.jpg", "img/vk_5069_0.jpg"];
+    cubes.forEach((cube, i) => {{
+      cube.classList.add("bento-anim");
+      cube.style.animationDelay = (i * 0.6) + "s";
+      const im = cube.querySelector("img");
+      if (im && cleanCubeImgs[i]) im.src = cleanCubeImgs[i];
+    }});
+
+    // Живой рандомный «✨ Гастро-пульс от ИИ-Оракула» + Карусель блюд прямо под слоганом!
     const pulseBox = heroLeft.querySelector(".bg-white\\\\/10.backdrop-blur-md");
     if (pulseBox) {{
       pulseBox.innerHTML = `<div class="flex items-center justify-between gap-2 mb-1">
@@ -901,34 +967,73 @@ window.addEventListener("DOMContentLoaded", () => {{
       <div id="ai-pulse-random-text" class="text-white font-semibold text-xs sm:text-sm transition-opacity duration-200 leading-relaxed"></div>`;
       window.rollRandomGastroPulse();
 
-      // Вставляем живую горизонтальную карусель Спешлов и Хитов прямо под Гастро-пульсом!
-      const specialsAndHits = (DATA.menu || []).filter(d => d.photo_type === "real").slice(0, 12);
-      const carouselHtml = `<div class="relative z-10 mt-2 bg-black/40 backdrop-blur-md p-3 rounded-2xl border border-[#F2B880]/40">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#F2B880]">🍲 Живая лента спешлов и хитов (листайте или жмите +)</span>
-          <div class="flex gap-1.5">
-            <button onclick="document.getElementById('hero-dish-carousel').scrollBy({{left:-240,behavior:'smooth'}})" class="w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold cursor-pointer">◀</button>
-            <button onclick="document.getElementById('hero-dish-carousel').scrollBy({{left:240,behavior:'smooth'}})" class="w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold cursor-pointer">▶</button>
+      if (!document.getElementById("hero-dish-carousel")) {{
+        const specialsAndHits = (DATA.menu || []).filter(d => d.photo_type === "real").slice(0, 12);
+        const carouselHtml = `<div class="mt-2 bg-black/45 backdrop-blur-md p-3 rounded-2xl border border-[#F2B880]/40">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#F2B880]">🍲 Карусель спешлов и хитов кафе (листайте или жмите +)</span>
+            <div class="flex gap-1.5">
+              <button onclick="document.getElementById('hero-dish-carousel').scrollBy({{left:-240,behavior:'smooth'}})" class="w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold cursor-pointer">◀</button>
+              <button onclick="document.getElementById('hero-dish-carousel').scrollBy({{left:240,behavior:'smooth'}})" class="w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold cursor-pointer">▶</button>
+            </div>
           </div>
-        </div>
-        <div id="hero-dish-carousel" class="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
-          ${{specialsAndHits.map((d) => {{
-            const realIdx = DATA.menu.indexOf(d);
-            return `<div onclick="openMenu('${{esc(d.category)}}')" class="vibe-card flex-shrink-0 w-48 bg-[#FDF8F2] text-stone-900 rounded-xl p-2 flex items-center gap-2.5 cursor-pointer shadow border border-[#F2B880]/50">
-              <img src="${{esc(d.photo)}}" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
-              <div class="min-w-0 flex-1">
-                <div class="font-bold text-[11px] text-[#2E3D28] truncate">${{esc(d.name)}}</div>
-                <div class="flex items-center justify-between mt-1">
-                  <strong class="text-xs text-[#D48238]">${{d.price}} ₽</strong>
-                  <button onclick="event.stopPropagation();addToCart(${{realIdx}},0)" class="px-2 py-0.5 rounded bg-[#556432] text-white text-[10px] font-extrabold cursor-pointer">+ В заказ</button>
+          <div id="hero-dish-carousel" class="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+            ${{specialsAndHits.map((d) => {{
+              const realIdx = DATA.menu.indexOf(d);
+              return `<div onclick="openMenu('${{esc(d.category)}}')" class="vibe-card flex-shrink-0 w-48 bg-[#FDF8F2] text-stone-900 rounded-xl p-2 flex items-center gap-2.5 cursor-pointer shadow border border-[#F2B880]/50">
+                <img src="${{esc(d.photo)}}" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
+                <div class="min-w-0 flex-1">
+                  <div class="font-bold text-[11px] text-[#2E3D28] truncate">${{esc(d.name)}}</div>
+                  <div class="flex items-center justify-between mt-1">
+                    <strong class="text-xs text-[#D48238]">${{d.price}} ₽</strong>
+                    <button onclick="event.stopPropagation();addToCart(${{realIdx}},0)" class="px-2 py-0.5 rounded bg-[#556432] text-white text-[10px] font-extrabold cursor-pointer">+ В заказ</button>
+                  </div>
                 </div>
-              </div>
-            </div>`;
-          }}).join("")}}
-        </div>
-      </div>`;
-      pulseBox.insertAdjacentHTML("afterend", carouselHtml);
+              </div>`;
+            }}).join("")}}
+          </div>
+        </div>`;
+        pulseBox.insertAdjacentHTML("afterend", carouselHtml);
+      }}
     }}
+  }}
+
+  // ВОЗВРАЩАЕМ 3D-КАРУСЕЛЬ 4 ОРИГИНАЛЬНЫХ БЛАНКОВ МЕНЮ СПРАВА В HERO-БЛОКЕ!
+  const scansBox = document.getElementById("scans-top-box");
+  if (scansBox && DATA.menu_scans && DATA.menu_scans.length) {{
+    const parentCol = scansBox.parentElement;
+    parentCol.classList.add("relative", "overflow-hidden");
+    parentCol.innerHTML = `<div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.42] z-0">
+      <div class="wm-spin">
+        <svg width="450" height="450" viewBox="0 0 120 120" fill="none"><circle cx="60" cy="60" r="56" stroke="#F2B880" stroke-width="3"/><circle cx="60" cy="60" r="50" stroke="#FFFDF9" stroke-width="2" stroke-dasharray="5 4"/><circle cx="60" cy="62" r="25" stroke="#F2B880" stroke-width="2.5" fill="rgba(242,184,128,0.18)"/><path d="M32 58 C24 44, 34 26, 52 34 C46 40, 42 48, 42 58 C38 60, 34 60, 32 58 Z" fill="#FFFDF9"/><path d="M88 58 C96 44, 86 26, 68 34 C74 40, 78 48, 78 58 C82 60, 86 60, 88 58 Z" fill="#FFFDF9"/><path d="M35 52 C30 68, 44 88, 60 90 C76 88, 90 68, 85 52 C82 66, 72 78, 60 80 C48 78, 38 66, 35 52 Z" fill="#FFFDF9"/><circle cx="48" cy="36" r="6" fill="#FFFDF9"/><text x="60" y="106" text-anchor="middle" fill="#F2B880" font-family="serif" font-weight="bold" font-size="11" letter-spacing="3">• MIR MIR •</text></svg>
+      </div>
+    </div>
+    <span class="relative z-10 text-xs font-extrabold uppercase px-3.5 py-1 rounded-full bg-black/50 text-[#F2B880] border border-[#F2B880]/40 mb-2">🔄 3D-карусель оригинальных бланков</span>
+    <div id="stage-3d-v35" class="stage-3d relative z-10"></div>
+    <div class="relative z-20 flex items-center gap-3 mt-2">
+      <button onclick="window.step3DV35(-1)" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/35 text-white font-bold cursor-pointer">◀</button>
+      <button onclick="openMenu('Все')" class="px-4 py-2 rounded-full bg-[#D48238] text-white text-xs font-extrabold uppercase shadow-lg cursor-pointer">📖 Все блюда (${{DATA.menu.length}})</button>
+      <button onclick="window.step3DV35(1)" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/35 text-white font-bold cursor-pointer">▶</button>
+    </div>`;
+    let c3d = 0;
+    const stBox = document.getElementById("stage-3d-v35");
+    stBox.innerHTML = DATA.menu_scans.map((s, i) => {{
+      const meta = (DATA.sheet_meta && DATA.sheet_meta[i]) || {{title:"Бланк меню", cat:"Все"}};
+      return `<div class="slide-3d" onclick="openMenu('${{meta.cat}}')"><div class="w-full h-full rounded-3xl overflow-hidden shadow-2xl border-4 border-[#FFFDF9] bg-[#FFFDF9] flex flex-col justify-between"><div class="flex-1 overflow-hidden flex items-center justify-center p-1.5"><img src="${{s}}?v=350" class="max-w-full max-h-full object-contain"></div><div class="bg-[#2E3D28] px-3 py-2 text-white flex items-center justify-between"><span class="text-[11px] font-extrabold text-[#F2B880] truncate">${{meta.title}}</span><button onclick="event.stopPropagation();showImg('${{s}}')" class="text-[10px] bg-white/20 px-2 py-0.5 rounded font-bold">Лупа 🔍</button></div></div></div>`;
+    }}).join("");
+    window.upd3DV35 = function() {{
+      const sl = stBox.querySelectorAll(".slide-3d"), tot = sl.length;
+      sl.forEach((el, idx) => {{
+        const d = (idx - c3d + tot) % tot;
+        if(d===0){{ el.style.transform="translateX(0) translateZ(65px) scale(1)"; el.style.zIndex="30"; el.style.opacity="1"; }}
+        else if(d===1){{ el.style.transform="translateX(55px) translateZ(-35px) rotateY(-16deg) scale(0.88)"; el.style.zIndex="20"; el.style.opacity="0.82"; }}
+        else if(d===tot-1){{ el.style.transform="translateX(-55px) translateZ(-35px) rotateY(16deg) scale(0.88)"; el.style.zIndex="20"; el.style.opacity="0.82"; }}
+        else {{ el.style.transform="translateX(0) translateZ(-95px) scale(0.75)"; el.style.zIndex="10"; el.style.opacity="0.35"; }}
+      }});
+    }};
+    window.step3DV35 = function(delta) {{ c3d = (c3d + delta + DATA.menu_scans.length) % DATA.menu_scans.length; window.upd3DV35(); }};
+    window.upd3DV35();
+    setInterval(() => window.step3DV35(1), 4000);
   }}
 
   window.applySiteToggles();
@@ -938,8 +1043,8 @@ window.addEventListener("DOMContentLoaded", () => {{
 
     last_body_idx = html.rfind("</body>")
     if last_body_idx != -1:
-        html = html[:last_body_idx] + V34_MODALS_AND_JS + "\n" + html[last_body_idx:]
+        html = html[:last_body_idx] + V35_MODALS_AND_JS + "\n" + html[last_body_idx:]
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("✨ [Ядро v34.0] Чистая шапка, Магазин кафе, 3 Радио РФ, Карусель под слоганом и Нижний Пульт Изменяшек вшиты!")
+    print("✨ [Ядро v35.0] Рука с цветком удалена, Hero-блок и 3D-карусель выровнены, Мастер-Промпт переписан ЧИСТЫМ ТЕКСТОМ!")
