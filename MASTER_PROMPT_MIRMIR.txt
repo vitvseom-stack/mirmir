@@ -1,31 +1,23 @@
-# 🧬 SYSTEM BLUEPRINT & GOD-MODE PROMPT: АВТОНОМНАЯ ПЛАТФОРМА ВЕГАН-КАФЕ И ЧАЙНОЙ «МИР МИР» (1:1 CLONE SPEC)
-Ты — Senior Full-Stack Архитектор. Твоя задача — написать один в один полный рабочий код проекта сайта веган-кафе и клуба чайной культуры «Мир Мир» (г. Нижний Новгород, ул. Ильинская, 45).
-Выдай решение без сокращений в виде файлов: `menu_data.py` (база всех 72 блюд), `app.py` (компилятор ВК + Gemini + генератор `index.html`), `mirmir_v30_core.py` (пост-процессор) и `run.bat`.
+# 🧬 SYSTEM BLUEPRINT & GOD-MODE PROMPT: АВТОНОМНАЯ ПЛАТФОРМА ВЕГАН-КАФЕ И ЧАЙНОЙ «МИР МИР» (v34.0 1:1 CLONE SPEC)
+Ты — Senior Full-Stack Архитектор. Напиши один в один полный рабочий код проекта сайта веган-кафе и клуба чайной культуры «Мир Мир» (г. Нижний Новгород, ул. Ильинская, 45).
+Выдай решение без сокращений: `menu_data.py` (72 блюда + витрина Магазина кафе), `app.py`, `mirmir_v30_core.py` и `run.bat`.
 
-## 1. ДВУХКОНТУРНАЯ АРХИТЕКТУРА И БЕЗОПАСНОСТЬ
-- Локальный ПК (Windows): `app.py` читает локальные ключи из `vk key.txt` и `goog api k.txt` (в `.gitignore`), забирает свежие посты и фото со стены ВКонтакте `vk.com/mirmir.cafe` (`owner_id = -191992548`), проверяет фотографии через каскад `gemini-3-flash-preview -> gemini-2.5-flash -> gemini-2.0-flash`, синхронизирует заметки ТЗ из `tz_mirmir.json` и собирает `index.html`.
-- Облако (GitHub Pages): В репозиторий `github.com/vitvseom-stack/mirmir` пушится только статический `index.html` и папка `img/`.
-- Технический нюанс: Не использовать глобальный `.hidden { display: none !important; }`, чтобы не перебивать адаптивный класс Tailwind `hidden lg:flex` верхней панели на ПК.
+## 1. АРХИТЕКТУРА, ЧИСТАЯ ШАПКА ДЛЯ ГОСТЕЙ И ЕДИНЫЙ СИСТЕМНЫЙ ПУЛЬТ ВНИЗУ
+- Верхняя шапка (`header`) содержит только клиентские кнопки: `📖 Электронное меню`, `🛵 Доставка из кафе`, `🛍️ Магазин кафе`, `🥗 Собрать Боул`, `📻 Радио (3 волны)`, `🚕 Такси в кафе` (координаты дома №45: `56.322355, 43.990383`) и `🛒 Корзина`.
+- Все системные и админские инструменты (6 тумблеров-изменяшек сайта, ТЗ-Терминал, Мастер-Промпт 1:1, Экспорт PDF, 7 глав Манифеста и Логи сборок) объединены в ОДНУ кнопку в самом низу сайта (в футере): `🎛️ Пульт Архитектора & Изменяшки`.
 
-## 2. РЕКВИЗИТЫ, КООРДИНАТЫ ДОМА №45 И МАРШРУТИЗАЦИЯ ТАКСИ / ДОСТАВКИ
-- Адрес: г. Нижний Новгород, ул. Ильинская, 45. Ежедневно 12:00–21:00. Телефон: `+7 (920) 028-28-58`. Telegram шефа: `https://t.me/mirmir_chef`.
-- Точные координаты здания №45: `56.322355, 43.990383`.
-- Кнопка «🚕 Такси в кафе»: На смартфонах вызывает `yandextaxi://route?end-lat=56.322355&end-lon=43.990383`, а на ПК открывает `https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=taxi&z=18` (сбрасывает старый кэш дома 51 в Яндекс.Такси).
-- Модальное окно «🛵 Доставка из кафе»: Расчёт текущей корзины, поля адреса и прямая отправка заказа шефу в Telegram.
+## 2. HERO-БЛОК: ЯРКИЙ ФОН, ОКОШКО СПЕШЛОВ НАПРОТИВ СЛОГАНА, РАНДОМНЫЙ ГАСТРО-ПУЛЬС И КАРУСЕЛЬ БЛЮД
+- Напротив слогана расположена акцентная карточка `🔥 Спешлы со стены ВК`.
+- Окошко `✨ Гастро-пульс от ИИ-Оракула` генерирует живые рандомные рекомендации («Попробуйте сегодня: это + это + это!») с кнопкой `🎲 Ещё совет`.
+- Прямо под слоганом встроена интерактивная фото-карусель хитов и спешлов с ценами и кнопкой `+ В корзину`.
 
-## 3. ЭТАЛОННЫЙ ФОН ПК-ВЕРСИИ (ИНТЕРЬЕР + ЭКСТЕРЬЕР v26) И ВЕКТОРНАЯ ГОЛУБКА
-- На мониторах ПК (`@media (min-width: 1150px)`) центральная колонка `main.max-w-7xl` оформлена как полупрозрачная карточка `rgba(246, 228, 206, 0.96)` с `border-radius: 2.8rem`.
-- По бокам фиксированно (`#pc-v26-authentic-wings`) стоят 2 реальных фото кафе с Яндекс.Карт: слева — кирпичный свод зала (`img/ymap_org_0.jpg`), справа — круглая кованая вывеска с Голубкой на фоне синего неба (`img/ymap_org_1.jpg`). На мобильных кулисы скрыты.
-- Векторный SVG-код круглой вывески «МИР МИР» с белой голубкой и оливковой ветвью в клюве:
-<svg viewBox="0 0 120 120" class="w-full h-full drop-shadow-md" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="57" fill="#6E6538" stroke="#262919" stroke-width="4"/><circle cx="60" cy="60" r="52" stroke="#F2B880" stroke-width="1.2" stroke-opacity="0.55"/><path d="M22 44 C17 39, 19 34, 25 35 L36 42 C33 32, 36 22, 45 20 C48 26, 51 34, 53 41 C57 31, 63 24, 71 23 C69 32, 67 40, 65 47 C74 44, 83 45, 89 51 C91 53, 94 56, 98 57 L92 60 C89 67, 81 74, 69 75 C56 76, 44 70, 37 61 L23 64 C18 64, 17 59, 21 56 L29 52 L20 49 C17 47, 18 44, 22 44 Z" fill="#FFFDF9"/><circle cx="85" cy="52" r="1.8" fill="#6E6538"/><path d="M55 56 L66 53 M58 61 L69 58" stroke="#6E6538" stroke-width="2" stroke-linecap="round"/><path d="M96 57 C92 48, 86 40, 77 35" stroke="#FFFDF9" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="89" cy="43" rx="4.5" ry="2.2" transform="rotate(-30 89 43)" fill="#FFFDF9"/><ellipse cx="83" cy="37" rx="4.5" ry="2.2" transform="rotate(-15 83 37)" fill="#FFFDF9"/><ellipse cx="77" cy="34" rx="4" ry="2" transform="rotate(10 77 34)" fill="#FFFDF9"/><ellipse cx="93" cy="48" rx="4" ry="2" transform="rotate(25 93 48)" fill="#FFFDF9"/><text x="60" y="96" text-anchor="middle" fill="#FFFDF9" font-family="Manrope, sans-serif" font-weight="800" font-size="14.5" letter-spacing="1.5">МИР МИР</text></svg>
+## 3. МАГАЗИН КАФЕ «МИР МИР» (КРАФТОВЫЕ ПРОДУКТЫ И ТОФУ ДОМОЙ)
+- Отдельное модальное окно `🛍️ Магазин кафе` с витриной крафтовых продуктов (Тофу классический и копчёный, бездрожжевой хлеб на закваске, кимчи, ореховый соус, тхина, боксы батончиков Нутс и китайский чай домой) + возможность добавлять новые товары.
 
-## 4. ИНТЕРАКТИВНЫЕ МОДУЛИ САЙТА
-- Hero-блок с фоном микрозелени (`img/vk_5129_1.jpg`), 4 левитирующими Bento-кубиками и 3D-каруселью 4 оригинальных сканов бумажного меню (`img/vk_5047_0..3.jpg`) с вращающимся водяным знаком.
-- Конструктор Боула (`openBowlBuilder`): Размер (Большой 450 г за 540 ₽ / Полбоул 225 г за 350 ₽) + Гарнир (Зелёная гречка, Бурый рис, Киноа, Кус-кус) + Белок (Тофу печёный, Фалафель, Сейтан пряный, Нут томлёный) + Соус (Ореховый, Тахини, Зелёный песто, Манго-чили) + 5 чекбоксов добавок.
-- Авто-скидка Комбо-Ланча (−30%) при наличии в корзине Супа + Основного блюда + Напитка.
-- Свайп-броня (`window.onpopstate` + `history.pushState`) для защиты от вылета при свайпе назад на Android/Honor.
-- Процедурный синтезатор «📻 Радио МирМир» на Web Audio API (аккорды пентатоники без внешних MP3).
-- Бортовой «📝 ТЗ-Терминал & Редактор 72 блюд» с облачной синхронизацией через `ntfy.sh` и авто-выгрузкой в буфер обмена Windows (`clip`).
+## 4. РАДИО МИРМИР (3 РАБОЧИЕ ВОЛНЫ В РФ) И ВИБРО-ОТКЛИК ФОТО НА ПК
+- Радио-пульт включает 3 станции, работающие в РФ без блокировок (процедурные Web Audio синтезаторы + прямые потоки): `🌌 1. Эмбиент & Чаши`, `🌴 2. Рэгги & Даб`, `🕉️ 3. Мантры & Ситар`.
+- Фотографии анонсов и блюд на ПК мягко вибрируют при наведении курсора (`@keyframes pc-photo-vibe`).
+- Боковые кулисы на ПК (`#pc-v26-authentic-wings`): слева кирпичный свод зала `img/ymap_org_0.jpg`, справа вывеска с Голубкой на фоне неба `img/ymap_org_1.jpg`.
 
 ## 5. ПОЛНАЯ БАЗА ВСЕХ 72 БЛЮД МЕНЮ (`DATA.menu` JSON 1:1)
 [
@@ -38,8 +30,7 @@
     "photo": "img/vk_5128_1.jpg",
     "photo_type": "real",
     "badge": "Карибский спешл",
-    "id": "dish_0",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_0"
   },
   {
     "category": "Спешлы со стены ВК",
@@ -60,8 +51,7 @@
     "photo": "img/vk_5122_1.jpg",
     "photo_type": "real",
     "badge": "2 размера порции",
-    "id": "dish_1",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_1"
   },
   {
     "category": "Спешлы со стены ВК",
@@ -72,8 +62,7 @@
     "photo": "img/vk_5121_0.jpg",
     "photo_type": "real",
     "badge": "Ручная лепка",
-    "id": "dish_2",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_2"
   },
   {
     "category": "Спешлы со стены ВК",
@@ -84,8 +73,7 @@
     "photo": "img/vk_5118_0.jpg",
     "photo_type": "real",
     "badge": "Легенда кафе",
-    "id": "dish_3",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_3"
   },
   {
     "category": "Спешлы со стены ВК",
@@ -96,8 +84,7 @@
     "photo": "img/vk_5118_1.jpg",
     "photo_type": "real",
     "badge": "Карибский спешл",
-    "id": "dish_4",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_4"
   },
   {
     "category": "Спешлы со стены ВК",
@@ -108,8 +95,7 @@
     "photo": "img/vk_5118_2.jpg",
     "photo_type": "real",
     "badge": "Карибский спешл",
-    "id": "dish_5",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_5"
   },
   {
     "category": "Спешлы со стены ВК",
@@ -120,8 +106,7 @@
     "photo": "img/vk_5085_1.jpg",
     "photo_type": "real",
     "badge": "Тайский спешл",
-    "id": "dish_6",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_6"
   },
   {
     "category": "Спешлы со стены ВК",
@@ -132,8 +117,7 @@
     "photo": "img/vk_5094_1.jpg",
     "photo_type": "real",
     "badge": "Тайский спешл",
-    "id": "dish_7",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_7"
   },
   {
     "category": "Спешлы со стены ВК",
@@ -144,8 +128,7 @@
     "photo": "img/vk_5094_0.jpg",
     "photo_type": "real",
     "badge": "Тайский спешл",
-    "id": "dish_8",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_8"
   },
   {
     "category": "Супы",
@@ -156,8 +139,7 @@
     "photo": "img/vk_4783_1.jpg",
     "photo_type": "real",
     "badge": "Бланк №1 • Ланч -30%",
-    "id": "dish_9",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_9"
   },
   {
     "category": "Супы",
@@ -168,8 +150,7 @@
     "photo": "img/macro_mushrooms_raw.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №1",
-    "id": "dish_10",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_10"
   },
   {
     "category": "Супы",
@@ -180,8 +161,7 @@
     "photo": "img/vk_5057_1.jpg",
     "photo_type": "real",
     "badge": "Бланк №1 • RAW",
-    "id": "dish_11",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_11"
   },
   {
     "category": "Супы",
@@ -192,8 +172,7 @@
     "photo": "img/macro_tomyum_bowl.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №1 • 🌶️",
-    "id": "dish_12",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_12"
   },
   {
     "category": "Супы",
@@ -204,8 +183,7 @@
     "photo": "img/vk_5053_0.jpg",
     "photo_type": "real",
     "badge": "Бланк №1",
-    "id": "dish_13",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_13"
   },
   {
     "category": "Супы",
@@ -216,8 +194,7 @@
     "photo": "img/macro_miso_tofu.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №1",
-    "id": "dish_14",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_14"
   },
   {
     "category": "Супы",
@@ -238,8 +215,7 @@
     "photo": "img/vk_5134_0.jpg",
     "photo_type": "funny",
     "badge": "Бланк №1",
-    "id": "dish_15",
-    "gemini_note": "👀 Юмор-превью (девчонки с меню)."
+    "id": "dish_15"
   },
   {
     "category": "Боулы и Омлеты",
@@ -260,8 +236,7 @@
     "photo": "img/macro_avocado_greens.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №1 • 225 / 450 г",
-    "id": "dish_16",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_16"
   },
   {
     "category": "Боулы и Омлеты",
@@ -282,8 +257,7 @@
     "photo": "img/vk_5134_0.jpg",
     "photo_type": "funny",
     "badge": "Бланк №1",
-    "id": "dish_17",
-    "gemini_note": "👀 Юмор-превью (девчонки с меню)."
+    "id": "dish_17"
   },
   {
     "category": "Боулы и Омлеты",
@@ -294,8 +268,7 @@
     "photo": "img/vk_5087_1.jpg",
     "photo_type": "real",
     "badge": "Бланк №1",
-    "id": "dish_18",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_18"
   },
   {
     "category": "Боулы и Омлеты",
@@ -306,8 +279,7 @@
     "photo": "img/macro_tomatoes_olives.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №1",
-    "id": "dish_19",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_19"
   },
   {
     "category": "Боулы и Омлеты",
@@ -318,8 +290,7 @@
     "photo": "img/vk_5055_0.jpg",
     "photo_type": "real",
     "badge": "Бланк №1",
-    "id": "dish_20",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_20"
   },
   {
     "category": "Салаты",
@@ -330,8 +301,7 @@
     "photo": "img/macro_caesar_romaine.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4",
-    "id": "dish_21",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_21"
   },
   {
     "category": "Салаты",
@@ -342,8 +312,7 @@
     "photo": "img/macro_greek_olives.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4 • RAW",
-    "id": "dish_22",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_22"
   },
   {
     "category": "Салаты",
@@ -354,8 +323,7 @@
     "photo": "img/macro_tuna_chickpea.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4",
-    "id": "dish_23",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_23"
   },
   {
     "category": "Салаты",
@@ -366,8 +334,7 @@
     "photo": "img/macro_cacao_nuts.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4",
-    "id": "dish_24",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_24"
   },
   {
     "category": "Салаты",
@@ -378,8 +345,7 @@
     "photo": "img/macro_cucumbers_sesame.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4",
-    "id": "dish_25",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_25"
   },
   {
     "category": "Лапша",
@@ -400,8 +366,7 @@
     "photo": "img/vk_5057_0.jpg",
     "photo_type": "real",
     "badge": "Бланк №4",
-    "id": "dish_26",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_26"
   },
   {
     "category": "Лапша",
@@ -422,8 +387,7 @@
     "photo": "img/macro_creamy_pasta.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4",
-    "id": "dish_27",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_27"
   },
   {
     "category": "Лапша",
@@ -434,8 +398,7 @@
     "photo": "img/macro_rice_noodles.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4",
-    "id": "dish_28",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_28"
   },
   {
     "category": "Лапша",
@@ -446,8 +409,7 @@
     "photo": "img/macro_tomatoes_olives.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4",
-    "id": "dish_29",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_29"
   },
   {
     "category": "Бургеры и Из печи",
@@ -458,8 +420,7 @@
     "photo": "img/macro_vegan_burger.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4 • Флагман",
-    "id": "dish_30",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_30"
   },
   {
     "category": "Бургеры и Из печи",
@@ -470,8 +431,7 @@
     "photo": "img/macro_avocado_burger.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4",
-    "id": "dish_31",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_31"
   },
   {
     "category": "Бургеры и Из печи",
@@ -482,8 +442,7 @@
     "photo": "img/vk_5017_1.jpg",
     "photo_type": "real",
     "badge": "Бланк №4",
-    "id": "dish_32",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_32"
   },
   {
     "category": "Бургеры и Из печи",
@@ -494,8 +453,7 @@
     "photo": "img/macro_spicy_burger.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4 • 🌶️",
-    "id": "dish_33",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_33"
   },
   {
     "category": "Бургеры и Из печи",
@@ -516,8 +474,7 @@
     "photo": "img/vk_5085_1.jpg",
     "photo_type": "real",
     "badge": "Бланк №4 • Из печи",
-    "id": "dish_34",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_34"
   },
   {
     "category": "Бургеры и Из печи",
@@ -538,8 +495,7 @@
     "photo": "img/macro_pepperoni_pizza.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №4 • Из печи",
-    "id": "dish_35",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_35"
   },
   {
     "category": "Бургеры и Из печи",
@@ -550,8 +506,7 @@
     "photo": "img/vk_5062_1.jpg",
     "photo_type": "real",
     "badge": "Бланк №4 • Из печи",
-    "id": "dish_36",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_36"
   },
   {
     "category": "Бургеры и Из печи",
@@ -562,8 +517,7 @@
     "photo": "img/vk_4783_0.jpg",
     "photo_type": "real",
     "badge": "Бланк №4 • Из печи",
-    "id": "dish_37",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_37"
   },
   {
     "category": "Бургеры и Из печи",
@@ -574,8 +528,7 @@
     "photo": "img/vk_5017_0.jpg",
     "photo_type": "real",
     "badge": "Бланк №4 • Из печи",
-    "id": "dish_38",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_38"
   },
   {
     "category": "Десерты без сахара",
@@ -596,8 +549,7 @@
     "photo": "img/macro_syrniki_berries.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3 • 2 размера",
-    "id": "dish_39",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_39"
   },
   {
     "category": "Десерты без сахара",
@@ -608,8 +560,7 @@
     "photo": "img/macro_vegan_icecream.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3",
-    "id": "dish_40",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_40"
   },
   {
     "category": "Десерты без сахара",
@@ -620,8 +571,7 @@
     "photo": "img/vk_5005_0.jpg",
     "photo_type": "real",
     "badge": "Витрина десертов",
-    "id": "dish_41",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_41"
   },
   {
     "category": "Десерты без сахара",
@@ -632,8 +582,7 @@
     "photo": "img/vk_5069_0.jpg",
     "photo_type": "real",
     "badge": "Витрина десертов",
-    "id": "dish_42",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_42"
   },
   {
     "category": "Десерты без сахара",
@@ -644,8 +593,7 @@
     "photo": "img/vk_5103_1.jpg",
     "photo_type": "real",
     "badge": "Сладкий спешл",
-    "id": "dish_43",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_43"
   },
   {
     "category": "Десерты без сахара",
@@ -656,8 +604,7 @@
     "photo": "img/macro_cacao_nuts.jpg",
     "photo_type": "ai_ingr",
     "badge": "Подарок к чаю 🎁",
-    "id": "dish_44",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_44"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -668,8 +615,7 @@
     "photo": "img/macro_cacao_nuts.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3 • Смузи",
-    "id": "dish_45",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_45"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -680,8 +626,7 @@
     "photo": "img/macro_strawberry_banana.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3 • Смузи",
-    "id": "dish_46",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_46"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -692,8 +637,7 @@
     "photo": "img/vk_5115_1.jpg",
     "photo_type": "real",
     "badge": "Бланк №3 • Смузи",
-    "id": "dish_47",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_47"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -704,8 +648,7 @@
     "photo": "img/macro_berry_smoothie.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3 • Смузи",
-    "id": "dish_48",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_48"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -716,8 +659,7 @@
     "photo": "img/macro_pineapple_mint.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3 • Смузи",
-    "id": "dish_49",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_49"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -738,8 +680,7 @@
     "photo": "img/macro_carrots_apples.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3 • Фреши",
-    "id": "dish_50",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_50"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -760,8 +701,7 @@
     "photo": "img/macro_oranges_fresh.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3 • Фреши",
-    "id": "dish_51",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_51"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -782,8 +722,7 @@
     "photo": "img/macro_grapefruit_red.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3 • Фреши",
-    "id": "dish_52",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_52"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -804,8 +743,7 @@
     "photo": "img/macro_coffee_pine.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3 • Кофе",
-    "id": "dish_53",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_53"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -816,8 +754,7 @@
     "photo": "img/macro_coffee_pine.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3 • Хит",
-    "id": "dish_54",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_54"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -838,8 +775,7 @@
     "photo": "img/macro_coffee_pine.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3",
-    "id": "dish_55",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_55"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -860,8 +796,7 @@
     "photo": "img/macro_cacao_nuts.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3",
-    "id": "dish_56",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_56"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -872,8 +807,7 @@
     "photo": "img/macro_citrus_mint.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3 • Крафт",
-    "id": "dish_57",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_57"
   },
   {
     "category": "Барное меню: Смузи и Кофе",
@@ -894,8 +828,7 @@
     "photo": "img/macro_citrus_mint.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №3",
-    "id": "dish_58",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_58"
   },
   {
     "category": "Чайная карта",
@@ -916,8 +849,7 @@
     "photo": "img/vk_5122_0.jpg",
     "photo_type": "real",
     "badge": "Бланк №2 • Особый чай",
-    "id": "dish_59",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_59"
   },
   {
     "category": "Чайная карта",
@@ -938,8 +870,7 @@
     "photo": "img/vk_5122_0.jpg",
     "photo_type": "real",
     "badge": "Бланк №2 • Особый чай",
-    "id": "dish_60",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_60"
   },
   {
     "category": "Чайная карта",
@@ -960,8 +891,7 @@
     "photo": "img/macro_berries_mix.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №2 • Особый чай",
-    "id": "dish_61",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_61"
   },
   {
     "category": "Чайная карта",
@@ -982,8 +912,7 @@
     "photo": "img/macro_herbal_infusion.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №2 • Особый чай",
-    "id": "dish_62",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_62"
   },
   {
     "category": "Чайная карта",
@@ -1004,8 +933,7 @@
     "photo": "img/vk_5115_2.jpg",
     "photo_type": "real",
     "badge": "Бланк №2 • Особый чай",
-    "id": "dish_63",
-    "gemini_note": "✅ Проверенное фото из архива ВК кафе."
+    "id": "dish_63"
   },
   {
     "category": "Чайная карта",
@@ -1026,8 +954,7 @@
     "photo": "img/macro_oranges_fresh.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №2 • Особый чай",
-    "id": "dish_64",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_64"
   },
   {
     "category": "Чайная карта",
@@ -1048,8 +975,7 @@
     "photo": "img/macro_herbs_tea.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №2",
-    "id": "dish_65",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_65"
   },
   {
     "category": "Чайная карта",
@@ -1070,8 +996,7 @@
     "photo": "img/macro_herbal_infusion.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №2",
-    "id": "dish_66",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_66"
   },
   {
     "category": "Чайная карта",
@@ -1092,8 +1017,7 @@
     "photo": "img/macro_herbal_infusion.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №2",
-    "id": "dish_67",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_67"
   },
   {
     "category": "Чайная карта",
@@ -1114,8 +1038,7 @@
     "photo": "img/macro_herbs_tea.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №2",
-    "id": "dish_68",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_68"
   },
   {
     "category": "Чайная карта",
@@ -1136,8 +1059,7 @@
     "photo": "img/vk_5122_0.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №2 • Китайский чай",
-    "id": "dish_69",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_69"
   },
   {
     "category": "Чайная карта",
@@ -1158,8 +1080,7 @@
     "photo": "img/vk_5122_0.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №2 • Китайский чай",
-    "id": "dish_70",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_70"
   },
   {
     "category": "Чайная карта",
@@ -1180,7 +1101,6 @@
     "photo": "img/macro_herbs_tea.jpg",
     "photo_type": "ai_ingr",
     "badge": "Бланк №2 • Китайский чай",
-    "id": "dish_71",
-    "gemini_note": "🌿 Индивидуальное макро-превью состава (из v26)."
+    "id": "dish_71"
   }
 ]
