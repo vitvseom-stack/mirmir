@@ -241,6 +241,44 @@ def sync_cloud_and_local_tz():
     return base_data
 
 
+
+
+def copy_active_tz_to_windows_clipboard(tz_data):
+    """Автоматически кладёт все свежие заметки ТЗ в буфер обмена Windows (clip), чтобы нажать только Ctrl+V в чате!"""
+    import subprocess
+    lines = ["📋 АКТУАЛЬНОЕ ТЗ С САЙТА «МИР МИР» (Авто-выгрузка v31.0):"]
+    tasks = tz_data.get("tasks", [])
+    dishes = tz_data.get("dishes", {})
+
+    if tasks:
+        lines.append("\n📓 ЗАДАЧИ ИЗ БОРТОВОГО ЖУРНАЛА:")
+        for i, t in enumerate(tasks, 1):
+            auth = t.get("author", "Команда")
+            dt = t.get("date", "")
+            txt = t.get("user_tz", "")
+            lines.append(f"{i}) [{dt} | {auth}]: {txt}")
+
+    dish_lines = []
+    for d_name, d_info in dishes.items():
+        if d_info.get("user_tz") or d_info.get("photo"):
+            dish_lines.append(f"• {d_name}: ТЗ=«{d_info.get('user_tz', '')}» | Фото=«{d_info.get('photo', '')}»")
+
+    if dish_lines:
+        lines.append("\n🍲 ПРАВКИ ПО БЛЮДАМ:")
+        lines.extend(dish_lines)
+
+    final_text = "\n".join(lines)
+    try:
+        p = subprocess.Popen(["clip"], stdin=subprocess.PIPE, shell=True)
+        p.communicate(input=final_text.encode("utf-16-le"))
+        print("=" * 78)
+        print("📋 [АВТО-БУФЕР WINDOWS] Все заметки ТЗ автоматически скопированы в твой буфер обмена!")
+        print("👉 Просто открой чат с Gemini и нажми Ctrl + V — ничего выделять и искать не нужно!")
+        print("=" * 78)
+    except Exception:
+        pass
+
+
 def enhance_index_html():
     """Главный пост-процессор v30.0: автоматически вызывается в конце app.py!"""
     if not os.path.exists("index.html"):
@@ -248,6 +286,7 @@ def enhance_index_html():
 
     left_wing, right_wing = ensure_v26_authentic_wings()
     tz_synced = sync_cloud_and_local_tz()
+    copy_active_tz_to_windows_clipboard(tz_synced)
 
     with open("index.html", "r", encoding="utf-8") as f:
         html = f.read()
@@ -464,6 +503,34 @@ window.submitDeliveryOrder = function() {
 // ============================================================================
 window.tzActiveTab = 'journal';
 
+
+window.saveGitHubToken = function() {
+  const v = (document.getElementById('gh-pat-inp')?.value || '').trim();
+  if (v) { localStorage.setItem('mirmir_gh_pat', v); alert('🔒 GitHub Token сохранён локально в браузере! Теперь сайт пушит tz_mirmir.json напрямую в репозиторий GitHub.'); }
+  else { localStorage.removeItem('mirmir_gh_pat'); alert('Токен удалён.'); }
+  window.renderTzTerminal();
+};
+
+window.pushTzDirectlyToGitHub = async function(payloadObj) {
+  const token = localStorage.getItem('mirmir_gh_pat') || '';
+  if (!token) return false;
+  const apiUrl = 'https://api.github.com/repos/vitvseom-stack/mirmir/contents/tz_mirmir.json';
+  try {
+    let sha = '';
+    const getR = await fetch(apiUrl, { headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' } });
+    if (getR.ok) { const getJ = await getR.json(); sha = getJ.sha || ''; }
+    const contentB64 = btoa(unescape(encodeURIComponent(JSON.stringify(payloadObj, null, 2))));
+    const bodyObj = { message: 'Auto-save TZ from MirMir Site Terminal', content: contentB64 };
+    if (sha) bodyObj.sha = sha;
+    const putR = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(bodyObj)
+    });
+    return putR.ok;
+  } catch(e) { return false; }
+};
+
 window.openTzTerminal = function(tab) {
   if (tab) window.tzActiveTab = tab;
   try { history.pushState({guard:'tz_terminal'}, ''); } catch(e){}
@@ -518,9 +585,9 @@ window.renderTzTerminal = function() {
         '<div class="bg-white p-4 sm:p-5 rounded-3xl border-2 border-[#556432] shadow-md space-y-3">',
           '<div class="flex items-center justify-between flex-wrap gap-2">',
             '<h4 class="font-serif text-xl sm:text-2xl font-bold text-[#2E3D28]">✍️ Оставить заметку или идею в ТЗ (для ребят в кафе и дома)</h4>',
-            '<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 font-extrabold text-[11px]">📡 Авто-синхронизация с ПК включена</span>',
+            '<div class="flex items-center gap-2 flex-wrap"><a href="https://github.com/vitvseom-stack/mirmir/blob/main/tz_mirmir.json" target="_blank" class="px-3 py-1 rounded-full bg-[#2E3D28] text-[#F2B880] font-extrabold text-[11px] hover:underline">🐙 Открыть tz_mirmir.json на GitHub ↗</a><button onclick="document.getElementById('gh-token-box').classList.toggle('hidden')" class="px-2.5 py-1 rounded-full bg-stone-200 text-stone-700 font-bold text-[10px] cursor-pointer">🔑 Настроить прямой GitHub Push</button></div>',
           '</div>',
-          '<div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">',
+          '<div id="gh-token-box" class="hidden p-2.5 rounded-xl bg-stone-100 border flex gap-2 items-center text-xs"><input id="gh-pat-inp" type="password" placeholder="Опционально: GitHub Token (ghp_...) для прямого коммита из браузера без run.bat" class="flex-1 px-2.5 py-1.5 rounded-lg bg-white border"><button onclick="window.saveGitHubToken()" class="px-3 py-1.5 rounded-lg bg-[#2E3D28] text-white font-bold cursor-pointer">Сохранить локально</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">',
             '<input id="tz-author-inp" placeholder="Ваше имя (например: Виталий / Шеф / Бариста)" class="px-3.5 py-2.5 rounded-xl bg-[#FDF8F2] border border-stone-300 text-xs sm:text-sm">',
             '<input id="tz-new-input" placeholder="Напишите идею или замечание по сайту и нажмите «Сохранить в ТЗ»..." class="sm:col-span-2 px-3.5 py-2.5 rounded-xl bg-[#FDF8F2] border border-stone-300 text-xs sm:text-sm">',
           '</div>',
@@ -638,6 +705,7 @@ window.addNewTzTask = async function() {
 
   try {
     await fetch(NTFY_SYNC_URL, { method: 'POST', body: JSON.stringify(newEntry) });
+    await window.pushTzDirectlyToGitHub({ updated_at: nowStr, tasks: getTzTasks(), dishes: getTzDishes() });
   } catch(e) {}
 
   window.renderTzTerminal();

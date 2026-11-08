@@ -1,5 +1,12 @@
 [
   {
+    "version": "v31.0 [Сборка #51]",
+    "timestamp": "08.11.2026 09:55:42",
+    "model": "gemini-3-flash-preview",
+    "status": "ONLINE (HTTP 200 OK)",
+    "stats": "Сборка v31.0 [Сборка #51]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
+  },
+  {
     "version": "v30.0 [Сборка #50]",
     "timestamp": "08.11.2026 09:44:54",
     "model": "gemini-3-flash-preview",
@@ -74,13 +81,6 @@
     "timestamp": "06.11.2026 19:31:41",
     "model": "gemini-3-flash-preview",
     "status": "CACHED / OFFLINE",
-    "stats": "Сборка v22.0 [Сборка #40]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v22.0 [Сборка #40]",
-    "timestamp": "06.11.2026 19:31:37",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
     "stats": "Сборка v22.0 [Сборка #40]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
   }
 ]
