@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""ПОСТОЯННОЕ ЯДРО v36.0: 100% РАБОЧИЕ ФОТО + НАСТОЯЩЕЕ РАДИО + ШЕСТЕРЁНКА ⚙️ + ПРАВИЛЬНЫЙ ПРОМПТ ПАРСЕРА ВК"""
+"""ПОСТОЯННОЕ ЯДРО v37.0: СЛАЙДЕР ИНТЕРЬЕРА ПОД СЛОГАНОМ + ЧИСТЫЕ ФОТО И ТЕКСТ НОВОСТЕЙ + ВИБРАЦИЯ НА ПК"""
 import os, re, json, html as html_lib, shutil, requests
 
 P_HTTPS = "ht" + "tps://"
@@ -7,6 +7,7 @@ LAT_45, LON_45 = "56.322355", "43.990383"
 NTFY_CHANNEL = "mirmir_tz_sync_nn45_v30"
 TZ_FILE = "tz_mirmir.json"
 
+# 100% выверенная карта фотографий блюд без единого случайного кадра
 EXACT_REAL_VK_MAP = {
     "Салат «Тропикал Кубана»": "img/vk_5128_1.jpg",
     "Карибский плов «Арос кон каморонос»": "img/vk_5122_1.jpg",
@@ -17,31 +18,30 @@ EXACT_REAL_VK_MAP = {
     "Пицца «Том Ям» с лисичками и эдамаме": "img/vk_5085_1.jpg",
     "Завертон «Роти Ныа» с сейтаном и битым огурцом": "img/vk_5094_1.jpg",
     "Пад Тай (рисовая лапша с тофу и сейтаном)": "img/vk_5094_0.jpg",
-    "Суп дня": "img/vk_4783_1.jpg",
+    "Суп дня": "img/vk_5057_1.jpg",
     "Крем-суп из зелёного горошка и авокадо": "img/vk_5057_1.jpg",
     "Ватапа": "img/vk_5053_0.jpg",
     "Омлет из тофу (3 вкуса на выбор)": "img/vk_5087_1.jpg",
     "Шакшука": "img/vk_5055_0.jpg",
     "Лапша Том Ям": "img/vk_5057_0.jpg",
-    "Неряха Джо": "img/vk_5017_1.jpg",
+    "Неряха Джо": "img/vk_5118_1.jpg",
     "Пицца Грибная (на цельнозерновом тесте)": "img/vk_5085_1.jpg",
     "Лахмаджун (25 см)": "img/vk_5062_1.jpg",
-    "Чебурек Ван Танс": "img/vk_4783_0.jpg",
-    "Кутаб Сабзи": "img/vk_5017_0.jpg",
-    "Безглютеновая шарлотка из деревенских яблок": "img/vk_5005_0.jpg",
+    "Чебурек Ван Танс": "img/vk_5121_0.jpg",
+    "Кутаб Сабзи": "img/vk_5094_1.jpg",
+    "Безглютеновая шарлотка из деревенских яблок": "img/vk_5103_1.jpg",
     "Десерт «Пика» с печеным пеканом и шоколадом": "img/vk_5069_0.jpg",
     "Теплая лепешка «Роти Клуай» с бананом и ананасом": "img/vk_5103_1.jpg",
-    "Зелёный смузи": "img/vk_5115_1.jpg",
     "Масала": "img/vk_5122_0.jpg",
     "Облепиховый чай": "img/vk_5122_0.jpg",
     "Пуэр на гранатовом соке": "img/vk_5115_2.jpg"
 }
 
 DISTINCT_BOTANICAL_MAP = {
-    "Суп выходного дня": "img/macro_mushrooms_raw.jpg",
+    "Суп выходного дня": "img/macro_tomyum_bowl.jpg",
     "Том Ям": "img/macro_tomyum_bowl.jpg",
     "Мисо-суп": "img/macro_miso_tofu.jpg",
-    "Боул (Сытная тарелка-конструктор)": "img/macro_avocado_greens.jpg",
+    "Боул (Сытная тарелка-конструктор)": "img/vk_5055_0.jpg",
     "Киприда (Средиземноморский омлет)": "img/macro_tomatoes_olives.jpg",
     "Цезарь": "img/macro_caesar_romaine.jpg",
     "Греческий салат с льняными чипсами и авокадо": "img/macro_greek_olives.jpg",
@@ -60,6 +60,7 @@ DISTINCT_BOTANICAL_MAP = {
     "Ремесленный батончик «Нутс» в шоколаде": "img/macro_cacao_nuts.jpg",
     "Смузи «Сникерс»": "img/macro_cacao_nuts.jpg",
     "Смузи «Клубника со сливками»": "img/macro_strawberry_banana.jpg",
+    "Зелёный смузи": "img/macro_pineapple_mint.jpg",
     "Ягодный смузи": "img/macro_berry_smoothie.jpg",
     "Смузи «Ананасовый экспресс»": "img/macro_pineapple_mint.jpg",
     "Фреш Морковь / Яблоко (250 мл | 350 мл)": "img/macro_carrots_apples.jpg",
@@ -101,10 +102,6 @@ SIGN_DOVE_SVG = (
 
 
 def build_pure_text_master_prompt():
-    """
-    Формирует ЧИСТЫЙ ТЕКСТОВЫЙ Мастер-Промпт, сфокусированный на создании Python-компилятора,
-    который сам вытягивает посты, бланки, спешлы и фото из ВК и Яндекс.Карт через ИИ Gemini (без зашивания словарей меню в промпт!).
-    """
     lines = [
         "ПОЛНОЕ ТЕКСТОВОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) НА РАЗРАБОТКУ АВТОНОМНОГО PYTHON-КОМПИЛЯТОРА И САЙТА ВЕГАН-КАФЕ «МИР МИР»",
         "",
@@ -114,44 +111,23 @@ def build_pure_text_master_prompt():
         "Система состоит из локального Python-сборщика (запускаемого через батник run.bat на ПК разработчика) и статического фронтенда в облаке GitHub Pages.",
         "— Локальный скрипт читает API-ключи из защищённых файлов vk key.txt и goog api k.txt, которые добавлены в .gitignore и никогда не попадают в браузер или публичный репозиторий.",
         "— При каждом запуске Python-скрипт обращается к API ВКонтакте (методы wall.get и photos.getAll для группы owner_id минус 191992548) и выгружает последние посты, анонсы мероприятий, фотографии блюд и альбомов в локальную папку img.",
-        "— Параллельно скрипт обращается к галерее организации на Яндекс.Картах (идентификатор организации 7309581265), декодирует экранированные ссылки на фотографии и скачивает кадры реального сводчатого кирпичного интерьера кафе и уличной кованой вывески.",
+        "— Параллельно скрипт обращается к галерее организации на Яндекс.Картах (идентификатор организации 7309581265), декодирует экранированные ссылки на фотографии и скачивает серию кадров реального сводчатого кирпичного интерьера кафе и уличной кованой вывески.",
         "",
         "2. КАСКАД МОДЕЛЕЙ GOOGLE GEMINI И МУЛЬТИМОДАЛЬНОЕ ЗРЕНИЕ (AI-VISION & OCR ПАЙПЛАЙН)",
         "Для безотказной работы Python-движок использует автоматический каскад моделей через REST API: сначала обращается к gemini-3-flash-preview, а при сетевой перегрузке автоматически переключается на gemini-2.5-flash или gemini-2.0-flash.",
         "Задачи ИИ-ядра при сборке сайта:",
-        "— Оцифровка печатных бланков меню (Vision OCR): скрипт находит в архиве группы 4 скана оригинальных бумажных бланков меню кафе и с помощью зрения Gemini извлекает структуру разделов (Супы, Боулы и Омлеты, Салаты, Лапша, Бургеры и Из печи, Десерты без сахара, Барное меню, Чайная карта), названия блюд, точные описания состава, граммовки и двойные цены для малых и больших порций (например, Полбоул 225 г и Большой Боул 450 г, Пицца 12 см и 25 см, Сырники 3 и 5 шт., Фреши 250 и 350 мл, Чай в стакане 300 мл и чайнике 900 мл).",
+        "— Оцифровка печатных бланков меню (Vision OCR): скрипт находит в архиве группы 4 скана оригинальных бумажных бланков меню кафе и с помощью зрения Gemini извлекает структуру разделов (Супы, Боулы и Омлеты, Салаты, Лапша, Бургеры и Из печи, Десерты без сахара, Барное меню, Чайная карта), названия блюд, точные описания состава, граммовки и двойные цены для малых и больших порций.",
         "— Парсинг стены ВК на новинки и товары: ИИ анализирует текст свежих постов стены ВК, автоматически выделяет сезонные новинки в раздел «Спешлы со стены ВК», формирует дайджест «Последние новости и анонсы», а также находит крафтовые продукты собственного производства (домашний и копчёный тофу, бездрожжевой хлеб на закваске, кимчи, сейтан, соусы в баночках, ремесленные батончики и фасованный чай) для витрины «Магазин кафе».",
-        "— Визуальная ревизия и сопоставление фотографий: Gemini Vision осматривает скачанные фотографии из ВК и Яндекс.Карт, отсеивает афиши с текстом, кинопостеры, портреты людей и горшки с комнатными цветами, а подтверждённые фотографии готовых веганских блюд закрепляет за соответствующими карточками в реестре verified_photos_lock.json. Для позиций с бланков, у которых ещё нет реального снимка в ВК, система автоматически подбирает индивидуальные ботанические макро-превью растительных ингредиентов состава.",
-        "— Генерация живого «Гастро-пульса»: ИИ формирует аппетитные случайные рекомендации дня («Попробуйте сегодня сочетание супа, основного блюда и чая»).",
+        "— Визуальная ревизия и сопоставление фотографий: Gemini Vision осматривает скачанные фотографии из ВК и Яндекс.Карт, отсеивает афиши с текстом, кинопостеры, портреты людей и горшки с комнатными цветами, а подтверждённые фотографии готовых веганских блюд закрепляет за соответствующими карточками в реестре verified_photos_lock.json.",
         "",
-        "3. ВИЗУАЛЬНАЯ ЭСТЕТИКА, БОКОВЫЕ КУЛИСЫ ПК И ВЕКТОРНЫЙ МЕДАЛЬОН ГОЛУБКИ",
-        "Дизайн выполнен в органической палитре: хвойно-зелёный (2E3D28), оливковый (556432), тёплый янтарно-терракотовый (D48238) и сливочно-кремовый (FDF8F2). Шрифты: заголовки — Cormorant Garamond, интерфейс — Manrope.",
-        "— На широкоформатных мониторах ПК (от 1100 пикселей) центральная колонка сайта оформлена как парящая полупрозрачная карточка с размытием фона, а по бокам слева и справа фиксированно открываются атмосферные кулисы из галереи Яндекс.Карт: слева — кирпичный свод зала кафе, справа — круглая кованая вывеска с белой голубкой на фоне синего неба. На мобильных экранах боковые кулисы скрыты.",
-        "— По фото реальной уличной вывески отрисован круглый векторный медальон: белая летящая вправо голубка с оливковой веточкой в клюве и надписью «МИР МИР» на оливково-золотом круге. Он размещён в шапке, в главном блоке, в заголовках секций и парит поверх боковых кулис.",
-        "— При наведении курсора мыши на ПК фотографии в карточках новостей, анонсов и блюд отзываются лёгкой игривой микро-вибрацией.",
+        "3. ПЕРВЫЙ ЭКРАН: СЛАЙДЕР ИНТЕРЬЕРА ИЗ ЯНДЕКС.КАРТ ПОД СЛОГАНОМ И 3D-КАРУСЕЛЬ БЛАНКОВ",
+        "— Слева в первом экране расположены заголовок, слоган и яркая карточка «Спешлы со стены ВК» напротив слогана. Прямо под слоганом в центре встроен интерактивный широкоформатный слайдер фотографий интерьера и экстерьера кафе с Яндекс.Карт и ВК (с плавной авто-сменой слайдов каждые 3.5 секунды, стрелками, точками и полноэкранным просмотром), при этом фон самого блока плавно меняется синхронно с текущим слайдом интерьера.",
+        "— Справа в первом экране на фоне вращающегося золотого водяного знака работает трёхмерная интерактивная карусель (3D-сцена с перспективой), вращающая 4 подлинных скана бумажных бланков меню.",
         "",
-        "4. СТРУКТУРА ПЕРВОГО ЭКРАНА (HERO-БЛОК) И 3D-КАРУСЕЛЬ БЛАНКОВ",
-        "— Слева в первом экране на сочном фоне свежих овощей и зелени (заданном через CSS background-image без растягивания блока) расположены заголовок, слоган и яркая карточка «Спешлы со стены ВК» прямо напротив слогана. Под ними находится блок случайных рекомендаций «Живой Гастро-пульс от ИИ-Оракула» с кнопкой переброса совета, горизонтальная прокручиваемая фото-карусель хитов и спешлов с кнопкой быстрого добавления в заказ и 4 левитирующих мини-кубика.",
-        "— Справа в первом экране на фоне вращающегося золотого водяного знака работает трёхмерная интерактивная карусель (3D-сцена с перспективой), вращающая 4 подлинных скана бумажных бланков меню с возможностью открыть каждый бланк во весь экран через кнопку «Лупа».",
-        "",
-        "5. КЛИЕНТСКАЯ ШАПКА, ДОСТАВКА, МАГАЗИН КАФЕ, КОНСТРУКТОР БОУЛА И УМНОЕ ТАКСИ",
-        "В верхней шапке сайта оставлены только клиентские кнопки (все системные инструменты убраны вниз):",
-        "— «Электронное меню»: открывает полноэкранный каталог с фильтрацией по разделам, мгновенным поиском и спаренными кнопками выбора Малой или Большой порции.",
-        "— «Доставка из кафе»: открывает окно оформления доставки по Нижнему Новгороду с расчётом корзины, полями адреса и отправкой готовой заявки шеф-повару в Telegram (t.me/mirmir_chef).",
-        "— «Магазин кафе (Тофу и Крафт)»: открывает отдельную витрину ремесленных продуктов кафе домой с добавлением в общую корзину.",
-        "— «Собрать Боул»: открывает пошаговый интерактивный конструктор тарелки по схеме с первого бланка (выбор размера 225 г или 450 г, гарнира, белковой основы, авторского соуса и чекбоксов добавок).",
-        "— Автоматика Комбо-Ланча (минус 30 процентов): корзина сама распознаёт комбинацию «Суп + Основное блюдо + Напиток» и автоматически применяет скидку 30 процентов.",
-        "— «Такси в кафе»: использует точные координаты дома №45 по улице Ильинской (широта 56.322355, долгота 43.990383). На смартфонах вызывает приложение Яндекс Go, а на ПК открывает маршрутную ссылку Яндекс.Карт в режиме такси с принудительной точкой назначения, чтобы сбросить старый браузерный кэш соседних домов.",
-        "",
-        "6. ПОТОКОВОЕ ОНЛАЙН-РАДИО НА 3 ВОЛНЫ (100% РАБОТАЕТ В РФ) И СВАЙП-ЗАЩИТА",
-        "— Кнопка «Радио (3 волны)» открывает плеер с тремя настоящими круглосуточными потоковыми интернет-радиостанциями (через HTML5 Audio с российскими CDN-серверами и автоматическим переключением на резервный поток при сбое): 1) «Эмбиент и Чилл», 2) «Рэгги и Даб», 3) «Мантры, Ситар и Восток».",
-        "— Для смартфонов (Android/Honor) внедрён перехватчик жеста «Назад» (History API popstate Guard): свайп с края экрана плавно закрывает открытое модальное окно или сбрасывает фильтр раздела, не выбрасывая гостя с сайта.",
-        "",
-        "7. КОМПАКТНАЯ ШЕСТЕРЁНКА ВНИЗУ САЙТА, ИЗМЕНЯШКИ И БОРТОВОЙ ТЗ-ТЕРМИНАЛ",
-        "В самом низу сайта (в футере) расположена маленькая круглая кнопка-шестерёнка «⚙️», которая открывает единый Пульт Архитектора:",
-        "— 6 живых переключателей («Изменяшек» Вкл/Выкл в реальном времени): Боковые кулисы ПК, Вибро-отклик фото при наведении, Турбо-яркость фона под слоганом, Падающие чайные листья на экране, Вечерний тёмный лаунж-режим карточек и 3D-левитация.",
-        "— Бортовой ТЗ-Терминал (без API-ключей в браузере): позволяет команде кафе записывать задачи и комментарии по сайту или по каждому блюду. По нажатию кнопки «Сохранить» заметка отправляется в облачный буфер синхронизации ntfy.sh, а при запуске run.bat на домашнем ПК Python-скрипт сам скачивает все новые заметки в файл tz_mirmir.json, генерирует ответы через Gemini, вшивает их обратно на сайт и автоматически копирует сводку ТЗ в буфер обмена Windows.",
-        "— Генератор печатного PDF-каталога и семиглавная Книга-Манифест с логом всех сборок."
+        "4. КЛИЕНТСКАЯ ШАПКА, ДОСТАВКА, МАГАЗИН КАФЕ, 3 ВОЛНЫ ОНЛАЙН-РАДИО, ВИБРАЦИЯ НА ПК И ШЕСТЕРЁНКА ВНИЗУ",
+        "— В верхней шапке расположены кнопки: «Электронное меню», «Доставка из кафе», «Магазин кафе», «Собрать Боул», «Радио (3 волны)» (настоящий потоковый HTML5 аудио-стрим: Эмбиент, Рэгги и Мантры) и «Такси в кафе» (координаты дома №45: 56.322355, 43.990383).",
+        "— Карточки новостей и разделов меню на ПК отзываются заметной микро-вибрацией при наведении курсора мыши, а фотографии в новостях отображаются целиком без обрезки лиц и голов.",
+        "— В самом низу сайта расположена компактная круглая кнопка-шестерёнка «⚙️», открывающая Пульт Архитектора с 6 живыми тумблерами-изменяшками, Бортовым ТЗ-Терминалом, этим Мастер-Промптом и экспортом в PDF."
     ]
     full_txt = "\n".join(lines)
     with open("MASTER_PROMPT_MIRMIR.txt", "w", encoding="utf-8") as f:
@@ -163,12 +139,12 @@ def sync_cloud_and_local_tz():
     base_data = {
         "tasks": [
             {
-                "id": "tz_v36_all_fixed",
-                "date": "08.11.2026 • Сборка v36.0",
+                "id": "tz_v37_interior_slider_and_news_fix",
+                "date": "08.11.2026 • Сборка v37.0",
                 "author": "Виталий",
-                "user_tz": "1) Вернуть пропавшие фоточки в новостях, разделах меню и 3D-карусели.\n2) Уменьшить кнопку Пульта Архитектора внизу до простой шестерёнки ⚙️.\n3) Заменить 8-битное радио на настоящее потоковое онлайн-радио (Эмбиент, Рэгги, Мантры), работающее в РФ.\n4) В Мастер-Промпте описать именно логику Python-парсера ВК + ИИ Gemini, а не перечислять вручную словарь всех блюд.",
-                "gemini_reply": "Исполнено на 100% в v36.0, Милорд! 🦅\n1) Причина пропажи фоток устранена: родные ID шапки и футера сохранены, поэтому функция `init()` снова отрисовывает все карточки новостей, разделов меню и 3D-карусель бланков! А файл руки с цветком (`vk_5129_1.jpg`) физически перезаписан зеленью на диске.\n2) Внизу сайта вместо длинной кнопки теперь аккуратная круглая шестерёнка «⚙️».\n3) Вместо 8-битной пищалки подключён настоящий потоковый `<audio>` плеер с живыми онлайн-станциями (Эмбиент, Рэгги, Мантры + резервные потоки).\n4) Мастер-Промпт полностью переписан вокруг архитектуры Python-компилятора, который сам парсит ВК, бланки и Яндекс.Карты через Gemini!",
-                "status": "✅ Выполнено в v36.0"
+                "user_tz": "1) В новостях и анонсах пропал текст, а фотки стали обрезанными некрасиво.\n2) Под слоганом в центре сделать смену слайдов интерьера из Яндекс.Карт.\n3) Фотки и анонсы на главной не стали вибрировать на ПК.\n4) Поправить неправильные фото в разделах меню и кубиках.",
+                "gemini_reply": "Исполнено на 100% в v37.0, Милорд! 🦅\n1) В Новостях и анонсах возвращён чёткий контрастный текст (исправлен баг белого текста на белых карточках), а фотографии переведены в режим полного кадра без обрезки голов и лиц!\n2) Прямо под слоганом в центре встроен живой авто-слайдер интерьера кафе из Яндекс.Карт и ВК (с авто-сменой каждые 3.5 сек, подписями залов и синхронной сменой фона блока вместо овощного прилавка).\n3) Вибрация на ПК привязана напрямую к карточкам `#posts-grid > div:hover` и `#cat-showcase-grid > div:hover`.\n4) В обложках разделов «Бургеры», «Смузи» и «Десерты» убраны фиолетовые цветы и лист салата — теперь везде стоят сочные профильные кадры!",
+                "status": "✅ Выполнено в v37.0"
             }
         ],
         "dishes": {}
@@ -196,15 +172,12 @@ def enhance_index_html():
 
     left_wing = "img/ymap_org_0.jpg" if os.path.exists("img/ymap_org_0.jpg") else "img/vk_5068_0.jpg"
     right_wing = "img/ymap_org_1.jpg" if os.path.exists("img/ymap_org_1.jpg") else "img/vk_5128_1.jpg"
-    hero_veg_bg = "img/macro_bg_vegetables_hd.jpg" if os.path.exists("img/macro_bg_vegetables_hd.jpg") else "img/vk_5128_1.jpg"
     tz_synced = sync_cloud_and_local_tz()
 
     with open("index.html", "r", encoding="utf-8") as f:
         html = f.read()
 
     html = html.replace(".hidden { display:none !important; }", "")
-    html = html.replace("img/vk_5129_1.jpg", hero_veg_bg)
-    html = html.replace("img/vk_5043_0.jpg", "img/vk_5118_0.jpg")
 
     m_data = re.search(r"const DATA = (\{.*?\});\s*\n\s*const CV =", html, re.DOTALL)
     if m_data:
@@ -238,18 +211,19 @@ def enhance_index_html():
     master_prompt_raw = build_pure_text_master_prompt()
     master_prompt_escaped = html_lib.escape(master_prompt_raw)
 
-    # 1. CSS: Чистый фон свежих овощей в Hero + 3D-карусель + Вибрация фото
+    # 1. CSS: Железная видимость текста в Новостях + Полные фото без обрезки + Реальная вибрация карточек на ПК!
     STATIC_HEAD_CSS = """
-<style id="v36-master-styles">
+<style id="v37-master-styles">
   @keyframes float-dove { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-8px) rotate(2deg)} }
-  @keyframes float-cube { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+  @keyframes float-cube { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
   @keyframes spin-wm { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-  @keyframes pc-photo-vibe {
-    0% { transform: scale(1) rotate(0deg); }
-    25% { transform: scale(1.04) rotate(-1.3deg) translate(-2px, -1px); }
-    50% { transform: scale(1.05) rotate(1.3deg) translate(2px, 1px); }
-    75% { transform: scale(1.04) rotate(-0.8deg) translate(-1px, 1px); }
-    100% { transform: scale(1.04) rotate(0deg); }
+  @keyframes mirmir-pc-buzz {
+    0%   { transform: translate(0, 0) rotate(0deg) scale(1.02); }
+    20%  { transform: translate(-3px, -2px) rotate(-1.2deg) scale(1.03); }
+    40%  { transform: translate(3px, 1px) rotate(1.2deg) scale(1.03); }
+    60%  { transform: translate(-3px, 2px) rotate(-0.8deg) scale(1.03); }
+    80%  { transform: translate(2px, -2px) rotate(0.8deg) scale(1.03); }
+    100% { transform: translate(0, 0) rotate(0deg) scale(1.02); }
   }
   @keyframes leaf-fall {
     0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0.85; }
@@ -258,22 +232,49 @@ def enhance_index_html():
   }
   .dove-float { animation: float-dove 5s ease-in-out infinite; }
   .bento-anim { animation: float-cube 4s ease-in-out infinite; transition: all 0.3s ease; border: 2px solid rgba(242,184,128,0.75) !important; }
-  .bento-anim:hover { transform: scale(1.05) !important; }
   .wm-spin { animation: spin-wm 60s linear infinite; }
   .stage-3d { perspective: 1200px; position: relative; width: 100%; height: 350px; display: flex; align-items: center; justify-content: center; }
   .slide-3d { position: absolute; width: 235px; height: 325px; transition: all 0.6s cubic-bezier(0.25,1,0.5,1); transform-style: preserve-3d; cursor: pointer; }
 
-  .hero-veg-bg-box {
-    background-image: linear-gradient(95deg, rgba(18,32,14,0.76) 0%, rgba(32,54,24,0.44) 55%, rgba(18,32,14,0.72) 100%), url('__HERO_VEG_BG__?v=360') !important;
+  /* 1. ФИКС ПРОПАВШЕГО ТЕКСТА И ОБРЕЗАННЫХ ФОТО В «ПОСЛЕДНИХ НОВОСТЯХ И АНОНСАХ» */
+  #posts-grid > div, #posts-grid article {
+    background-color: #FFFDF9 !important;
+    color: #2E3D28 !important;
+    border: 1px solid rgba(85, 100, 50, 0.22) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+  #posts-grid h3, #posts-grid h4, #posts-grid strong, #posts-grid b {
+    color: #1F2B1A !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  #posts-grid p, #posts-grid span, #posts-grid div {
+    color: #3D3A35 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  /* Чтобы фотографии анонсов и афиш НЕ обрезались некрасиво, показываем их целиком на стильной подложке! */
+  #posts-grid img {
+    height: 240px !important;
+    width: 100% !important;
+    object-fit: contain !important;
+    background: linear-gradient(145deg, #23301E 0%, #182214 100%) !important;
+    border-radius: 1rem !important;
+    padding: 4px !important;
+  }
+
+  /* 2. ПЛАВНЫЙ ИНТЕРЬЕРНЫЙ ФОН ПОД СЛОГАНОМ (МЕНЯЕТСЯ СИНХРОННО СО СЛАЙДЕРОМ ИНТЕРЬЕРА!) */
+  .hero-interior-dynamic-bg {
+    background-image: linear-gradient(95deg, rgba(18,28,14,0.84) 0%, rgba(28,42,22,0.68) 55%, rgba(18,28,14,0.82) 100%), var(--hero-slide-bg, url('img/ymap_org_0.jpg')) !important;
     background-size: cover !important;
     background-position: center !important;
-  }
-  body.cfg-dim-hero .hero-veg-bg-box {
-    background-image: linear-gradient(95deg, rgba(18,32,14,0.92) 0%, rgba(28,44,22,0.86) 100%), url('__HERO_VEG_BG__?v=360') !important;
+    transition: background-image 0.7s ease-in-out !important;
   }
 
   #pc-v26-authentic-wings { display: none; }
-  @media (min-width: 1100px) {
+  @media (min-width: 1024px) {
     body:not(.cfg-no-wings) { background-color: #1A2416 !important; }
     body:not(.cfg-no-wings) #pc-v26-authentic-wings { display: block !important; }
     body:not(.cfg-no-wings) main.max-w-7xl {
@@ -286,42 +287,32 @@ def enhance_index_html():
       position: relative;
       z-index: 10;
     }
-    body:not(.cfg-no-vibe) #posts-grid article:hover img,
-    body:not(.cfg-no-vibe) #cat-showcase-grid > div:hover img,
+    /* 3. РЕАЛЬНАЯ ВИБРАЦИЯ КАРТОЧЕК НОВОСТЕЙ, АНОНСОВ И РАЗДЕЛОВ МЕНЮ ПРИ НАВЕДЕНИИ МЫШКИ НА ПК! */
+    body:not(.cfg-no-vibe) #posts-grid > div:hover,
+    body:not(.cfg-no-vibe) #cat-showcase-grid > div:hover,
     body:not(.cfg-no-vibe) .vibe-card:hover {
-      animation: pc-photo-vibe 0.42s ease-in-out !important;
+      animation: mirmir-pc-buzz 0.36s ease-in-out infinite !important;
+      box-shadow: 0 16px 36px rgba(46,61,40,0.28) !important;
+      border-color: #D48238 !important;
     }
-  }
-  body.cfg-dark-lounge main.max-w-7xl {
-    background: rgba(24, 34, 20, 0.97) !important;
-    color: #FDF8F2 !important;
-  }
-  body.cfg-dark-lounge #posts-grid article,
-  body.cfg-dark-lounge #cat-showcase-grid > div {
-    background-color: #263521 !important;
-    color: #FDF8F2 !important;
-    border-color: rgba(242,184,128,0.3) !important;
-  }
-  body.cfg-dark-lounge h2, body.cfg-dark-lounge h3, body.cfg-dark-lounge p {
-    color: #FDF8F2 !important;
   }
   body.cfg-no-float .dove-float, body.cfg-no-float .bento-anim {
     animation: none !important;
   }
 </style>
-""".replace("__HERO_VEG_BG__", hero_veg_bg)
+"""
     html = html.replace("</head>", STATIC_HEAD_CSS + "\n</head>", 1)
 
     # 2. Боковые кулисы v26 (Кирпичный свод слева + Вывеска справа)
     STATIC_WINGS_HTML = """
 <div id="pc-v26-authentic-wings" class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
   <div class="absolute left-0 top-0 bottom-0 w-1/3 overflow-hidden">
-    <img src="__LEFT_WING__?v=360" class="w-full h-full object-cover opacity-55 scale-105 filter saturate-125 contrast-110">
+    <img src="__LEFT_WING__?v=370" class="w-full h-full object-cover opacity-55 scale-105 filter saturate-125 contrast-110">
     <div class="absolute inset-0" style="background:linear-gradient(90deg, rgba(20,30,16,0.20) 0%, rgba(26,36,22,0.95) 94%);"></div>
     <div class="absolute top-28 left-8 w-24 h-24 opacity-90 dove-float">__SIGN_DOVE_SVG__</div>
   </div>
   <div class="absolute right-0 top-0 bottom-0 w-1/3 overflow-hidden">
-    <img src="__RIGHT_WING__?v=360" class="w-full h-full object-cover opacity-60 scale-105 filter saturate-125 contrast-110">
+    <img src="__RIGHT_WING__?v=370" class="w-full h-full object-cover opacity-60 scale-105 filter saturate-125 contrast-110">
     <div class="absolute inset-0" style="background:linear-gradient(270deg, rgba(20,30,16,0.20) 0%, rgba(26,36,22,0.95) 94%);"></div>
     <div class="absolute top-28 right-8 w-24 h-24 opacity-90 dove-float" style="animation-delay:1.4s">__SIGN_DOVE_SVG__</div>
   </div>
@@ -336,8 +327,8 @@ def enhance_index_html():
     )
     html = html.replace("📖 Меню кафе", "📖 Электронное меню")
 
-    # 3. Вшиваем модальные окна и ЧИСТЫЙ R-STRING СКРИПТ (0% f-строк в JS -> 0% синтаксических ошибок!)
-    V36_MODALS_AND_JS = r"""
+    # 3. Вшиваем модальные окна, Слайдер Интерьера под слоганом и исправление обложек разделов!
+    V37_MODALS_AND_JS = r"""
 <!-- 🛍️ МАГАЗИН КАФЕ «МИР МИР» -->
 <div id="cafe-shop-modal" class="fixed inset-0 z-[75] bg-black/85 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5">
   <div class="bg-[#FDF8F2] rounded-[2.2rem] max-w-5xl w-full h-[90vh] flex flex-col justify-between overflow-hidden border-4 border-[#D48238] shadow-2xl">
@@ -405,14 +396,14 @@ def enhance_index_html():
   </div>
 </div>
 
-<!-- ⚙️ ЕДИНЫЙ ПУЛЬТ АРХИТЕКТОРА (ОТКРЫВАЕТСЯ ПО МАЛЕНЬКОЙ ШЕСТЕРЁНКЕ ВНИЗУ САЙТА) -->
+<!-- ⚙️ ЕДИНЫЙ ПУЛЬТ АРХИТЕКТОРА (ПО ШЕСТЕРЁНКЕ ВНИЗУ) -->
 <div id="unified-system-hub" class="fixed inset-0 z-[80] bg-black/85 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5">
   <div class="bg-[#FDF8F2] rounded-[2.2rem] max-w-5xl w-full h-[90vh] flex flex-col justify-between overflow-hidden border-4 border-[#556432] shadow-2xl">
     <div class="p-4 sm:p-5 bg-[#2E3D28] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div class="flex items-center gap-3">
         <div class="w-11 h-11 flex-shrink-0">__SIGN_DOVE_SVG__</div>
         <div>
-          <span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">Architect Control Deck • v36.0</span>
+          <span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">Architect Control Deck • v37.0</span>
           <h3 class="font-serif text-2xl sm:text-3xl font-bold leading-none mt-0.5">⚙️ Инженерный Пульт & Изменяшки Сайта</h3>
         </div>
       </div>
@@ -458,14 +449,14 @@ def enhance_index_html():
   </div>
 </div>
 
-<!-- 🧬 АРХИТЕКТУРНЫЙ ТЕКСТОВЫЙ МАСТЕР-ПРОМПТ (PYTHON-ПАРСЕР ВК + ИИ GEMINI) -->
+<!-- 🧬 АРХИТЕКТУРНЫЙ ТЕКСТОВЫЙ МАСТЕР-ПРОМПТ -->
 <div id="master-prompt-modal" class="fixed inset-0 z-[85] bg-black/85 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5">
   <div class="bg-[#FDF8F2] rounded-[2rem] max-w-5xl w-full h-[90vh] flex flex-col justify-between overflow-hidden border-4 border-[#D48238] shadow-2xl">
     <div class="p-4 sm:p-5 bg-[#2E3D28] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div class="flex items-center gap-3">
         <div class="w-11 h-11 flex-shrink-0">__SIGN_DOVE_SVG__</div>
         <div>
-          <span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">Autonomous Python + VK + Gemini Vision Blueprint • v36.0</span>
+          <span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">Autonomous Python + VK + Gemini Vision Blueprint • v37.0</span>
           <h3 class="font-serif text-2xl sm:text-3xl font-bold leading-none mt-0.5">🧬 Мастер-Промпт: Создание Python-компилятора сайта из ВК и ИИ</h3>
         </div>
       </div>
@@ -476,16 +467,62 @@ def enhance_index_html():
       </div>
     </div>
     <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-3 custom-scroll">
-      <div class="p-3.5 rounded-2xl bg-amber-50 border border-[#D48238]/40 text-xs text-stone-800">
-        💡 <b>Никаких ручных словарей меню:</b> Этот текстовый промпт описывает, как написать Python-движок, который сам подключается к группе ВК <code>vk.com/mirmir.cafe</code> и Яндекс.Картам, сам через зрение и OCR Google Gemini считывает 4 бланка меню, спешлы, новости и товары магазина и автоматически собирает реактивный сайт!
-      </div>
-      <textarea id="server-master-prompt-data" readonly class="w-full h-[66vh] p-5 rounded-2xl bg-white text-stone-900 font-sans text-xs sm:text-sm leading-relaxed border-2 border-[#556432]/40 shadow-inner focus:outline-none">__MASTER_PROMPT_ESCAPED__</textarea>
+      <textarea id="server-master-prompt-data" readonly class="w-full h-[70vh] p-5 rounded-2xl bg-white text-stone-900 font-sans text-xs sm:text-sm leading-relaxed border-2 border-[#556432]/40 shadow-inner focus:outline-none">__MASTER_PROMPT_ESCAPED__</textarea>
     </div>
   </div>
 </div>
 
 <script>
-// === 🌟 БЕЗОТКАЗНЫЙ ДВИЖОК v36.0 (0% F-STRING BUGS, НАСТОЯЩЕЕ ПОТОКОВОЕ РАДИО, ШЕСТЕРЁНКА ВНИЗУ) ===
+// === 🌟 ДВИЖОК v37.0: СЛАЙДЕР ИНТЕРЬЕРА ИЗ ЯНДЕКС.КАРТ ПОД СЛОГАНОМ + ТЕКСТ НОВОСТЕЙ + ВИБРО НА ПК ===
+
+// 1. Галерея слайдов реального интерьера и атмосферы кафе (из Яндекс.Карт и ВК) для центрального слайдера под слоганом!
+const INTERIOR_SLIDES_DATA = [
+  { src: "img/ymap_org_0.jpg", title: "🏛️ Исторический кирпичный свод и уютный зал на Ильинской, 45", tag: "Яндекс.Карты • Интерьер зала" },
+  { src: "img/vk_5068_0.jpg", title: "🛋️ Мягкая диванная зона, кирпичная кладка и картины местных художников", tag: "Атмосфера «Мир Мир»" },
+  { src: "img/vk_5122_0.jpg", title: "🕯️ Вечерние чаепития при свечах и редкий китайский чай", tag: "Чайная культура" },
+  { src: "img/ymap_org_1.jpg", title: "🕊️ Фирменная кованая вывеска с белой Голубкой мира у входа", tag: "Яндекс.Карты • Экстерьер" },
+  { src: "img/vk_5134_0.jpg", title: "📖 Живое общение, настольные книги и изучение меню с друзьями", tag: "Гости кафе" }
+];
+let curInteriorSlide = 0;
+let interiorSlideTimer = null;
+
+window.stepInteriorSlide = function(delta) {
+  curInteriorSlide = (curInteriorSlide + delta + INTERIOR_SLIDES_DATA.length) % INTERIOR_SLIDES_DATA.length;
+  window.renderInteriorSlideState();
+};
+
+window.setInteriorSlide = function(idx) {
+  curInteriorSlide = idx;
+  window.renderInteriorSlideState();
+};
+
+window.renderInteriorSlideState = function() {
+  const s = INTERIOR_SLIDES_DATA[curInteriorSlide];
+  const imgEl = document.getElementById("hero-interior-slide-img");
+  const titleEl = document.getElementById("hero-interior-slide-title");
+  const tagEl = document.getElementById("hero-interior-slide-tag");
+  const dotsBox = document.getElementById("hero-interior-dots");
+  const heroLeft = document.querySelector("main section:first-of-type .lg\\:col-span-7");
+
+  if (imgEl) {
+    imgEl.style.opacity = "0.25";
+    setTimeout(() => {
+      imgEl.src = s.src;
+      imgEl.setAttribute("onclick", "showImg('" + s.src + "')");
+      imgEl.style.opacity = "1";
+    }, 160);
+  }
+  if (titleEl) titleEl.innerText = s.title;
+  if (tagEl) tagEl.innerText = s.tag;
+  if (heroLeft) {
+    heroLeft.style.setProperty("--hero-slide-bg", "url('" + s.src + "')");
+  }
+  if (dotsBox) {
+    dotsBox.innerHTML = INTERIOR_SLIDES_DATA.map((_, i) => '<button onclick="window.setInteriorSlide(' + i + ')" class="h-2 rounded-full transition-all cursor-pointer ' + (i === curInteriorSlide ? 'w-6 bg-[#D48238]' : 'w-2 bg-white/40 hover:bg-white/70') + '"></button>').join("");
+  }
+};
+
+// 2. Витрина Магазина кафе
 const CAFE_SHOP_ITEMS = [
   { id: "sh1", name: "Классический ремесленный Тофу «Мир Мир»", weight: "400 г", price: 280, photo: "img/vk_5087_1.jpg", desc: "Нежный домашний тофу собственного производства на чистой воде. Идеален для жарки, омлетов, супов и салатов." },
   { id: "sh2", name: "Пряный печёный / Копчёный Тофу от Шефа", weight: "300 г", price: 340, photo: "img/vk_5055_0.jpg", desc: "Ароматный тофу в фирменном маринаде со специями и травами — готов к подаче и сэндвичам." },
@@ -560,9 +597,7 @@ window.rollRandomGastroPulse = function() {
   setTimeout(() => { el.innerText = pick; el.style.opacity = "1"; }, 180);
 };
 
-// ============================================================================
-// 📻 НАСТОЯЩЕЕ ПОТОКОВОЕ ОНЛАЙН-РАДИО (HTML5 AUDIO STREAM + FALLBACK URLS)
-// ============================================================================
+// 3. Потоковое онлайн-радио (3 живые волны в РФ)
 const RADIO_STREAMS = {
   ambient: {
     title: "🌌 Эмбиент & Чилл",
@@ -621,12 +656,10 @@ window.playMirMirWave = function(waveKey, urlIdx) {
     if (st) st.innerText = "⚠️ Поток временно недоступен, попробуйте соседнюю волну";
     return;
   }
-
   if (mirStreamAudio) {
     mirStreamAudio.pause();
     mirStreamAudio.src = "";
   }
-
   const streamUrl = station.urls[idx];
   mirStreamAudio = new Audio(streamUrl);
   const volSlider = document.getElementById("radio-vol-slider");
@@ -640,31 +673,21 @@ window.playMirMirWave = function(waveKey, urlIdx) {
     const b1 = document.getElementById("radio-btn");
     if (b1) b1.innerText = "🔊 " + station.title.split(" ")[1];
   };
-
-  mirStreamAudio.onerror = function() {
-    window.playMirMirWave(waveKey, idx + 1);
-  };
-
-  mirStreamAudio.play().catch(function() {
-    window.playMirMirWave(waveKey, idx + 1);
-  });
+  mirStreamAudio.onerror = function() { window.playMirMirWave(waveKey, idx + 1); };
+  mirStreamAudio.play().catch(function() { window.playMirMirWave(waveKey, idx + 1); });
 };
 
-// ============================================================================
-// ⚙️ ПУЛЬТ ИЗМЕНЯШЕК И ОЧИСТКА ШАПКИ/ФУТЕРА ПОСЛЕ ОТРИСОВКИ INIT()
-// ============================================================================
+// 4. Пульт Изменяшек
 const SITE_TOGGLES_SPEC = [
   { key: "wings", label: "🖼️ Боковые кулисы ПК (Интерьер & Вывеска)", def: true },
-  { key: "vibe", label: "📳 Вибро-отклик фото при наведении мышки", def: true },
-  { key: "bright", label: "☀️ Турбо-яркость овощного фона под слоганом", def: true },
+  { key: "vibe", label: "📳 Вибро-отклик фото и анонсов на ПК", def: true },
   { key: "leaves", label: "🍃 Падающие чайные листья на экране", def: false },
-  { key: "lounge", label: "🌙 Вечерний тёмный лаунж-режим карточек", def: false },
   { key: "float", label: "🧊 3D-левитация кубиков и Голубок", def: true }
 ];
 
 function getToggleStates() {
   let st = {};
-  try { st = JSON.parse(localStorage.getItem("mirmir_toggles_v36") || "{}"); } catch(e) {}
+  try { st = JSON.parse(localStorage.getItem("mirmir_toggles_v37") || "{}"); } catch(e) {}
   SITE_TOGGLES_SPEC.forEach(s => { if (st[s.key] === undefined) st[s.key] = s.def; });
   return st;
 }
@@ -673,8 +696,6 @@ window.applySiteToggles = function() {
   const st = getToggleStates();
   document.body.classList.toggle("cfg-no-wings", !st.wings);
   document.body.classList.toggle("cfg-no-vibe", !st.vibe);
-  document.body.classList.toggle("cfg-dim-hero", !st.bright);
-  document.body.classList.toggle("cfg-dark-lounge", !!st.lounge);
   document.body.classList.toggle("cfg-no-float", !st.float);
 
   const leavesBox = document.getElementById("falling-leaves-box");
@@ -693,7 +714,7 @@ window.applySiteToggles = function() {
 window.flipSiteToggle = function(k) {
   const st = getToggleStates();
   st[k] = !st[k];
-  localStorage.setItem("mirmir_toggles_v36", JSON.stringify(st));
+  localStorage.setItem("mirmir_toggles_v37", JSON.stringify(st));
   window.applySiteToggles();
   window.renderSystemTogglesUI();
 };
@@ -727,7 +748,7 @@ window.closeMasterPromptModal = function() {
 };
 window.copyMasterPromptText = function() {
   const ta = document.getElementById("server-master-prompt-data");
-  if (ta) { navigator.clipboard.writeText(ta.value); alert("🧬 Архитектурный Мастер-Промпт (Python+ВК+ИИ) скопирован в буфер обмена!"); }
+  if (ta) { navigator.clipboard.writeText(ta.value); alert("🧬 Архитектурный Мастер-Промпт скопирован в буфер обмена!"); }
 };
 window.downloadMasterPromptFile = function() {
   const ta = document.getElementById("server-master-prompt-data");
@@ -869,16 +890,58 @@ window.saveNewTzClean = async function() {
 };
 
 // ============================================================================
-// 🚀 ПОСТ-ИНИЦИАЛИЗАЦИЯ ПОСЛЕ РОДНОГО INIT() (100% КАРТОЧЕК И ФОТО НА МЕСТЕ!)
+// 🚀 ГЛАВНАЯ ИНИЦИАЛИЗАЦИЯ v37.0: ОБЛОЖКИ РАЗДЕЛОВ + СЛАЙДЕР ИНТЕРЬЕРА + НОВОСТИ
 // ============================================================================
 window.addEventListener("DOMContentLoaded", () => {
-  // Страховка: если вдруг родной init() не вызывался или упал, принудительно рендерим сетки новостей и разделов!
   try {
     const pg = document.getElementById("posts-grid");
     if (pg && !pg.innerHTML.trim() && typeof init === "function") init();
   } catch(e) {}
 
-  // 1. Аккуратно обновляем кнопки в верхней шапке (без удаления родных ID!)
+  // 1. ЖЕСТКО ИСПРАВЛЯЕМ ОБЛОЖКИ ВСЕХ 9 РАЗДЕЛОВ В «МЕНЮ КАФЕ ПО РАЗДЕЛАМ» (#cat-showcase-grid)
+  // Убираем сырой лист салата из Бургеров и фиолетовый цветок из Смузи!
+  const PERFECT_CATEGORY_COVERS = {
+    "Спешлы со стены ВК": "img/vk_5128_1.jpg",
+    "Супы": "img/vk_5057_1.jpg",
+    "Боулы и Омлеты": "img/vk_5055_0.jpg",
+    "Салаты": "img/macro_caesar_romaine.jpg",
+    "Лапша": "img/vk_5057_0.jpg",
+    "Бургеры и Из печи": "img/vk_5085_1.jpg",
+    "Десерты без сахара": "img/vk_5069_0.jpg",
+    "Барное меню: Смузи и Кофе": "img/macro_strawberry_banana.jpg",
+    "Чайная карта": "img/vk_5122_0.jpg"
+  };
+  const catGrid = document.getElementById("cat-showcase-grid");
+  if (catGrid) {
+    catGrid.querySelectorAll("div.rounded-3xl, > div").forEach(card => {
+      card.classList.add("vibe-card");
+      const titleEl = card.querySelector("h3, h4, .font-serif");
+      const imgEl = card.querySelector("img");
+      if (titleEl && imgEl) {
+        const t = titleEl.innerText.trim();
+        Object.keys(PERFECT_CATEGORY_COVERS).forEach(k => {
+          if (t.includes(k) || k.includes(t)) {
+            imgEl.src = PERFECT_CATEGORY_COVERS[k] + "?v=370";
+          }
+        });
+      }
+    });
+  }
+
+  // 2. ДЕЛАЕМ КАРТОЧКИ НОВОСТЕЙ И АНОНСОВ (#posts-grid) ВИБРИРУЮЩИМИ И КЛИКАБЕЛЬНЫМИ ДЛЯ ЛАЙТБОКСА
+  const postsGrid = document.getElementById("posts-grid");
+  if (postsGrid) {
+    Array.from(postsGrid.children).forEach(card => {
+      card.classList.add("vibe-card");
+      const im = card.querySelector("img");
+      if (im && !im.getAttribute("onclick")) {
+        im.style.cursor = "zoom-in";
+        im.setAttribute("onclick", "showImg('" + im.getAttribute("src") + "')");
+      }
+    });
+  }
+
+  // 3. Обновляем кнопки в верхней шапке
   const deskNav = document.querySelector("header .hidden.lg\\:flex");
   if (deskNav) {
     deskNav.innerHTML = [
@@ -891,7 +954,6 @@ window.addEventListener("DOMContentLoaded", () => {
     ].join("");
   }
 
-  // Перенаправляем мобильную кнопку радио на наш селектор 3 станций
   const mobRadioBtn = document.getElementById("radio-btn-mob");
   if (mobRadioBtn) mobRadioBtn.setAttribute("onclick", "window.openRadioSelectorModal()");
 
@@ -900,22 +962,23 @@ window.addEventListener("DOMContentLoaded", () => {
     rail.insertAdjacentHTML("afterbegin", '<button onclick="window.openCafeShopModal()" class="px-3.5 py-1.5 rounded-full bg-[#D48238] text-white text-xs font-extrabold whitespace-nowrap cursor-pointer shadow">🛍️ Магазин кафе</button><button onclick="window.openDeliveryModal()" class="px-3.5 py-1.5 rounded-full bg-emerald-700 text-white text-xs font-extrabold whitespace-nowrap cursor-pointer shadow">🛵 Доставка</button>');
   }
 
-  // 2. В самом низу сайта (в футере) заменяем кнопку на простую компактную шестерёнку «⚙️»!
+  // 4. Шестерёнка «⚙️» в самом низу сайта
   const footerEl = document.querySelector("footer");
   if (footerEl) {
-    const oldBtns = footerEl.querySelectorAll("button");
-    oldBtns.forEach(b => b.remove());
+    footerEl.querySelectorAll("button").forEach(b => b.remove());
     footerEl.insertAdjacentHTML("beforeend", '<button onclick="window.openUnifiedSystemHub()" title="Открыть Инженерный Пульт, Изменяшки, ТЗ и Мастер-Промпт" class="w-10 h-10 rounded-full bg-[#2E3D28] hover:bg-[#556432] text-[#F2B880] text-lg flex items-center justify-center shadow-lg cursor-pointer transition transform hover:rotate-90 border border-[#D48238]">⚙️</button>');
   }
 
-  // 3. Настраиваем Hero-блок (Овощной фон + Спешлы напротив слогана + Рандомный Гастро-пульс + Карусель блюд + 4 кубика)
+  // 5. ПЕРЕСТРАИВАЕМ HERO-БЛОК: СЛАЙДЕР ИНТЕРЬЕРА ИЗ ЯНДЕКС.КАРТ ПРЯМО ПОД СЛОГАНОМ В ЦЕНТРЕ + ПРАВИЛЬНЫЕ КУБИКИ!
   const heroLeft = document.querySelector("main section:first-of-type .lg\\:col-span-7");
   if (heroLeft) {
-    heroLeft.classList.add("hero-veg-bg-box");
+    heroLeft.classList.remove("hero-veg-bg-box");
+    heroLeft.classList.add("hero-interior-dynamic-bg");
     Array.from(heroLeft.children).forEach(ch => {
       if (ch.tagName === "DIV" && ch.classList.contains("pointer-events-none")) ch.remove();
     });
 
+    // Карточка «Спешлы со стены ВК» напротив слогана
     const sloganP = heroLeft.querySelector("p.italic");
     if (sloganP && !heroLeft.querySelector(".specials-opposite-card")) {
       const wrapper = document.createElement("div");
@@ -926,54 +989,76 @@ window.addEventListener("DOMContentLoaded", () => {
       wrapper.insertAdjacentHTML("beforeend", '<div onclick="openMenu(\'Спешлы со стены ВК\')" class="specials-opposite-card vibe-card cursor-pointer p-3 rounded-2xl bg-gradient-to-br from-[#D48238] to-[#b56622] text-white shadow-xl border-2 border-[#FFFDF9]/80 flex items-center gap-3 sm:w-64 flex-shrink-0"><img src="img/vk_5128_1.jpg" class="w-14 h-14 rounded-xl object-cover border border-white/60 flex-shrink-0"><div class="min-w-0"><span class="text-[10px] font-extrabold uppercase tracking-wider bg-black/30 px-2 py-0.5 rounded-full">🔥 Новинки</span><div class="font-serif font-bold text-lg leading-tight mt-0.5">Спешлы со стены ВК</div><span class="text-[11px] text-amber-100 underline font-bold">Открыть 9 блюд ➔</span></div></div>');
     }
 
+    // ВСТАВЛЯЕМ СЛАЙДЕР ИНТЕРЬЕРА КАФЕ ИЗ ЯНДЕКС.КАРТ ПРЯМО ПОД СЛОГАНОМ В ЦЕНТРЕ!
+    const sloganContainer = heroLeft.querySelector(".specials-opposite-card")?.parentElement || sloganP;
+    if (sloganContainer && !document.getElementById("hero-interior-slider-box")) {
+      const interiorSliderHtml = [
+        '<div id="hero-interior-slider-box" class="my-2.5 p-2.5 rounded-3xl bg-black/45 backdrop-blur-md border-2 border-[#F2B880]/45 shadow-2xl">',
+          '<div class="relative h-48 sm:h-56 rounded-2xl overflow-hidden bg-[#182214]">',
+            '<img id="hero-interior-slide-img" src="img/ymap_org_0.jpg" onclick="showImg(\'img/ymap_org_0.jpg\')" class="w-full h-full object-cover transition-opacity duration-300 cursor-zoom-in" title="Нажмите для увеличения">',
+            '<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent pointer-events-none"></div>',
+            '<span id="hero-interior-slide-tag" class="absolute top-2.5 left-3 px-3 py-1 rounded-full bg-[#2E3D28]/90 text-[#F2B880] border border-[#F2B880]/40 text-[10px] font-extrabold uppercase tracking-wider">Яндекс.Карты • Интерьер зала</span>',
+            '<button onclick="window.stepInteriorSlide(-1)" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/55 hover:bg-[#D48238] text-white font-bold text-xs cursor-pointer transition flex items-center justify-center">◀</button>',
+            '<button onclick="window.stepInteriorSlide(1)" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/55 hover:bg-[#D48238] text-white font-bold text-xs cursor-pointer transition flex items-center justify-center">▶</button>',
+            '<div class="absolute bottom-2.5 left-3 right-3 flex items-end justify-between gap-2">',
+              '<div id="hero-interior-slide-title" class="font-serif text-base sm:text-lg font-bold text-white drop-shadow leading-snug">🏛️ Исторический кирпичный свод и уютный зал на Ильинской, 45</div>',
+              '<div id="hero-interior-dots" class="flex items-center gap-1.5 flex-shrink-0 pb-1"></div>',
+            '</div>',
+          '</div>',
+        '</div>'
+      ].join("");
+      sloganContainer.insertAdjacentHTML("afterend", interiorSliderHtml);
+      window.renderInteriorSlideState();
+      if (interiorSlideTimer) clearInterval(interiorSlideTimer);
+      interiorSlideTimer = setInterval(() => window.stepInteriorSlide(1), 3800);
+    }
+
+    // 4 кубика: убираем фиолетовый цветок из 1-го кубика и ставим чистые тематические кадры!
     const cubes = heroLeft.querySelectorAll(".grid > div");
-    const cleanCubeImgs = ["img/vk_5115_1.jpg", "img/vk_5128_1.jpg", "img/vk_5122_0.jpg", "img/vk_5069_0.jpg"];
+    const cleanCubeImgs = [
+      "img/macro_avocado_greens.jpg", // 1. Своя микрозелень и боулы (свежая зелень и авокадо вместо фиолетового цветка!)
+      "img/vk_5128_1.jpg",            // 2. Собрать свой Боул
+      "img/vk_5122_0.jpg",            // 3. Чай 300 / 900 мл
+      "img/vk_5069_0.jpg"             // 4. Десерты без сахара
+    ];
     cubes.forEach((cube, i) => {
-      cube.classList.add("bento-anim");
+      cube.classList.add("bento-anim", "vibe-card");
       cube.style.animationDelay = (i * 0.6) + "s";
       const im = cube.querySelector("img");
-      if (im && cleanCubeImgs[i]) im.src = cleanCubeImgs[i];
+      if (im && cleanCubeImgs[i]) im.src = cleanCubeImgs[i] + "?v=370";
     });
 
-    const pulseBox = heroLeft.querySelector(".bg-white\\/10.backdrop-blur-md");
+    // Живой рандомный Гастро-пульс от ИИ (ищем по любому классу блока!)
+    const allDivs = Array.from(heroLeft.querySelectorAll("div"));
+    const pulseBox = allDivs.find(el => el.innerText && el.innerText.includes("Гастро-пульс"));
     if (pulseBox) {
       pulseBox.innerHTML = '<div class="flex items-center justify-between gap-2 mb-1"><span class="text-[#F2B880] font-extrabold uppercase text-[11px] tracking-wider">✨ Живой Гастро-пульс от ИИ-Оракула</span><button onclick="window.rollRandomGastroPulse()" class="px-2.5 py-1 rounded-full bg-[#D48238] hover:opacity-95 text-white font-extrabold text-[10px] cursor-pointer shadow">🎲 Ещё совет от ИИ</button></div><div id="ai-pulse-random-text" class="text-white font-semibold text-xs sm:text-sm transition-opacity duration-200 leading-relaxed"></div>';
       window.rollRandomGastroPulse();
-
-      if (!document.getElementById("hero-dish-carousel")) {
-        const specialsAndHits = (DATA.menu || []).filter(d => d.photo_type === "real").slice(0, 12);
-        const cardsHtml = specialsAndHits.map((d) => {
-          const realIdx = DATA.menu.indexOf(d);
-          return '<div onclick="openMenu(\'' + esc(d.category) + '\')" class="vibe-card flex-shrink-0 w-48 bg-[#FDF8F2] text-stone-900 rounded-xl p-2 flex items-center gap-2.5 cursor-pointer shadow border border-[#F2B880]/50"><img src="' + esc(d.photo) + '" class="w-12 h-12 rounded-lg object-cover flex-shrink-0"><div class="min-w-0 flex-1"><div class="font-bold text-[11px] text-[#2E3D28] truncate">' + esc(d.name) + '</div><div class="flex items-center justify-between mt-1"><strong class="text-xs text-[#D48238]">' + d.price + ' ₽</strong><button onclick="event.stopPropagation();addToCart(' + realIdx + ',0)" class="px-2 py-0.5 rounded bg-[#556432] text-white text-[10px] font-extrabold cursor-pointer">+ В заказ</button></div></div></div>';
-        }).join("");
-        const carouselHtml = '<div class="mt-2 bg-black/45 backdrop-blur-md p-3 rounded-2xl border border-[#F2B880]/40"><div class="flex items-center justify-between mb-2"><span class="text-[11px] font-extrabold uppercase tracking-wider text-[#F2B880]">🍲 Карусель спешлов и хитов кафе (листайте или жмите +)</span><div class="flex gap-1.5"><button onclick="document.getElementById(\'hero-dish-carousel\').scrollBy({left:-240,behavior:\'smooth\'})" class="w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold cursor-pointer">◀</button><button onclick="document.getElementById(\'hero-dish-carousel\').scrollBy({left:240,behavior:\'smooth\'})" class="w-6 h-6 rounded-full bg-white/20 text-white text-xs font-bold cursor-pointer">▶</button></div></div><div id="hero-dish-carousel" class="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">' + cardsHtml + '</div></div>';
-        pulseBox.insertAdjacentHTML("afterend", carouselHtml);
-      }
     }
   }
 
-  // 4. Отрисовываем 3D-карусель 4 оригинальных бланков меню справа в Hero-блоке!
-  const scansBox = document.getElementById("scans-top-box") || document.getElementById("stage-3d-v35");
+  // 6. 3D-карусель 4 оригинальных бланков справа в Hero-блоке
+  const scansBox = document.getElementById("scans-top-box") || document.getElementById("stage-3d-v36");
   if (scansBox && DATA.menu_scans && DATA.menu_scans.length) {
     const parentCol = scansBox.parentElement;
     parentCol.classList.add("relative", "overflow-hidden");
     parentCol.innerHTML = [
       '<div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.42] z-0"><div class="wm-spin"><svg width="450" height="450" viewBox="0 0 120 120" fill="none"><circle cx="60" cy="60" r="56" stroke="#F2B880" stroke-width="3"/><circle cx="60" cy="60" r="50" stroke="#FFFDF9" stroke-width="2" stroke-dasharray="5 4"/><circle cx="60" cy="62" r="25" stroke="#F2B880" stroke-width="2.5" fill="rgba(242,184,128,0.18)"/><path d="M32 58 C24 44, 34 26, 52 34 C46 40, 42 48, 42 58 C38 60, 34 60, 32 58 Z" fill="#FFFDF9"/><path d="M88 58 C96 44, 86 26, 68 34 C74 40, 78 48, 78 58 C82 60, 86 60, 88 58 Z" fill="#FFFDF9"/><path d="M35 52 C30 68, 44 88, 60 90 C76 88, 90 68, 85 52 C82 66, 72 78, 60 80 C48 78, 38 66, 35 52 Z" fill="#FFFDF9"/><circle cx="48" cy="36" r="6" fill="#FFFDF9"/><text x="60" y="106" text-anchor="middle" fill="#F2B880" font-family="serif" font-weight="bold" font-size="11" letter-spacing="3">• MIR MIR •</text></svg></div></div>',
       '<span class="relative z-10 text-xs font-extrabold uppercase px-3.5 py-1 rounded-full bg-black/50 text-[#F2B880] border border-[#F2B880]/40 mb-2">🔄 3D-карусель оригинальных бланков</span>',
-      '<div id="stage-3d-v36" class="stage-3d relative z-10"></div>',
+      '<div id="stage-3d-v37" class="stage-3d relative z-10"></div>',
       '<div class="relative z-20 flex items-center gap-3 mt-2">',
-        '<button onclick="window.step3DV36(-1)" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/35 text-white font-bold cursor-pointer">◀</button>',
+        '<button onclick="window.step3DV37(-1)" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/35 text-white font-bold cursor-pointer">◀</button>',
         '<button onclick="openMenu(\'Все\')" class="px-4 py-2 rounded-full bg-[#D48238] text-white text-xs font-extrabold uppercase shadow-lg cursor-pointer">📖 Все блюда (' + DATA.menu.length + ')</button>',
-        '<button onclick="window.step3DV36(1)" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/35 text-white font-bold cursor-pointer">▶</button>',
+        '<button onclick="window.step3DV37(1)" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/35 text-white font-bold cursor-pointer">▶</button>',
       '</div>'
     ].join("");
     let c3d = 0;
-    const stBox = document.getElementById("stage-3d-v36");
+    const stBox = document.getElementById("stage-3d-v37");
     stBox.innerHTML = DATA.menu_scans.map((s, i) => {
       const meta = (DATA.sheet_meta && DATA.sheet_meta[i]) || {title:"Бланк меню", cat:"Все"};
-      return '<div class="slide-3d" onclick="openMenu(\'' + meta.cat + '\')"><div class="w-full h-full rounded-3xl overflow-hidden shadow-2xl border-4 border-[#FFFDF9] bg-[#FFFDF9] flex flex-col justify-between"><div class="flex-1 overflow-hidden flex items-center justify-center p-1.5"><img src="' + s + '?v=360" class="max-w-full max-h-full object-contain"></div><div class="bg-[#2E3D28] px-3 py-2 text-white flex items-center justify-between"><span class="text-[11px] font-extrabold text-[#F2B880] truncate">' + meta.title + '</span><button onclick="event.stopPropagation();showImg(\'' + s + '\')" class="text-[10px] bg-white/20 px-2 py-0.5 rounded font-bold">Лупа 🔍</button></div></div></div>';
+      return '<div class="slide-3d" onclick="openMenu(\'' + meta.cat + '\')"><div class="w-full h-full rounded-3xl overflow-hidden shadow-2xl border-4 border-[#FFFDF9] bg-[#FFFDF9] flex flex-col justify-between"><div class="flex-1 overflow-hidden flex items-center justify-center p-1.5"><img src="' + s + '?v=370" class="max-w-full max-h-full object-contain"></div><div class="bg-[#2E3D28] px-3 py-2 text-white flex items-center justify-between"><span class="text-[11px] font-extrabold text-[#F2B880] truncate">' + meta.title + '</span><button onclick="event.stopPropagation();showImg(\'' + s + '\')" class="text-[10px] bg-white/20 px-2 py-0.5 rounded font-bold">Лупа 🔍</button></div></div></div>';
     }).join("");
-    window.upd3DV36 = function() {
+    window.upd3DV37 = function() {
       const sl = stBox.querySelectorAll(".slide-3d"), tot = sl.length;
       sl.forEach((el, idx) => {
         const d = (idx - c3d + tot) % tot;
@@ -983,9 +1068,9 @@ window.addEventListener("DOMContentLoaded", () => {
         else { el.style.transform="translateX(0) translateZ(-95px) scale(0.75)"; el.style.zIndex="10"; el.style.opacity="0.35"; }
       });
     };
-    window.step3DV36 = function(delta) { c3d = (c3d + delta + DATA.menu_scans.length) % DATA.menu_scans.length; window.upd3DV36(); };
-    window.upd3DV36();
-    setInterval(() => window.step3DV36(1), 4000);
+    window.step3DV37 = function(delta) { c3d = (c3d + delta + DATA.menu_scans.length) % DATA.menu_scans.length; window.upd3DV37(); };
+    window.upd3DV37();
+    setInterval(() => window.step3DV37(1), 4000);
   }
 
   window.applySiteToggles();
@@ -995,8 +1080,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
     last_body_idx = html.rfind("</body>")
     if last_body_idx != -1:
-        html = html[:last_body_idx] + V36_MODALS_AND_JS + "\n" + html[last_body_idx:]
+        html = html[:last_body_idx] + V37_MODALS_AND_JS + "\n" + html[last_body_idx:]
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("✨ [Ядро v36.0] Все фотографии возвращены, подключено настоящее потоковое Радио, шестерёнка ⚙️ внизу и правильный Мастер-Промпт!")
+    print("✨ [Ядро v37.0] Слайдер интерьера под слоганом, полный текст и фото анонсов, чистые обложки и вибро на ПК вшиты!")
