@@ -47,7 +47,7 @@ def get_run_version():
             pass
     with open(p, "w", encoding="utf-8") as f:
         f.write(str(c))
-    return f"v35.0 [Сборка #{c}]", c
+    return f"v36.0 [Сборка #{c}]", c
 
 
 def load_key(filename):
@@ -312,7 +312,7 @@ body {{ font-family:'Manrope',sans-serif; background:#F6E4CE; color:#263020; mar
     <div class="grid grid-cols-1 lg:grid-cols-12 items-stretch">
       <div class="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between relative overflow-hidden">
         <div class="absolute inset-0 pointer-events-none z-0">
-          <img src="img/vk_5129_1.jpg?v={build_num}" alt="" class="w-full h-full object-cover opacity-[0.52] scale-105 filter saturate-150 contrast-110">
+          <img src="img/vk_5128_1.jpg?v={build_num}" alt="" class="w-full h-full object-cover opacity-[0.52] scale-105 filter saturate-150 contrast-110">
           <div class="absolute inset-0" style="background:linear-gradient(90deg,rgba(25,38,20,0.78) 0%,rgba(38,56,30,0.48) 55%,rgba(25,38,20,0.75) 100%);"></div>
         </div>
 
