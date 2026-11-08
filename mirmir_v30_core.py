@@ -531,6 +531,129 @@ window.pushTzDirectlyToGitHub = async function(payloadObj) {
   } catch(e) { return false; }
 };
 
+
+// ============================================================================
+// 🧬 ГЕНЕРАТОР ПОЛНОГО МАСТЕР-ПРОМПТА (ДНК САЙТА 1:1 ДЛЯ ЛЮБОЙ ТОПОВОЙ LLM)
+// ============================================================================
+window.buildFullSiteMasterPrompt = function() {
+  const menuJsonCompact = JSON.stringify(DATA.menu || [], null, 2);
+  return [
+    '# 🧬 SYSTEM BLUEPRINT & GOD-MODE PROMPT: АВТОНОМНАЯ ПЛАТФОРМА ВЕГАН-КАФЕ И ЧАЙНОЙ «МИР МИР» (1:1 CLONE SPEC)',
+    'Ты — Senior Full-Stack Архитектор. Твоя задача — написать один в один полный, готовый к запуску код проекта сайта веган-кафе и клуба чайной культуры «Мир Мир» (г. Нижний Новгород, ул. Ильинская, 45).',
+    'Выдай решение строго без сокращений в виде 3 файлов: `menu_data.py` (база всех 72 блюд), `app.py` (компилятор ВК + Gemini + генератор `index.html`) и `run.bat` (скрипт сборки и деплоя в GitHub Pages).',
+    '',
+    '## 1. АРХИТЕКТУРА И БЕЗОПАСНОСТЬ (ДВУХКОНТУРНЫЙ ДЕТЕРМИНИЗМ)',
+    '- **Контур 1 (Локальный ПК на Windows):** Скрипт `app.py` читает локальные токены из файлов `vk key.txt` и `goog api k.txt` (оба файла в `.gitignore`, НИКОГДА не попадают в браузер или в Git!). Скрипт забирает свежие посты и фото со стены ВКонтакте `vk.com/mirmir.cafe` (`owner_id = -191992548`), проверяет фотографии через каскад моделей `gemini-3-flash-preview -> gemini-2.5-flash -> gemini-2.0-flash`, синхронизирует заметки ТЗ из `tz_mirmir.json` и компилирует единый автономный файл `index.html`.',
+    '- **Контур 2 (Публичное облако GitHub Pages):** В репозиторий `github.com/vitvseom-stack/mirmir` улетает только статический `index.html` и папка `img/` со сжатыми локальными кадрами.',
+    '- **Критическое правило верстки:** Внутри `app.py` при генерации HTML избегать конфликта фигурных скобок JS с f-строками Python. Не использовать глобальное правило `.hidden { display: none !important; }`, так как оно ломает адаптивный класс Tailwind `hidden lg:flex` верхней навигации на ПК!',
+    '',
+    '## 2. ТОЧНЫЕ РЕКВИЗИТЫ, КООРДИНАТЫ И ЛОГИКА ТАКСИ / ДОСТАВКИ',
+    '- **Название:** Веган-кафе и чайная «Мир Мир» (100% Plant-Based, этичная кухня без мяса, рыбы, яиц и молочки).',
+    '- **Адрес и часы работы:** г. Нижний Новгород, ул. Ильинская, 45. Ежедневно с 12:00 до 21:00. Телефон: `+7 (920) 028-28-58`. Telegram шефа для заказов: `https://t.me/mirmir_chef`.',
+    '- **Точные гео-координаты здания №45:** Широта `56.322355`, Долгота `43.990383`.',
+    '- **Умная кнопка «🚕 Такси в кафе»:**',
+    '  - На смартфонах (Android/iOS) вызывает диплинк `yandextaxi://route?end-lat=56.322355&end-lon=43.990383` с фоллбэком на `3.redirect.appmetrica.yandex.com`.',
+    '  - На ПК открывает прямую маршрутную ссылку `https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=taxi&z=18` (это принудительно сбрасывает старый кэш localStorage Яндекс.Такси и ставит точку строго на дом №45 вместо соседнего дома №51!).',
+    '- **Модальное окно «🛵 Доставка из кафе»:** Открывается из верхней шапки и липкой ленты. Содержит сводку текущей корзины, поля (Имя, Телефон/@Telegram, Улица/Дом/Кв, Пожелания) и отправляет сформированный заказ в Telegram шефу.',
+    '',
+    '## 3. ДИЗАЙН-СИСТЕМА, БОКОВЫЕ КУЛИСЫ ПК (v26) И ВЕКТОРНАЯ ГОЛУБКА «МИР МИР»',
+    '- **Шрифты и Tailwind:** Заголовки — `Cormorant Garamond` (serif), основной текст — `Manrope` (sans-serif). Подключен Tailwind CDN.',
+    '- **Цветовая палитра:** Фон ПК-кулис `#1A2416`, темно-хвойный `#2E3D28`, оливковый `#556432`, теплый терракотово-янтарный акцент `#D48238`, золотисто-персиковый `#F2B880`, сливочно-кремовый фон карточек `#FDF8F2` и `#F6E4CE`.',
+    '- **Аутентичные боковые кулисы для ПК (`@media (min-width: 1150px)`):**',
+    '  - На широких экранах центральная колонка `main.max-w-7xl` оформлена как полупрозрачная карточка `rgba(246, 228, 206, 0.96)` с `border-radius: 2.8rem`, `backdrop-filter: blur(12px)` и глубокой тенью.',
+    '  - По бокам фиксированно (`#pc-v26-authentic-wings`) раскрываются 2 реальные фотографии из галереи кафе: слева — кирпичный свод зала (`img/ymap_org_0.jpg`), справа — круглая кованая вывеска с Голубкой на фоне синего неба (`img/ymap_org_1.jpg`) под мягким темно-зеленым градиентом. На мобильных экранах боковые кулисы отключены (`display: none`).',
+    '- **Точный SVG-код фирменного медальона вывески «МИР МИР» (белая голубка с оливковой веточкой в клюве на оливково-золотом круге):**',
+    '```html',
+    DOVE_SIGN_HTML,
+    '```',
+    '',
+    '## 4. HERO-БЛОК, 4 ЛЕВИТИРУЮЩИХ КУБИКА И 3D-КАРУСЕЛЬ ОРИГИНАЛЬНЫХ БЛАНКОВ',
+    '- Слева в Hero-блоке: яркая текстура живой микрозелени (`img/vk_5129_1.jpg`), медальон Голубки, заголовок «Мир Мир — пространство вкуса и уюта», цитата ИИ-оракула и 4 левитирующих Bento-кубика (`@keyframes float-cube`) с быстрым переходом к разделам.',
+    '- Справа в Hero-блоке: вращающийся водяной знак (`@keyframes spin-wm`) и интерактивная 3D-карусель (`perspective: 1200px`, `transform-style: preserve-3d`) 4 подлинных сканов бумажного меню кафе (`img/vk_5047_0.jpg` — Осень/Супы/Боул, `img/vk_5047_1.jpg` — Салаты/Лапша/Бургеры/Пицца, `img/vk_5047_2.jpg` — Десерты/Смузи/Кофе, `img/vk_5047_3.jpg` — Чайная карта) с кнопкой «Лупа 🔍» для полноэкранного просмотра.',
+    '',
+    '## 5. ИНТЕРАКТИВНЫЙ КОНСТРУКТОР БОУЛА (БЛАНК №1) И КОМБО-ЛАНЧ (-30%)',
+    '- **Модальное окно «🥗 Собрать Боул» (`openBowlBuilder`):**',
+    '  - Уже в базе тарелки: Запечённые овощи + Салат коул слоу + Ферментированные овощи.',
+    '  - Шаг 1 (Размер): Большой Боул 450 г (540 ₽) или Полбоул 225 г (350 ₽).',
+    '  - Шаг 2 (Гарнир): Зелёная гречка | Бурый рис | Киноа | Кус-кус.',
+    '  - Шаг 3 (Белковая основа): Тофу печёный | Фалафель | Сейтан пряный | Нут томлёный.',
+    '  - Шаг 4 (Авторский соус): Ореховый | Тахини | Зелёный песто | Манго-чили.',
+    '  - Шаг 5 (Чекбоксы добавок): Авокадо 45 г (+120 ₽), Вторая основа мал. (+90 ₽), Вторая основа бол. (+120 ₽), Доп. соус (+60 ₽), Крафтовый хлеб (+60 ₽).',
+    '- **Авто-математика Комбо-Ланча (-30%):** Корзина автоматически проверяет наличие триады «Суп + Основное блюдо (Боулы/Салаты/Лапша/Бургеры/Спешлы) + Напиток (Бар/Чай)». Как только все 3 категории присутствуют в заказе, автоматически применяется скидка 30% на комбо-набор!',
+    '',
+    '## 6. СВАЙП-БРОНЯ (SPA HISTORY API GUARD), РАДИО МИРМИР И PDF-КАТАЛОГ',
+    '- **Защита от вылета при свайпе назад на смартфонах (`window.onpopstate`):** При загрузке и открытии любого модального окна вызывается `history.pushState({g:1}, "")`. При свайпе «Назад» на Android/Honor перехватчик поочерёдно закрывает открытый лайтбокс, окно Боула, Доставку, Корзину, ТЗ-Терминал или сбрасывает фильтр категории меню на «Все», не выбрасывая гостя из браузера.',
+    '- **Процедурный синтезатор «📻 Радио МирМир»:** Работает на чистом `Web Audio API` (`AudioContext`) без внешних MP3-файлов — генерирует мягкие переливы синусоидальных аккордов пентатоники (частоты 261.63, 293.66, 329.63, 392.00, 440.00, 523.25 Гц).',
+    '- **Экспорт в PDF (`exportPDF`):** Генерирует чистое печатное окно всех 72 блюд с миниатюрами фото, весом, составом и ценами S/L и вызывает `window.print()`.',
+    '',
+    '## 7. БОРТОВОЙ ТЗ-ТЕРМИНАЛ, ЧЕК-ЛИСТ БАГОВ И АВТО-БУФЕР ОБМЕНА WINDOWS',
+    '- Встроено окно «📝 Бортовой ТЗ-Терминал & Редактор 72 блюд» (без API-ключей в браузере): позволяет команде кафе оставлять заметки в общий журнал или напротив каждого из 72 блюд.',
+    '- Нажатие «💾 Сохранить» отправляет заметку в облачный буфер `ntfy.sh/mirmir_tz_sync_nn45_v30`, а при запуске `run.bat` на ПК скрипт сам скачивает заметки в `tz_mirmir.json`, генерирует ответы от Gemini и копирует сводку ТЗ в буфер обмена Windows (`clip`).',
+    '',
+    '## 8. ПОЛНАЯ ЭТАЛОННАЯ БАЗА ВСЕХ 72 БЛЮД МЕНЮ (`DATA.menu` JSON 1:1)',
+    'Ниже представлена точная структура всех 72 позиций меню (9 спешлов со стены ВК + 63 позиции с 4 печатных бланков, включая 29 блюд с двойными кнопками выбора Малой/Большой порции `sizes` и проверенными путями к фотографиям):',
+    '```json',
+    menuJsonCompact,
+    '```',
+    '',
+    '## 9. ИНСТРУКЦИЯ ПО ГЕНЕРАЦИИ КОДА ДЛЯ ИИ-МОДЕЛИ',
+    'Используя эту спецификацию и JSON-массив выше, напиши полный рабочий код:',
+    '1) Сначала выдай полный файл `menu_data.py` со всеми 72 позициями.',
+    '2) Затем выдай полный файл `app.py` (включая рендер HTML, JS-логику всех модальных окон, конструктора Боула, корзины с комбо -30%, 3D-карусели и ТЗ-Терминала).',
+    '3) Не сокращай список блюд комментариями вроде `// ... остальные блюда` — перенеси все 72 позиции полностью!'
+  ].join('\n');
+};
+
+window.openMasterPromptModal = function() {
+  try { history.pushState({guard:'master_prompt'}, ''); } catch(e){}
+  let m = document.getElementById('master-prompt-modal');
+  if (!m) {
+    m = document.createElement('div');
+    m.id = 'master-prompt-modal';
+    m.className = 'fixed inset-0 z-[70] bg-black/85 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5';
+    document.body.appendChild(m);
+  }
+  m.classList.remove('hidden'); m.classList.add('flex');
+  const promptText = window.buildFullSiteMasterPrompt();
+  m.innerHTML = [
+    '<div class="bg-[#FDF8F2] rounded-[2rem] max-w-5xl w-full h-[90vh] flex flex-col justify-between overflow-hidden border-4 border-[#D48238] shadow-2xl">',
+      '<div class="p-4 sm:p-5 bg-[#2E3D28] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">',
+        '<div class="flex items-center gap-3">',
+          '<div class="w-11 h-11 flex-shrink-0">' + DOVE_SIGN_HTML + '</div>',
+          '<div><span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">Full DNA Quine Specification • v32.0</span>',
+          '<h3 class="font-serif text-2xl sm:text-3xl font-bold leading-none mt-0.5">🧬 Мастер-Промпт для 100% воссоздания сайта любой ИИ-моделью</h3></div>',
+        '</div>',
+        '<div class="flex items-center gap-2 flex-wrap">',
+          '<button onclick="window.copyMasterPromptText()" class="px-4 py-2.5 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs sm:text-sm shadow-lg cursor-pointer">📋 Скопировать весь Промпт (1 клик)</button>',
+          '<button onclick="window.downloadMasterPromptFile()" class="px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow cursor-pointer">💾 Скачать .TXT</button>',
+          '<button onclick="document.getElementById(\'master-prompt-modal\').classList.add(\'hidden\');document.getElementById(\'master-prompt-modal\').classList.remove(\'flex\')" class="w-9 h-9 rounded-full bg-white/15 text-white font-bold cursor-pointer ml-1">✕</button>',
+        '</div>',
+      '</div>',
+      '<div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-3 custom-scroll">',
+        '<div class="p-3.5 rounded-2xl bg-amber-50 border border-[#D48238]/40 text-xs text-stone-800">',
+          '💡 <b>Как использовать эту ДНК-спецификацию:</b> В этом промпте собраны абсолютно все технические нюансы, цвета, координаты дома №45, SVG-код Голубки, механики конструктора Боула, свайп-защиты и полный JSON-каталог всех 72 блюд. Скопируйте его и отправьте в любую топовую LLM (Gemini Pro/Ultra, Claude 3.5/4 Opus/Sonnet, GPT-4o/5) — и модель сгенерирует весь код проекта один в один!',
+        '</div>',
+        '<textarea id="master-prompt-textarea" readonly class="w-full h-[64vh] p-4 rounded-2xl bg-[#1A2316] text-[#F6E4CE] font-mono text-xs leading-relaxed border-2 border-[#556432] focus:outline-none">' + esc(promptText) + '</textarea>',
+      '</div>',
+    '</div>'
+  ].join('');
+};
+
+window.copyMasterPromptText = function() {
+  const txt = window.buildFullSiteMasterPrompt();
+  navigator.clipboard.writeText(txt);
+  alert('🧬 Полный Мастер-Промпт (включая все 72 блюда и технические спецификации) скопирован в буфер обмена!');
+};
+
+window.downloadMasterPromptFile = function() {
+  const txt = window.buildFullSiteMasterPrompt();
+  const blob = new Blob([txt], {type: 'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'MASTER_PROMPT_MIRMIR_v32.txt';
+  a.click();
+};
+
 window.openTzTerminal = function(tab) {
   if (tab) window.tzActiveTab = tab;
   try { history.pushState({guard:'tz_terminal'}, ''); } catch(e){}
@@ -669,6 +792,7 @@ window.renderTzTerminal = function() {
           tabBtn('journal', '📓 Бортовой Журнал ТЗ (' + tasks.length + ')'),
           tabBtn('dishes', '🍲 Построчное ТЗ по блюдам (72)'),
           tabBtn('vk_gallery', '📸 Архив фото ВК'),
+          '<button onclick="window.openMasterPromptModal()" class="px-4 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm cursor-pointer bg-amber-400 text-[#1A2416] shadow-lg hover:bg-amber-300">🧬 Мастер-Промпт (ДНК Сайта)</button>',
           '<button onclick="window.closeTzTerminal()" class="w-9 h-9 rounded-full bg-white/15 text-white font-bold cursor-pointer ml-1">✕</button>',
         '</div>',
       '</div>',
@@ -771,6 +895,11 @@ window.saveDishTzRow = async function(idx) {
 
   window.addEventListener('DOMContentLoaded', () => {
     syncLocalTzWithMenu();
+    const devCard = document.querySelector('#dev-modal .bg-white.p-5');
+    if (devCard && !document.getElementById('btn-open-master-prompt-dev')) {
+      devCard.insertAdjacentHTML('afterbegin', '<div class="mb-4 p-3.5 rounded-2xl bg-gradient-to-r from-[#2E3D28] to-[#556432] text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg border-2 border-[#F2B880]"><div><span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold block">God-Mode AI Specification • v32.0</span><h4 class="font-serif text-xl font-bold">🧬 Полный Мастер-Промпт для клонирования сайта 1:1</h4><p class="text-xs text-white/80">Включает все технические нюансы, SVG, стили, логику и базу всех 72 блюд для любой LLM</p></div><div class="flex gap-2"><button id="btn-open-master-prompt-dev" onclick="window.openMasterPromptModal()" class="px-4 py-2.5 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs whitespace-nowrap shadow cursor-pointer">🧬 Открыть Мастер-Промпт</button><button onclick="window.openTzTerminal(\'journal\')" class="px-3.5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-[#F2B880] font-extrabold text-xs whitespace-nowrap cursor-pointer">📝 ТЗ-Терминал</button></div></div>');
+    }
+
     renderDishes();
 
     document.querySelectorAll('a[href*="appmetrica"], a[href*="taxi.yandex"]').forEach(a => {
