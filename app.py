@@ -47,7 +47,7 @@ def get_run_version():
             pass
     with open(p, "w", encoding="utf-8") as f:
         f.write(str(c))
-    return f"v29.0 [Сборка #{c}]", c
+    return f"v30.0 [Сборка #{c}]", c
 
 
 def load_key(filename):
@@ -946,3 +946,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    import mirmir_v30_core
+    mirmir_v30_core.enhance_index_html()
