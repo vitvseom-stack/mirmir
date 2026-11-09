@@ -1,5 +1,12 @@
 [
   {
+    "version": "Релиз v1.0 (от 09.11.2026 • Сборка #4)",
+    "timestamp": "09.11.2026 13:20:11",
+    "model": "gemini-3-flash-preview",
+    "status": "ONLINE (HTTP 200 OK)",
+    "stats": "Сборка Релиз v1.0 (от 09.11.2026 • Сборка #4): 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
+  },
+  {
     "version": "Релиз v1.0 (от 09.11.2026 • Сборка #2)",
     "timestamp": "09.11.2026 12:38:00",
     "model": "gemini-3-flash-preview",
