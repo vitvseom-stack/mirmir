@@ -47,7 +47,7 @@ def get_run_version():
             pass
     with open(p, "w", encoding="utf-8") as f:
         f.write(str(c))
-    return "v1.0 • Подарочное издание (от 09.11.2026)", 1
+    return f"Релиз v1.0 (от 09.11.2026 • Сборка #{c})", c
 
 
 def load_key(filename):
@@ -201,7 +201,7 @@ def build_data_and_audit(announcements, api_key, version_str):
             "✅ Защита от вылета при свайпе назад (History API Guard на окнах, вкладках и главной): АКТИВНА",
             "✅ Интерактивный Конструктор Боула (225/450 г + Гарнир + Белок + Соус + Допы): ПОДКЛЮЧЕН",
             f"✅ 100% соответствие 4 бланкам ({len(menu_list)} поз., выбор S/L порции: {dual_cnt} поз.)",
-            "✅ Точный прицел Яндекс Go на дом №45 по ул. Ильинской (56.321475, 43.990240)"
+            "✅ Точный прицел Яндекс Go на дом №45 по ул. Ильинской (56.322355, 43.990383)"
         ],
         "auto_fixed_issues": [
             "Внедрен перехватчик `window.onpopstate`: свайп назад закрывает открытые модалки и сбрасывает вкладки вместо выброса из браузера.",
@@ -217,7 +217,7 @@ def build_data_and_audit(announcements, api_key, version_str):
                 hist = json.load(f)
         except Exception:
             pass
-    hist.insert(0, {"version": version_str, "timestamp": qa_report["checked_at"], "model": active_model, "status": model_status, "stats": qa_report["ai_qa_verdict"]})
+    hist = hist if isinstance(hist, list) else []; hist.insert(0, {"version": version_str, "timestamp": qa_report["checked_at"], "model": active_model, "status": model_status, "stats": qa_report["ai_qa_verdict"]})
     hist = hist[:12]
     with open(hist_p, "w", encoding="utf-8") as f:
         json.dump(hist, f, ensure_ascii=False, indent=2)
