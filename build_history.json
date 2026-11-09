@@ -1,86 +1,11 @@
-[
-  {
-    "version": "v38.0 [Сборка #59]",
-    "timestamp": "08.11.2026 12:10:57",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
-    "stats": "Сборка v38.0 [Сборка #59]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v37.0 [Сборка #58]",
-    "timestamp": "08.11.2026 11:59:09",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
-    "stats": "Сборка v37.0 [Сборка #58]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v36.0 [Сборка #57]",
-    "timestamp": "08.11.2026 11:31:39",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
-    "stats": "Сборка v36.0 [Сборка #57]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v35.0 [Сборка #56]",
-    "timestamp": "08.11.2026 11:21:44",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
-    "stats": "Сборка v35.0 [Сборка #56]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v34.0 [Сборка #55]",
-    "timestamp": "08.11.2026 11:08:55",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
-    "stats": "Сборка v34.0 [Сборка #55]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v33.0 [Сборка #54]",
-    "timestamp": "08.11.2026 10:18:47",
-    "model": "gemini-3-flash-preview",
-    "status": "CACHED / OFFLINE",
-    "stats": "Сборка v33.0 [Сборка #54]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v32.0 [Сборка #53]",
-    "timestamp": "08.11.2026 10:00:01",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
-    "stats": "Сборка v32.0 [Сборка #53]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v32.0 [Сборка #52]",
-    "timestamp": "08.11.2026 09:59:22",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
-    "stats": "Сборка v32.0 [Сборка #52]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v31.0 [Сборка #51]",
-    "timestamp": "08.11.2026 09:55:42",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
-    "stats": "Сборка v31.0 [Сборка #51]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v30.0 [Сборка #50]",
-    "timestamp": "08.11.2026 09:44:54",
-    "model": "gemini-3-flash-preview",
-    "status": "ONLINE (HTTP 200 OK)",
-    "stats": "Сборка v30.0 [Сборка #50]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v29.0 [Сборка #49]",
-    "timestamp": "07.11.2026 10:04:08",
-    "model": "gemini-3-flash-preview",
-    "status": "CACHED / OFFLINE",
-    "stats": "Сборка v29.0 [Сборка #49]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  },
-  {
-    "version": "v29.0 [Сборка #48]",
-    "timestamp": "07.11.2026 10:03:06",
-    "model": "gemini-3-flash-preview",
-    "status": "CACHED / OFFLINE",
-    "stats": "Сборка v29.0 [Сборка #48]: 72 блюд. Защита History API (SPA Back-Guard) активна. Конструктор Боула подключен."
-  }
-]
+{
+  "count": 1,
+  "logs": [
+    {
+      "build": 1,
+      "time": "09.11.2026 12:00",
+      "version": "v1.0",
+      "status": "Официальный запуск обновлённой платформы веган-кафе и чайной «Мир Мир» (Ильинская, 45)"
+    }
+  ]
+}
