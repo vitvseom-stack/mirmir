@@ -849,14 +849,14 @@
     function copyMasterPromptText() { const ta = document.getElementById("server-master-prompt-data"); if (ta) { navigator.clipboard.writeText(ta.value); showToast("🧬 Мастер-Промпт скопирован!"); } }
     function downloadMasterPromptFile() { const ta = document.getElementById("server-master-prompt-data"); if (!ta) return; const b = new Blob([ta.value], {type: "text/plain;charset=utf-8"}), a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "MASTER_PROMPT_MIRMIR.txt"; a.click(); }
 
-    // === 🚀 ЕДИНОЕ ЯДРО v3.1: ПЛАШКА ПОДАЧИ В МЕНЮ + КНОПКА С ЛОГО VK НА ПОСТ + БЕЗЛИМИТНЫЙ «ЕЩЁ ВАРИАНТ» + СВАЙП НАЗАД ===
+    // === 🚀 ЕДИНОЕ ЯДРО v3.2: УЗКАЯ КНОПКА [VK + ЧЕЛОВЕЧЕК] + ЖИВАЯ ПРОВЕРКА КАРТИНОК БЕЗ БИТЫХ ИКОНОК + ПОДАЧА БЛЮД ===
     const VK_LOGO_SVG = '<svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M15.07 2H8.93C3.33 2 2 3.33 2 8.93v6.14C2 20.67 3.33 22 8.93 22h6.14c5.6 0 6.93-1.33 6.93-6.93V8.93C22 3.33 20.67 2 15.07 2zm3.08 14.27h-1.46c-.55 0-.72-.44-1.71-1.43-.86-.83-1.24-.94-1.46-.94-.3 0-.38.08-.38.49v1.31c0 .35-.11.56-1.04.56-1.54 0-3.25-.93-4.45-2.66-1.81-2.54-2.3-4.45-2.3-4.84 0-.21.08-.41.49-.41h1.46c.37 0 .51.17.65.56.72 2.08 1.92 3.9 2.41 3.9.19 0 .27-.09.27-.56v-2.16c-.06-.99-.58-1.08-.58-1.43 0-.17.14-.34.37-.34h2.29c.31 0 .42.16.42.53v2.91c0 .31.14.42.23.42.19 0 .34-.11.68-.45 1.05-1.18 1.8-3 1.8-3 .1-.21.27-.41.64-.41h1.46c.44 0 .54.23.44.53-.18.85-1.95 3.35-1.95 3.35-.16.25-.22.36 0 .65.16.21.69.67 1.04 1.08.65.74 1.14 1.36 1.27 1.79.14.42-.08.64-.5.64z"/></svg>';
+    const WALKING_PERSON_SVG = '<svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7z"/></svg>';
 
     window.customPromptsPerDish = window.customPromptsPerDish || {};
     window.dishVariantStep = window.dishVariantStep || {};
     window.cachedSearchPools = window.cachedSearchPools || {};
 
-    // 1. В левом слайдере крутятся строго 5 проверенных кадров ИНТЕРЬЕРА и ЭКСТЕРЬЕРА кафе
     window.getInteriorSlidesList = function() {
       return [
         { src: "img/ymap_org_0.jpg", title: "🏛️ Исторический кирпичный свод и уютный зал на Ильинской, 45", tag: "Интерьер зала" },
@@ -867,7 +867,6 @@
       ];
     };
 
-    // 2. Справа под 3D-меню: 2 крупных поля для картинок блюд
     window.rightSpecialsPairIdx = 0;
     window.stepRightSpecialsPair = function(delta) {
       const specials = (DATA.menu || []).filter(d => d.category === "Сезонные спешлы от Шефа" || d.photo_type === "real");
@@ -923,7 +922,7 @@
       window.renderRightTwoPictureFields();
     };
 
-    // 3. Прямая отрисовка Электронного меню (72 блюда) с обязательной плашкой «🍽️ Подача блюд может отличаться» на фото КАЖДОГО блюда!
+    // Электронное меню (72 блюда) с обязательной плашкой «🍽️ Подача блюд может отличаться» на фото каждого блюда
     renderDishes = function() {
       applyManualOverridesToMenuData();
       const tabsBox = document.getElementById("menu-cat-tabs");
@@ -969,7 +968,7 @@
       }).join("");
     };
 
-    // 4. Отрисовка Новостей с кнопкой-логотипом VK и прямой ссылкой на конкретный пост (?w=wall-191992548_ID)
+    // НОВОСТИ: узкая синяя кнопка только с логотипом VK + идущий человечек 🚶 (без битого параметра -191992548!)
     renderNewsPosts = function() {
       const grid = document.getElementById("posts-grid");
       if (!grid) return;
@@ -977,15 +976,10 @@
       const slice = posts.slice(currentNewsPage * 3, currentNewsPage * 3 + 3);
 
       grid.innerHTML = slice.map(p => {
-        let postId = p.id || "";
-        if (!postId && p.photo) {
-          const m = String(p.photo).match(/vk_(\d+)_/);
-          if (m) postId = m[1];
+        let safeVkUrl = p.vk_url || "https://vk.com/mirmir.cafe";
+        if (safeVkUrl.includes("-191992548")) {
+          safeVkUrl = "https://vk.com/mirmir.cafe";
         }
-        const directPostUrl = postId
-          ? ("https://vk.com/mirmir.cafe?w=wall-191992548_" + postId)
-          : (p.vk_url || "https://vk.com/mirmir.cafe");
-
         return '<article class="zoom-card bg-[#FFFDF9] rounded-3xl p-4 border border-[#556432]/25 shadow-sm flex flex-col justify-between gap-3 transition">' +
           '<div class="space-y-2.5">' +
             '<div class="flex items-center justify-between text-[11px] font-extrabold text-[#D48238]">' +
@@ -999,58 +993,76 @@
             '<p class="text-xs sm:text-sm text-stone-700 leading-relaxed whitespace-pre-line">' + esc(p.text || "") + '</p>' +
           '</div>' +
           '<div class="pt-2.5 border-t border-stone-200/80 flex items-center justify-between">' +
-            '<a href="' + esc(directPostUrl) + '" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0077FF] hover:bg-[#0055CC] text-white text-xs font-extrabold transition shadow-md cursor-pointer">' +
-              VK_LOGO_SVG + '<span>Открыть пост в VK ↗</span>' +
+            '<a href="' + esc(safeVkUrl) + '" target="_blank" title="Перейти в VK" class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-[#0077FF] hover:bg-[#0055CC] text-white transition shadow-md cursor-pointer">' +
+              VK_LOGO_SVG + WALKING_PERSON_SVG +
             '</a>' +
-            (postId ? '<span class="text-[10px] font-bold text-stone-400">Пост #' + esc(postId) + '</span>' : '') +
+            '<span class="text-[10px] font-bold text-stone-400">vk.com/mirmir.cafe</span>' +
           '</div>' +
         '</article>';
       }).join("");
 
-      // Обновляем и нижнюю кнопку под секцией новостей на логотип VK
       const bottomVkLink = document.querySelector("#news-section-wrap a[href*='vk.com']");
       if (bottomVkLink) {
-        bottomVkLink.className = "inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0077FF] hover:bg-[#0055CC] text-white text-xs font-extrabold transition shadow-md";
-        bottomVkLink.innerHTML = VK_LOGO_SVG + "<span>Все посты на стене VK (vk.com/mirmir.cafe) ↗</span>";
+        bottomVkLink.className = "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0077FF] hover:bg-[#0055CC] text-white text-xs font-extrabold transition shadow-md";
+        bottomVkLink.innerHTML = VK_LOGO_SVG + WALKING_PERSON_SVG + "<span>Стена VK</span>";
       }
     };
 
-    // 5. Умный подбор коротких веган-тегов и 100% рабочая кнопка «🎲 Ещё вариант» БЕЗ 45-секундных заглушек!
+    // ЖИВАЯ ПРОВЕРКА ЗАГРУЗКИ КАРТИНКИ В БРАУЗЕРЕ (защита от битых иконок!)
+    function verifyImageLoads(url, timeoutMs = 3500) {
+      return new Promise(resolve => {
+        if (!url) return resolve(false);
+        const img = new Image();
+        let done = false;
+        const timer = setTimeout(() => {
+          if (!done) { done = true; resolve(false); }
+        }, timeoutMs);
+        img.onload = () => {
+          if (!done) { done = true; clearTimeout(timer); resolve(img.naturalWidth > 30); }
+        };
+        img.onerror = () => {
+          if (!done) { done = true; clearTimeout(timer); resolve(false); }
+        };
+        img.src = url;
+      });
+    }
+
     const NON_VEGAN_BAN_REGEX = /meat|chicken|pork|beef|shrimp|prawn|fish|seafood|salmon|tuna|bacon|steak|ham|lamb|turkey|sausage|pepperoni|cheese|milk|dairy|egg/i;
 
-    // Кулинарная база гарантированных HD веган-фотографий по категориям (мгновенный пул без лимитов!)
     const CURATED_VEGAN_HD_BANK = {
+      burger: [
+        "img/vk_5128_1.jpg",
+        "img/vk_5118_0.jpg",
+        "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=800&q=80",
+        "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&q=80",
+        "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800&q=80"
+      ],
       drink: [
         "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&q=80",
         "https://images.unsplash.com/photo-1556881286-fc6915169721?w=800&q=80",
         "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=800&q=80",
         "https://images.unsplash.com/photo-1497534446932-c925b458314e?w=800&q=80",
-        "https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=800&q=80",
-        "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80"
+        "https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=800&q=80"
       ],
       soup: [
         "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80",
         "https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80",
-        "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=800&q=80",
-        "https://images.unsplash.com/photo-1578020190125-f4f7c18bc9cb?w=800&q=80"
+        "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=800&q=80"
       ],
       salad: [
         "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80",
         "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&q=80",
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80",
-        "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=800&q=80"
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80"
       ],
       main: [
         "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80",
-        "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=800&q=80",
         "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80",
         "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&q=80"
       ],
       dessert: [
         "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=800&q=80",
         "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&q=80",
-        "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80",
-        "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800&q=80"
+        "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80"
       ]
     };
 
@@ -1058,25 +1070,26 @@
       const cat = (dish.category || "").toLowerCase();
       const nm = (dish.name || "").toLowerCase();
       const raw = (rawText || "").toLowerCase();
-      if (nm.includes("лимонад") || raw.includes("lemonade") || raw.includes("citrus")) return { q: "citrus lemonade mint drink", bank: "drink" };
-      if (nm.includes("смузи") || raw.includes("smoothie")) return { q: "berry fruit smoothie glass", bank: "drink" };
-      if (nm.includes("фреш") || raw.includes("juice")) return { q: "fresh orange carrot juice", bank: "drink" };
-      if (nm.includes("кофе") || nm.includes("капучино") || nm.includes("американо")) return { q: "latte cappuccino coffee cup", bank: "drink" };
-      if (cat.includes("чай") || nm.includes("чай") || nm.includes("пуэр") || nm.includes("улун") || nm.includes("масала")) return { q: "herbal tea teapot cup", bank: "drink" };
-      if (cat.includes("суп") || nm.includes("суп") || nm.includes("том ям") || nm.includes("ватапа")) return { q: "vegan vegetable tofu soup bowl", bank: "soup" };
-      if (cat.includes("салат") || nm.includes("салат") || nm.includes("цезарь") || nm.includes("боул")) return { q: "vegan avocado green salad bowl", bank: "salad" };
-      if (cat.includes("десерт") || nm.includes("сырники") || nm.includes("шарлотка") || nm.includes("мороженое") || nm.includes("батончик")) return { q: "vegan berry cake dessert", bank: "dessert" };
-      if (nm.includes("пицца") || nm.includes("лахмаджун")) return { q: "vegan mushroom vegetable pizza", bank: "main" };
-      if (nm.includes("бургер") || nm.includes("сэндвич") || nm.includes("неряха")) return { q: "vegan plant burger sandwich", bank: "main" };
-      if (cat.includes("лапша") || nm.includes("лапша") || nm.includes("паста") || nm.includes("пад тай")) return { q: "vegan noodles pasta tofu", bank: "main" };
-      return { q: "vegan healthy dish bowl", bank: "salad" };
+      if (nm.includes("бургер") || raw.includes("burger") || nm.includes("сэндвич") || nm.includes("неряха") || nm.includes("завертон")) {
+        return { q: "vegan burger sandwich", bank: "burger" };
+      }
+      if (nm.includes("лимонад") || raw.includes("lemonade") || raw.includes("citrus")) return { q: "citrus lemonade mint", bank: "drink" };
+      if (nm.includes("смузи") || raw.includes("smoothie")) return { q: "berry smoothie", bank: "drink" };
+      if (nm.includes("фреш") || raw.includes("juice")) return { q: "fresh orange juice", bank: "drink" };
+      if (nm.includes("кофе") || nm.includes("капучино") || nm.includes("американо")) return { q: "latte coffee cup", bank: "drink" };
+      if (cat.includes("чай") || nm.includes("чай") || nm.includes("пуэр") || nm.includes("улун") || nm.includes("масала")) return { q: "herbal tea teapot", bank: "drink" };
+      if (cat.includes("суп") || nm.includes("суп") || nm.includes("том ям") || nm.includes("ватапа")) return { q: "vegan tofu soup", bank: "soup" };
+      if (cat.includes("салат") || nm.includes("салат") || nm.includes("цезарь") || nm.includes("боул")) return { q: "vegan salad bowl", bank: "salad" };
+      if (cat.includes("десерт") || nm.includes("сырники") || nm.includes("шарлотка") || nm.includes("мороженое") || nm.includes("батончик") || nm.includes("роти")) return { q: "vegan cake dessert", bank: "dessert" };
+      if (nm.includes("пицца") || nm.includes("лахмаджун")) return { q: "vegan vegetable pizza", bank: "main" };
+      if (cat.includes("лапша") || nm.includes("лапша") || nm.includes("паста") || nm.includes("пад тай")) return { q: "vegan noodles tofu", bank: "main" };
+      return { q: "vegan dish bowl", bank: "salad" };
     }
 
     window.runEngineForDish = function(idx, engKey) {
       const inp = document.getElementById("hub-ai-prm-" + idx);
       if (inp) window.customPromptsPerDish[idx] = inp.value;
       selectedAiEnginePerDish[idx] = engKey;
-      window.dishVariantStep[idx] = (window.dishVariantStep[idx] || 0) + 1;
       window.generateDishCandidateAI(idx);
     };
 
@@ -1104,12 +1117,11 @@
             const engines = [
               { k: "openverse_hd", lbl: "📸 1. Openverse HD" },
               { k: "wikimedia", lbl: "🥗 2. Wikimedia" },
-              { k: "gastro_hd", lbl: "🍹 3. GastroBank HD" },
-              { k: "flickr_food", lbl: "🍲 4. Flickr Vegan" },
-              { k: "local_ready", lbl: "🌿 5. Архив (317)" }
+              { k: "gastro_hd", lbl: "🍔 3. GastroBank HD" },
+              { k: "vk_food_archive", lbl: "🌿 4. Фото блюд из ВК" }
             ];
             const btnsHtml = '<div class="quick-6-engines-bar flex flex-wrap gap-1 pt-1.5 border-t border-amber-200/80 mt-1.5">' +
-              '<span class="text-[9px] font-extrabold text-stone-500 w-full">⚡ Нажмите на любой источник для мгновенного подбора без лимитов:</span>' +
+              '<span class="text-[9px] font-extrabold text-stone-500 w-full">⚡ Источники с авто-проверкой загрузки кадра (без битых ссылок):</span>' +
               engines.map(e =>
                 '<button onclick="runEngineForDish(' + idx + ',\'' + e.k + '\')" class="px-2 py-1 rounded-lg text-[10px] font-extrabold cursor-pointer transition ' +
                 (curE === e.k ? 'bg-[#2E3D28] text-[#F2B880] shadow' : 'bg-white hover:bg-amber-100 text-[#2E3D28] border border-amber-300') + '">' + e.lbl + '</button>'
@@ -1135,91 +1147,93 @@
       const engine = selectedAiEnginePerDish[idx] || "openverse_hd";
 
       const btn = document.getElementById("hub-ai-btn-" + idx);
-      if (btn) { btn.innerText = "⏳ Вариант #" + step + "..."; btn.disabled = true; }
+      if (btn) { btn.innerText = "⏳ Подбор #" + step + "..."; btn.disabled = true; }
 
       const topicInfo = extractShortSearchTopic(d, userRawText);
       const shortQuery = topicInfo.q;
       const bankPool = CURATED_VEGAN_HD_BANK[topicInfo.bank] || CURATED_VEGAN_HD_BANK.salad;
 
-      // 1. Движок Openverse HD (кешируем список из 30 реальных фото и при каждом клике «Ещё вариант» выдаём следующий кадр!)
+      // 1. Openverse HD с проверкой, что картинка реально открывается в браузере
       if (engine === "openverse_hd") {
         try {
           const cacheKey = "ov_" + shortQuery;
           if (!window.cachedSearchPools[cacheKey]) {
-            const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent(shortQuery) + "&page_size=30");
+            const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent(shortQuery) + "&page_size=25");
             const j = await r.json();
             if (j.results && j.results.length) {
               window.cachedSearchPools[cacheKey] = j.results
                 .filter(it => !NON_VEGAN_BAN_REGEX.test((it.title || "")))
-                .map(it => it.url)
+                .map(it => it.thumbnail || it.url)
                 .filter(Boolean);
             }
           }
           const pool = window.cachedSearchPools[cacheKey];
           if (pool && pool.length) {
-            const pickUrl = pool[step % pool.length];
-            pendingDishCandidates[idx] = { url: pickUrl, source: "📸 Openverse HD (Вариант #" + ((step % pool.length) + 1) + " из " + pool.length + ")", prompt: shortQuery };
-            addLocalBuildOrActionLog("📸 Openverse HD: вариант #" + step + " для «" + d.name + "»", shortQuery);
-            renderUnifiedSystemHub();
-            return;
+            for (let attempt = 0; attempt < Math.min(4, pool.length); attempt++) {
+              const candidateUrl = pool[(step + attempt) % pool.length];
+              if (await verifyImageLoads(candidateUrl)) {
+                pendingDishCandidates[idx] = { url: candidateUrl, source: "📸 Openverse HD (Вариант #" + step + ")", prompt: shortQuery };
+                renderUnifiedSystemHub();
+                return;
+              }
+            }
           }
         } catch(e) {}
       }
 
-      // 2. Движок Wikimedia Gastro Commons
+      // 2. Wikimedia Gastro с проверкой загрузки
       if (engine === "wikimedia") {
         try {
           const cacheKey = "wm_" + shortQuery;
           if (!window.cachedSearchPools[cacheKey]) {
-            const r = await fetch("https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=" + encodeURIComponent("filetype:bitmap " + shortQuery) + "&gsrlimit=25&prop=imageinfo&iiprop=url&format=json&origin=*");
+            const r = await fetch("https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=" + encodeURIComponent("filetype:bitmap " + shortQuery) + "&gsrlimit=25&prop=imageinfo&iiprop=url&iiurlwidth=720&format=json&origin=*");
             const j = await r.json();
             const pages = j.query && j.query.pages ? Object.values(j.query.pages) : [];
             window.cachedSearchPools[cacheKey] = pages
               .filter(p => !NON_VEGAN_BAN_REGEX.test(p.title || ""))
-              .map(p => p.imageinfo && p.imageinfo[0] && p.imageinfo[0].url)
+              .map(p => p.imageinfo && p.imageinfo[0] && (p.imageinfo[0].thumburl || p.imageinfo[0].url))
               .filter(Boolean);
           }
           const pool = window.cachedSearchPools[cacheKey];
           if (pool && pool.length) {
-            const pickUrl = pool[step % pool.length];
-            pendingDishCandidates[idx] = { url: pickUrl, source: "🥗 Wikimedia Gastro (Вариант #" + ((step % pool.length) + 1) + " из " + pool.length + ")", prompt: shortQuery };
-            addLocalBuildOrActionLog("🥗 Wikimedia: вариант #" + step + " для «" + d.name + "»", shortQuery);
-            renderUnifiedSystemHub();
-            return;
+            for (let attempt = 0; attempt < Math.min(4, pool.length); attempt++) {
+              const candidateUrl = pool[(step + attempt) % pool.length];
+              if (await verifyImageLoads(candidateUrl)) {
+                pendingDishCandidates[idx] = { url: candidateUrl, source: "🥗 Wikimedia Gastro (Вариант #" + step + ")", prompt: shortQuery };
+                renderUnifiedSystemHub();
+                return;
+              }
+            }
           }
         } catch(e) {}
       }
 
-      // 3. Движок Flickr Vegan Stream
-      if (engine === "flickr_food") {
-        const tag = shortQuery.split(" ")[0] || "vegan";
-        const flickrUrl = "https://loremflickr.com/720/720/vegan," + encodeURIComponent(tag) + "?lock=" + (step * 137 + idx);
-        pendingDishCandidates[idx] = { url: flickrUrl, source: "🍲 Flickr Vegan (Вариант #" + step + ")", prompt: shortQuery };
-        renderUnifiedSystemHub();
-        return;
+      // 3. Архив реальных фотографий блюд из постов ВК (отфильтрованный от зала и бланков меню)
+      if (engine === "vk_food_archive" || engine === "local_ready") {
+        const vkFoodPool = (DATA.vk_food_photos && DATA.vk_food_photos.length)
+          ? DATA.vk_food_photos
+          : (DATA.ready_photos || []).filter(p => p.includes("vk_") && !p.includes("5047_") && !p.includes("5068_"));
+        if (vkFoodPool.length) {
+          const pickVk = vkFoodPool[(step - 1) % vkFoodPool.length];
+          pendingDishCandidates[idx] = { url: pickVk, source: "🌿 Фото из постов ВК кафе (#" + (((step - 1) % vkFoodPool.length) + 1) + " из " + vkFoodPool.length + ")", prompt: pickVk };
+          renderUnifiedSystemHub();
+          return;
+        }
       }
 
-      // 4. Движок Локальный Архив img/ (317 готовых фото)
-      if (engine === "local_ready") {
-        const pool = (DATA.ready_photos && DATA.ready_photos.length) ? DATA.ready_photos : ["img/vk_5128_1.jpg"];
-        const pickLocal = pool[(step * 7 + idx) % pool.length];
-        pendingDishCandidates[idx] = { url: pickLocal, source: "🌿 Архив Кафе img/ (Вариант #" + step + ")", prompt: pickLocal };
-        renderUnifiedSystemHub();
-        return;
+      // 4. Проверенный пул GastroBank HD (гарантированно живые ссылки)
+      for (let attempt = 0; attempt < bankPool.length; attempt++) {
+        const bankUrl = bankPool[(step + attempt) % bankPool.length];
+        if (await verifyImageLoads(bankUrl)) {
+          pendingDishCandidates[idx] = { url: bankUrl, source: "🍔 GastroBank HD (Вариант #" + step + ")", prompt: shortQuery };
+          renderUnifiedSystemHub();
+          return;
+        }
       }
-
-      // 5. Гарантированный безлимитный пул GastroBank HD (НИКОГДА не выдаёт жёлтый баннер 45-секундного лимита!)
-      const pickBankUrl = bankPool[step % bankPool.length];
-      pendingDishCandidates[idx] = {
-        url: pickBankUrl,
-        source: "🍹 GastroBank HD (Вариант #" + ((step % bankPool.length) + 1) + " • Без лимитов)",
-        prompt: shortQuery
-      };
-      addLocalBuildOrActionLog("🍹 GastroBank HD: вариант #" + step + " для «" + d.name + "»", shortQuery);
       renderUnifiedSystemHub();
     };
 
-    // 6. Мобильный свайп «Назад» (popstate SPA-Guard для всех окон)
+    // Мобильный свайп «Назад» (popstate SPA-Guard)
     window.pushModalGuardState = function(tag) {
       try { history.pushState({ mirmirModal: tag || "open", t: Date.now() }, ""); } catch(e) {}
     };

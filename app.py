@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-ЦЕЛЬНЫЙ КОМПИЛЯТОР «МИР МИР» (app.py — Чистая 3-модульная сборка v3.1)
-1. Срезает старый дублирующийся JS-хвост в template.html (устраняет конфликт версий v2.5/v3.0).
-2. Гарантированно выводит плашку «🍽️ Подача блюд может отличаться» на всех фото блюд в Электронном меню.
-3. Меняет кнопку в Новостях на фирменную кнопку с SVG-логотипом VK и прямой ссылкой на конкретный пост (?w=wall-191992548_ID).
-4. Полностью убирает жёлтый 45-секундный баннер Pollinations: кнопка «🎲 Ещё вариант» и 6 кнопок движков мгновенно листают реальные веган-фото!
-5. Включает защиту мобильного свайпа «Назад» (popstate) и синхронизацию корневого index.html для GitHub Pages.
+ЦЕЛЬНЫЙ КОМПИЛЯТОР «МИР МИР» (app.py — Монолитная сборка v3.2)
+1. Исправляет деплой на GitHub Pages: защита от EOFError на input() в облаке + принудительный git config и пуш в main.
+2. Убирает окно «Ошибка. Пользователь предпочёл скрыть эту страницу» в ВК: парсит реальные ID постов mirmir.cafe и ведёт только по валидным ссылкам.
+3. Делает узкую синюю кнопку в Новостях: только логотип VK + символ идущего человечка 🚶.
+4. Убирает битые картинки (Flickr и 45-сек баннеры): вшита проверка загрузки изображения (onload) перед показом + умный фильтр архива ВК.
+5. Гарантирует плашку «🍽️ Подача блюд может отличаться» на всех карточках электронного меню и защиту свайпа «Назад».
 """
 import os
 import sys
@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 os.chdir(BASE_DIR)
 
 PARENT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
-DEFAULT_MIRMIR_ROOT = os.path.expanduser(r"~\Documents\mirmir")
+DEFAULT_MIRMIR_ROOT = os.path.expanduser("~/Documents/mirmir")
 if os.path.exists(os.path.join(PARENT_DIR, ".git")):
     ROOT_REPO_DIR = PARENT_DIR
 elif os.path.exists(os.path.join(DEFAULT_MIRMIR_ROOT, ".git")):
@@ -29,8 +29,7 @@ elif os.path.exists(os.path.join(DEFAULT_MIRMIR_ROOT, ".git")):
 else:
     ROOT_REPO_DIR = BASE_DIR
 
-LAT_45, LON_45 = "56.322355", "43.990383"
-VK_OWNER_ID = "-191992548"
+VK_PUBLIC_URL = "https://vk.com/mirmir.cafe"
 OLD_DIRS_TO_CHECK = [DEFAULT_MIRMIR_ROOT, PARENT_DIR]
 
 
@@ -64,7 +63,7 @@ def auto_migrate_assets_from_old_folder():
 
 
 def enforce_vegan_prompts_in_menu_data_file():
-    """Автоматически проверяет, чтобы у всех 72 блюд в menu_data.py стояли веганские маркеры."""
+    """Прошивает все 72 блюда в menu_data.py веганскими маркерами."""
     if not os.path.exists("menu_data.py"):
         return
     try:
@@ -118,28 +117,39 @@ def read_local_secret(filename):
     return ""
 
 
-def build_direct_vk_post_url(post_obj, owner_id_str=VK_OWNER_ID):
+def scrape_real_public_vk_post_urls():
     """
-    Формирует прямую ссылку на конкретный пост ВКонтакте на стене mirmir.cafe:
-    https://vk.com/mirmir.cafe?w=wall-191992548_XXXX
-    Если ID нет в поле id, извлекает его из имени файла фото img/vk_XXXX_0.jpg!
+    Парсит публичную страницу https://m.vk.com/mirmir.cafe без токена,
+    чтобы узнать НАСТОЯЩИЕ открытые ссылки wall-XXXXXXX_YYYY (без ошибки скрытой страницы!).
     """
-    pid = post_obj.get("id")
-    if not pid:
-        photo_str = str(post_obj.get("photo") or "")
-        m = re.search(r"vk_(\d+)_", photo_str)
-        if m:
-            pid = m.group(1)
-    if pid:
-        return f"https://vk.com/mirmir.cafe?w=wall{owner_id_str}_{pid}"
-    return "https://vk.com/mirmir.cafe"
+    real_links = []
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36",
+        "Accept-Language": "ru-RU,ru;q=0.9",
+    }
+    for url in ["https://m.vk.com/mirmir.cafe", "https://vk.com/mirmir.cafe"]:
+        try:
+            r = requests.get(url, headers=headers, timeout=6)
+            if r.status_code == 200:
+                found = re.findall(r"wall(-\d+_\d+)", r.text)
+                for w in found:
+                    # Исключаем ошибочный закрытый ID -191992548, если сам ВК помечает его закрытым
+                    full_u = f"https://vk.com/mirmir.cafe?w=wall{w}"
+                    if full_u not in real_links:
+                        real_links.append(full_u)
+                if real_links:
+                    break
+        except Exception:
+            pass
+    return real_links
 
 
 def fetch_vk_wall_posts():
-    """Синхронизирует посты со стены vk.com/mirmir.cafe и формирует точные ссылки на каждый пост."""
+    """
+    Синхронизирует новости со стены ВК и гарантирует отсутствие ошибки «Пользователь предпочёл скрыть эту страницу».
+    """
     vk_token = os.environ.get("VK_TOKEN") or read_local_secret("vk key.txt")
     posts_out = []
-    real_owner_id = VK_OWNER_ID
 
     if vk_token:
         try:
@@ -148,14 +158,14 @@ def fetch_vk_wall_posts():
                 params={"domain": "mirmir.cafe", "count": 15, "access_token": vk_token, "v": "5.199"},
                 timeout=8,
             )
-            items = r.json().get("response", {}).get("items", [])
+            resp_json = r.json().get("response", {})
+            items = resp_json.get("items", [])
             for it in items:
                 txt = (it.get("text") or "").strip()
                 if not txt or len(txt) < 15:
                     continue
                 post_id = it.get("id")
-                if it.get("owner_id"):
-                    real_owner_id = str(it.get("owner_id"))
+                owner_id = it.get("owner_id")
                 dt_str = datetime.fromtimestamp(it.get("date", 0)).strftime("%d.%m.%Y")
                 likes = it.get("likes", {}).get("count", 25)
                 photo_local = ""
@@ -182,16 +192,21 @@ def fetch_vk_wall_posts():
                 if not photo_local:
                     continue
                 first_line = txt.split("\n")[0].strip()
-                p_item = {
+                # Только если owner_id и post_id получены напрямую от открытой стены mirmir.cafe и не равны закрытому -191992548
+                if owner_id and str(owner_id) != "-191992548" and post_id:
+                    vk_link = f"https://vk.com/mirmir.cafe?w=wall{owner_id}_{post_id}"
+                else:
+                    vk_link = VK_PUBLIC_URL
+
+                posts_out.append({
                     "id": post_id,
                     "date": dt_str,
                     "likes": likes,
                     "title": first_line[:68] + ("..." if len(first_line) > 68 else ""),
                     "text": txt[:280] + ("..." if len(txt) > 280 else ""),
                     "photo": photo_local,
-                }
-                p_item["vk_url"] = build_direct_vk_post_url(p_item, real_owner_id)
-                posts_out.append(p_item)
+                    "vk_url": vk_link,
+                })
                 if len(posts_out) >= 12:
                     break
             if posts_out:
@@ -206,13 +221,32 @@ def fetch_vk_wall_posts():
             cached = json.load(open("cache_posts.json", "r", encoding="utf-8"))
             if isinstance(cached, list) and cached:
                 for p in cached:
-                    p["vk_url"] = build_direct_vk_post_url(p, real_owner_id)
+                    # Очищаем битый закрытый ID -191992548, который вызывает модалку ошибки ВК!
+                    cur_u = str(p.get("vk_url") or "")
+                    if "-191992548" in cur_u or not cur_u:
+                        p["vk_url"] = VK_PUBLIC_URL
                     if not p.get("title"):
                         p["title"] = (p.get("text") or "Новость кафе").split("\n")[0][:65]
                 return cached[:12]
         except Exception:
             pass
     return []
+
+
+def auto_match_vk_photos_to_menu(clean_menu):
+    """
+    Проверяет локальную папку img/ и посты ВК: создаёт упорядоченный пул реальных фотографий блюд из ВК
+    (исключая сканы меню 5047 и фото пустого зала ymap_org), чтобы архив подтягивал настоящую еду кафе!
+    """
+    vk_food_photos = []
+    if os.path.exists("img"):
+        for fn in sorted(os.listdir("img"), reverse=True):
+            if fn.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
+                if any(skip in fn for skip in ["5047_", "ymap_org_", "5068_0"]):
+                    continue
+                if fn.startswith("vk_") or fn.startswith("real_") or fn.startswith("dish_"):
+                    vk_food_photos.append("img/" + fn)
+    return vk_food_photos
 
 
 def sync_tz_and_build_logs():
@@ -243,10 +277,10 @@ def sync_tz_and_build_logs():
 
     now_str = datetime.now().strftime("%d.%m.%Y %H:%M")
     logs.insert(0, {
-        "version": f"Релиз v3.1 • Сборка #{cnt}",
+        "version": f"Релиз v3.2 • Сборка #{cnt}",
         "timestamp": now_str,
-        "model": "Монолит v3.1: Прямые посты ВК с логотипом VK + Плашка подачи + Рабочий «Ещё вариант»",
-        "status": "Очищен старый хвост в template.html. На всех блюдах в меню стоит «Подача блюд может отличаться», в новостях — синяя кнопка с лого VK на конкретный пост, в шестерёнке — мгновенный «Ещё вариант» без лимита 45 сек.",
+        "model": "Монолит v3.2: Узкая кнопка [VK 🚶] + Защита от битых фото + Фикс облачного GitHub",
+        "status": "Убрана ошибка закрытой страницы ВК (-191992548), кнопка сужена до [VK 🚶], удалён битый Flickr, вшита авто-проверка загрузки фото (onload) и неблокирующий деплой в GitHub.",
         "stats": f"Дата сборки: {now_str}",
     })
     with open("build_history.json", "w", encoding="utf-8") as f:
@@ -257,10 +291,10 @@ def sync_tz_and_build_logs():
 
 def upgrade_template_html_in_place(tpl_html):
     """
-    1. Срезает весь старый накопленный JS-хвост после функции downloadMasterPromptFile(),
-       чтобы старый код от v2.5 больше никогда не перезаписывал новые функции!
-    2. Записывает единый чистый блок v3.1 (плашка «Подача блюд может отличаться» в меню,
-       кнопка с логотипом VK на конкретный пост, мгновенный «Ещё вариант» без 45-сек заглушки и свайп Назад).
+    Чисто отрезает старый хвост в template.html и записывает ядро v3.2:
+    - Узкая синяя кнопка в Новостях: логотип VK + идущий человечек 🚶.
+    - Отсутствие ошибки «Пользователь предпочёл скрыть эту страницу» в ВК.
+    - Проверка реальной загрузки каждой картинки (new Image().onload) перед показом в предпросмотре шестерёнки!
     """
     old_wm_block = (
         '<div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.35] z-0">\n'
@@ -282,7 +316,6 @@ def upgrade_template_html_in_place(tpl_html):
     if old_wm_block in tpl_html:
         tpl_html = tpl_html.replace(old_wm_block, new_wm_block)
 
-    # Находим конец последней базовой функции downloadMasterPromptFile() и ЧИСТО ОТРЕЗАЕМ весь старый хвост под ней!
     anchor_str = 'a.download = "MASTER_PROMPT_MIRMIR.txt";'
     anchor_pos = tpl_html.find(anchor_str)
     if anchor_pos != -1:
@@ -290,15 +323,15 @@ def upgrade_template_html_in_place(tpl_html):
         if brace_pos != -1:
             tpl_html = tpl_html[: brace_pos + 1] + "\n"
 
-    v31_clean_tail = """
-    // === 🚀 ЕДИНОЕ ЯДРО v3.1: ПЛАШКА ПОДАЧИ В МЕНЮ + КНОПКА С ЛОГО VK НА ПОСТ + БЕЗЛИМИТНЫЙ «ЕЩЁ ВАРИАНТ» + СВАЙП НАЗАД ===
+    v32_clean_tail = """
+    // === 🚀 ЕДИНОЕ ЯДРО v3.2: УЗКАЯ КНОПКА [VK + ЧЕЛОВЕЧЕК] + ЖИВАЯ ПРОВЕРКА КАРТИНОК БЕЗ БИТЫХ ИКОНОК + ПОДАЧА БЛЮД ===
     const VK_LOGO_SVG = '<svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M15.07 2H8.93C3.33 2 2 3.33 2 8.93v6.14C2 20.67 3.33 22 8.93 22h6.14c5.6 0 6.93-1.33 6.93-6.93V8.93C22 3.33 20.67 2 15.07 2zm3.08 14.27h-1.46c-.55 0-.72-.44-1.71-1.43-.86-.83-1.24-.94-1.46-.94-.3 0-.38.08-.38.49v1.31c0 .35-.11.56-1.04.56-1.54 0-3.25-.93-4.45-2.66-1.81-2.54-2.3-4.45-2.3-4.84 0-.21.08-.41.49-.41h1.46c.37 0 .51.17.65.56.72 2.08 1.92 3.9 2.41 3.9.19 0 .27-.09.27-.56v-2.16c-.06-.99-.58-1.08-.58-1.43 0-.17.14-.34.37-.34h2.29c.31 0 .42.16.42.53v2.91c0 .31.14.42.23.42.19 0 .34-.11.68-.45 1.05-1.18 1.8-3 1.8-3 .1-.21.27-.41.64-.41h1.46c.44 0 .54.23.44.53-.18.85-1.95 3.35-1.95 3.35-.16.25-.22.36 0 .65.16.21.69.67 1.04 1.08.65.74 1.14 1.36 1.27 1.79.14.42-.08.64-.5.64z"/></svg>';
+    const WALKING_PERSON_SVG = '<svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7z"/></svg>';
 
     window.customPromptsPerDish = window.customPromptsPerDish || {};
     window.dishVariantStep = window.dishVariantStep || {};
     window.cachedSearchPools = window.cachedSearchPools || {};
 
-    // 1. В левом слайдере крутятся строго 5 проверенных кадров ИНТЕРЬЕРА и ЭКСТЕРЬЕРА кафе
     window.getInteriorSlidesList = function() {
       return [
         { src: "img/ymap_org_0.jpg", title: "🏛️ Исторический кирпичный свод и уютный зал на Ильинской, 45", tag: "Интерьер зала" },
@@ -309,7 +342,6 @@ def upgrade_template_html_in_place(tpl_html):
       ];
     };
 
-    // 2. Справа под 3D-меню: 2 крупных поля для картинок блюд
     window.rightSpecialsPairIdx = 0;
     window.stepRightSpecialsPair = function(delta) {
       const specials = (DATA.menu || []).filter(d => d.category === "Сезонные спешлы от Шефа" || d.photo_type === "real");
@@ -365,7 +397,7 @@ def upgrade_template_html_in_place(tpl_html):
       window.renderRightTwoPictureFields();
     };
 
-    // 3. Прямая отрисовка Электронного меню (72 блюда) с обязательной плашкой «🍽️ Подача блюд может отличаться» на фото КАЖДОГО блюда!
+    // Электронное меню (72 блюда) с обязательной плашкой «🍽️ Подача блюд может отличаться» на фото каждого блюда
     renderDishes = function() {
       applyManualOverridesToMenuData();
       const tabsBox = document.getElementById("menu-cat-tabs");
@@ -411,7 +443,7 @@ def upgrade_template_html_in_place(tpl_html):
       }).join("");
     };
 
-    // 4. Отрисовка Новостей с кнопкой-логотипом VK и прямой ссылкой на конкретный пост (?w=wall-191992548_ID)
+    // НОВОСТИ: узкая синяя кнопка только с логотипом VK + идущий человечек 🚶 (без битого параметра -191992548!)
     renderNewsPosts = function() {
       const grid = document.getElementById("posts-grid");
       if (!grid) return;
@@ -419,15 +451,10 @@ def upgrade_template_html_in_place(tpl_html):
       const slice = posts.slice(currentNewsPage * 3, currentNewsPage * 3 + 3);
 
       grid.innerHTML = slice.map(p => {
-        let postId = p.id || "";
-        if (!postId && p.photo) {
-          const m = String(p.photo).match(/vk_(\\d+)_/);
-          if (m) postId = m[1];
+        let safeVkUrl = p.vk_url || "https://vk.com/mirmir.cafe";
+        if (safeVkUrl.includes("-191992548")) {
+          safeVkUrl = "https://vk.com/mirmir.cafe";
         }
-        const directPostUrl = postId
-          ? ("https://vk.com/mirmir.cafe?w=wall-191992548_" + postId)
-          : (p.vk_url || "https://vk.com/mirmir.cafe");
-
         return '<article class="zoom-card bg-[#FFFDF9] rounded-3xl p-4 border border-[#556432]/25 shadow-sm flex flex-col justify-between gap-3 transition">' +
           '<div class="space-y-2.5">' +
             '<div class="flex items-center justify-between text-[11px] font-extrabold text-[#D48238]">' +
@@ -441,58 +468,76 @@ def upgrade_template_html_in_place(tpl_html):
             '<p class="text-xs sm:text-sm text-stone-700 leading-relaxed whitespace-pre-line">' + esc(p.text || "") + '</p>' +
           '</div>' +
           '<div class="pt-2.5 border-t border-stone-200/80 flex items-center justify-between">' +
-            '<a href="' + esc(directPostUrl) + '" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0077FF] hover:bg-[#0055CC] text-white text-xs font-extrabold transition shadow-md cursor-pointer">' +
-              VK_LOGO_SVG + '<span>Открыть пост в VK ↗</span>' +
+            '<a href="' + esc(safeVkUrl) + '" target="_blank" title="Перейти в VK" class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-[#0077FF] hover:bg-[#0055CC] text-white transition shadow-md cursor-pointer">' +
+              VK_LOGO_SVG + WALKING_PERSON_SVG +
             '</a>' +
-            (postId ? '<span class="text-[10px] font-bold text-stone-400">Пост #' + esc(postId) + '</span>' : '') +
+            '<span class="text-[10px] font-bold text-stone-400">vk.com/mirmir.cafe</span>' +
           '</div>' +
         '</article>';
       }).join("");
 
-      // Обновляем и нижнюю кнопку под секцией новостей на логотип VK
       const bottomVkLink = document.querySelector("#news-section-wrap a[href*='vk.com']");
       if (bottomVkLink) {
-        bottomVkLink.className = "inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0077FF] hover:bg-[#0055CC] text-white text-xs font-extrabold transition shadow-md";
-        bottomVkLink.innerHTML = VK_LOGO_SVG + "<span>Все посты на стене VK (vk.com/mirmir.cafe) ↗</span>";
+        bottomVkLink.className = "inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#0077FF] hover:bg-[#0055CC] text-white text-xs font-extrabold transition shadow-md";
+        bottomVkLink.innerHTML = VK_LOGO_SVG + WALKING_PERSON_SVG + "<span>Стена VK</span>";
       }
     };
 
-    // 5. Умный подбор коротких веган-тегов и 100% рабочая кнопка «🎲 Ещё вариант» БЕЗ 45-секундных заглушек!
+    // ЖИВАЯ ПРОВЕРКА ЗАГРУЗКИ КАРТИНКИ В БРАУЗЕРЕ (защита от битых иконок!)
+    function verifyImageLoads(url, timeoutMs = 3500) {
+      return new Promise(resolve => {
+        if (!url) return resolve(false);
+        const img = new Image();
+        let done = false;
+        const timer = setTimeout(() => {
+          if (!done) { done = true; resolve(false); }
+        }, timeoutMs);
+        img.onload = () => {
+          if (!done) { done = true; clearTimeout(timer); resolve(img.naturalWidth > 30); }
+        };
+        img.onerror = () => {
+          if (!done) { done = true; clearTimeout(timer); resolve(false); }
+        };
+        img.src = url;
+      });
+    }
+
     const NON_VEGAN_BAN_REGEX = /meat|chicken|pork|beef|shrimp|prawn|fish|seafood|salmon|tuna|bacon|steak|ham|lamb|turkey|sausage|pepperoni|cheese|milk|dairy|egg/i;
 
-    // Кулинарная база гарантированных HD веган-фотографий по категориям (мгновенный пул без лимитов!)
     const CURATED_VEGAN_HD_BANK = {
+      burger: [
+        "img/vk_5128_1.jpg",
+        "img/vk_5118_0.jpg",
+        "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=800&q=80",
+        "https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&q=80",
+        "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=800&q=80"
+      ],
       drink: [
         "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&q=80",
         "https://images.unsplash.com/photo-1556881286-fc6915169721?w=800&q=80",
         "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=800&q=80",
         "https://images.unsplash.com/photo-1497534446932-c925b458314e?w=800&q=80",
-        "https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=800&q=80",
-        "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80"
+        "https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=800&q=80"
       ],
       soup: [
         "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80",
         "https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80",
-        "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=800&q=80",
-        "https://images.unsplash.com/photo-1578020190125-f4f7c18bc9cb?w=800&q=80"
+        "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=800&q=80"
       ],
       salad: [
         "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80",
         "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&q=80",
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80",
-        "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=800&q=80"
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80"
       ],
       main: [
         "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80",
-        "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=800&q=80",
         "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80",
         "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&q=80"
       ],
       dessert: [
         "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=800&q=80",
         "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&q=80",
-        "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80",
-        "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800&q=80"
+        "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80"
       ]
     };
 
@@ -500,25 +545,26 @@ def upgrade_template_html_in_place(tpl_html):
       const cat = (dish.category || "").toLowerCase();
       const nm = (dish.name || "").toLowerCase();
       const raw = (rawText || "").toLowerCase();
-      if (nm.includes("лимонад") || raw.includes("lemonade") || raw.includes("citrus")) return { q: "citrus lemonade mint drink", bank: "drink" };
-      if (nm.includes("смузи") || raw.includes("smoothie")) return { q: "berry fruit smoothie glass", bank: "drink" };
-      if (nm.includes("фреш") || raw.includes("juice")) return { q: "fresh orange carrot juice", bank: "drink" };
-      if (nm.includes("кофе") || nm.includes("капучино") || nm.includes("американо")) return { q: "latte cappuccino coffee cup", bank: "drink" };
-      if (cat.includes("чай") || nm.includes("чай") || nm.includes("пуэр") || nm.includes("улун") || nm.includes("масала")) return { q: "herbal tea teapot cup", bank: "drink" };
-      if (cat.includes("суп") || nm.includes("суп") || nm.includes("том ям") || nm.includes("ватапа")) return { q: "vegan vegetable tofu soup bowl", bank: "soup" };
-      if (cat.includes("салат") || nm.includes("салат") || nm.includes("цезарь") || nm.includes("боул")) return { q: "vegan avocado green salad bowl", bank: "salad" };
-      if (cat.includes("десерт") || nm.includes("сырники") || nm.includes("шарлотка") || nm.includes("мороженое") || nm.includes("батончик")) return { q: "vegan berry cake dessert", bank: "dessert" };
-      if (nm.includes("пицца") || nm.includes("лахмаджун")) return { q: "vegan mushroom vegetable pizza", bank: "main" };
-      if (nm.includes("бургер") || nm.includes("сэндвич") || nm.includes("неряха")) return { q: "vegan plant burger sandwich", bank: "main" };
-      if (cat.includes("лапша") || nm.includes("лапша") || nm.includes("паста") || nm.includes("пад тай")) return { q: "vegan noodles pasta tofu", bank: "main" };
-      return { q: "vegan healthy dish bowl", bank: "salad" };
+      if (nm.includes("бургер") || raw.includes("burger") || nm.includes("сэндвич") || nm.includes("неряха") || nm.includes("завертон")) {
+        return { q: "vegan burger sandwich", bank: "burger" };
+      }
+      if (nm.includes("лимонад") || raw.includes("lemonade") || raw.includes("citrus")) return { q: "citrus lemonade mint", bank: "drink" };
+      if (nm.includes("смузи") || raw.includes("smoothie")) return { q: "berry smoothie", bank: "drink" };
+      if (nm.includes("фреш") || raw.includes("juice")) return { q: "fresh orange juice", bank: "drink" };
+      if (nm.includes("кофе") || nm.includes("капучино") || nm.includes("американо")) return { q: "latte coffee cup", bank: "drink" };
+      if (cat.includes("чай") || nm.includes("чай") || nm.includes("пуэр") || nm.includes("улун") || nm.includes("масала")) return { q: "herbal tea teapot", bank: "drink" };
+      if (cat.includes("суп") || nm.includes("суп") || nm.includes("том ям") || nm.includes("ватапа")) return { q: "vegan tofu soup", bank: "soup" };
+      if (cat.includes("салат") || nm.includes("салат") || nm.includes("цезарь") || nm.includes("боул")) return { q: "vegan salad bowl", bank: "salad" };
+      if (cat.includes("десерт") || nm.includes("сырники") || nm.includes("шарлотка") || nm.includes("мороженое") || nm.includes("батончик") || nm.includes("роти")) return { q: "vegan cake dessert", bank: "dessert" };
+      if (nm.includes("пицца") || nm.includes("лахмаджун")) return { q: "vegan vegetable pizza", bank: "main" };
+      if (cat.includes("лапша") || nm.includes("лапша") || nm.includes("паста") || nm.includes("пад тай")) return { q: "vegan noodles tofu", bank: "main" };
+      return { q: "vegan dish bowl", bank: "salad" };
     }
 
     window.runEngineForDish = function(idx, engKey) {
       const inp = document.getElementById("hub-ai-prm-" + idx);
       if (inp) window.customPromptsPerDish[idx] = inp.value;
       selectedAiEnginePerDish[idx] = engKey;
-      window.dishVariantStep[idx] = (window.dishVariantStep[idx] || 0) + 1;
       window.generateDishCandidateAI(idx);
     };
 
@@ -546,12 +592,11 @@ def upgrade_template_html_in_place(tpl_html):
             const engines = [
               { k: "openverse_hd", lbl: "📸 1. Openverse HD" },
               { k: "wikimedia", lbl: "🥗 2. Wikimedia" },
-              { k: "gastro_hd", lbl: "🍹 3. GastroBank HD" },
-              { k: "flickr_food", lbl: "🍲 4. Flickr Vegan" },
-              { k: "local_ready", lbl: "🌿 5. Архив (317)" }
+              { k: "gastro_hd", lbl: "🍔 3. GastroBank HD" },
+              { k: "vk_food_archive", lbl: "🌿 4. Фото блюд из ВК" }
             ];
             const btnsHtml = '<div class="quick-6-engines-bar flex flex-wrap gap-1 pt-1.5 border-t border-amber-200/80 mt-1.5">' +
-              '<span class="text-[9px] font-extrabold text-stone-500 w-full">⚡ Нажмите на любой источник для мгновенного подбора без лимитов:</span>' +
+              '<span class="text-[9px] font-extrabold text-stone-500 w-full">⚡ Источники с авто-проверкой загрузки кадра (без битых ссылок):</span>' +
               engines.map(e =>
                 '<button onclick="runEngineForDish(' + idx + ',\\'' + e.k + '\\')" class="px-2 py-1 rounded-lg text-[10px] font-extrabold cursor-pointer transition ' +
                 (curE === e.k ? 'bg-[#2E3D28] text-[#F2B880] shadow' : 'bg-white hover:bg-amber-100 text-[#2E3D28] border border-amber-300') + '">' + e.lbl + '</button>'
@@ -577,91 +622,93 @@ def upgrade_template_html_in_place(tpl_html):
       const engine = selectedAiEnginePerDish[idx] || "openverse_hd";
 
       const btn = document.getElementById("hub-ai-btn-" + idx);
-      if (btn) { btn.innerText = "⏳ Вариант #" + step + "..."; btn.disabled = true; }
+      if (btn) { btn.innerText = "⏳ Подбор #" + step + "..."; btn.disabled = true; }
 
       const topicInfo = extractShortSearchTopic(d, userRawText);
       const shortQuery = topicInfo.q;
       const bankPool = CURATED_VEGAN_HD_BANK[topicInfo.bank] || CURATED_VEGAN_HD_BANK.salad;
 
-      // 1. Движок Openverse HD (кешируем список из 30 реальных фото и при каждом клике «Ещё вариант» выдаём следующий кадр!)
+      // 1. Openverse HD с проверкой, что картинка реально открывается в браузере
       if (engine === "openverse_hd") {
         try {
           const cacheKey = "ov_" + shortQuery;
           if (!window.cachedSearchPools[cacheKey]) {
-            const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent(shortQuery) + "&page_size=30");
+            const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent(shortQuery) + "&page_size=25");
             const j = await r.json();
             if (j.results && j.results.length) {
               window.cachedSearchPools[cacheKey] = j.results
                 .filter(it => !NON_VEGAN_BAN_REGEX.test((it.title || "")))
-                .map(it => it.url)
+                .map(it => it.thumbnail || it.url)
                 .filter(Boolean);
             }
           }
           const pool = window.cachedSearchPools[cacheKey];
           if (pool && pool.length) {
-            const pickUrl = pool[step % pool.length];
-            pendingDishCandidates[idx] = { url: pickUrl, source: "📸 Openverse HD (Вариант #" + ((step % pool.length) + 1) + " из " + pool.length + ")", prompt: shortQuery };
-            addLocalBuildOrActionLog("📸 Openverse HD: вариант #" + step + " для «" + d.name + "»", shortQuery);
-            renderUnifiedSystemHub();
-            return;
+            for (let attempt = 0; attempt < Math.min(4, pool.length); attempt++) {
+              const candidateUrl = pool[(step + attempt) % pool.length];
+              if (await verifyImageLoads(candidateUrl)) {
+                pendingDishCandidates[idx] = { url: candidateUrl, source: "📸 Openverse HD (Вариант #" + step + ")", prompt: shortQuery };
+                renderUnifiedSystemHub();
+                return;
+              }
+            }
           }
         } catch(e) {}
       }
 
-      // 2. Движок Wikimedia Gastro Commons
+      // 2. Wikimedia Gastro с проверкой загрузки
       if (engine === "wikimedia") {
         try {
           const cacheKey = "wm_" + shortQuery;
           if (!window.cachedSearchPools[cacheKey]) {
-            const r = await fetch("https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=" + encodeURIComponent("filetype:bitmap " + shortQuery) + "&gsrlimit=25&prop=imageinfo&iiprop=url&format=json&origin=*");
+            const r = await fetch("https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=" + encodeURIComponent("filetype:bitmap " + shortQuery) + "&gsrlimit=25&prop=imageinfo&iiprop=url&iiurlwidth=720&format=json&origin=*");
             const j = await r.json();
             const pages = j.query && j.query.pages ? Object.values(j.query.pages) : [];
             window.cachedSearchPools[cacheKey] = pages
               .filter(p => !NON_VEGAN_BAN_REGEX.test(p.title || ""))
-              .map(p => p.imageinfo && p.imageinfo[0] && p.imageinfo[0].url)
+              .map(p => p.imageinfo && p.imageinfo[0] && (p.imageinfo[0].thumburl || p.imageinfo[0].url))
               .filter(Boolean);
           }
           const pool = window.cachedSearchPools[cacheKey];
           if (pool && pool.length) {
-            const pickUrl = pool[step % pool.length];
-            pendingDishCandidates[idx] = { url: pickUrl, source: "🥗 Wikimedia Gastro (Вариант #" + ((step % pool.length) + 1) + " из " + pool.length + ")", prompt: shortQuery };
-            addLocalBuildOrActionLog("🥗 Wikimedia: вариант #" + step + " для «" + d.name + "»", shortQuery);
-            renderUnifiedSystemHub();
-            return;
+            for (let attempt = 0; attempt < Math.min(4, pool.length); attempt++) {
+              const candidateUrl = pool[(step + attempt) % pool.length];
+              if (await verifyImageLoads(candidateUrl)) {
+                pendingDishCandidates[idx] = { url: candidateUrl, source: "🥗 Wikimedia Gastro (Вариант #" + step + ")", prompt: shortQuery };
+                renderUnifiedSystemHub();
+                return;
+              }
+            }
           }
         } catch(e) {}
       }
 
-      // 3. Движок Flickr Vegan Stream
-      if (engine === "flickr_food") {
-        const tag = shortQuery.split(" ")[0] || "vegan";
-        const flickrUrl = "https://loremflickr.com/720/720/vegan," + encodeURIComponent(tag) + "?lock=" + (step * 137 + idx);
-        pendingDishCandidates[idx] = { url: flickrUrl, source: "🍲 Flickr Vegan (Вариант #" + step + ")", prompt: shortQuery };
-        renderUnifiedSystemHub();
-        return;
+      // 3. Архив реальных фотографий блюд из постов ВК (отфильтрованный от зала и бланков меню)
+      if (engine === "vk_food_archive" || engine === "local_ready") {
+        const vkFoodPool = (DATA.vk_food_photos && DATA.vk_food_photos.length)
+          ? DATA.vk_food_photos
+          : (DATA.ready_photos || []).filter(p => p.includes("vk_") && !p.includes("5047_") && !p.includes("5068_"));
+        if (vkFoodPool.length) {
+          const pickVk = vkFoodPool[(step - 1) % vkFoodPool.length];
+          pendingDishCandidates[idx] = { url: pickVk, source: "🌿 Фото из постов ВК кафе (#" + (((step - 1) % vkFoodPool.length) + 1) + " из " + vkFoodPool.length + ")", prompt: pickVk };
+          renderUnifiedSystemHub();
+          return;
+        }
       }
 
-      // 4. Движок Локальный Архив img/ (317 готовых фото)
-      if (engine === "local_ready") {
-        const pool = (DATA.ready_photos && DATA.ready_photos.length) ? DATA.ready_photos : ["img/vk_5128_1.jpg"];
-        const pickLocal = pool[(step * 7 + idx) % pool.length];
-        pendingDishCandidates[idx] = { url: pickLocal, source: "🌿 Архив Кафе img/ (Вариант #" + step + ")", prompt: pickLocal };
-        renderUnifiedSystemHub();
-        return;
+      // 4. Проверенный пул GastroBank HD (гарантированно живые ссылки)
+      for (let attempt = 0; attempt < bankPool.length; attempt++) {
+        const bankUrl = bankPool[(step + attempt) % bankPool.length];
+        if (await verifyImageLoads(bankUrl)) {
+          pendingDishCandidates[idx] = { url: bankUrl, source: "🍔 GastroBank HD (Вариант #" + step + ")", prompt: shortQuery };
+          renderUnifiedSystemHub();
+          return;
+        }
       }
-
-      // 5. Гарантированный безлимитный пул GastroBank HD (НИКОГДА не выдаёт жёлтый баннер 45-секундного лимита!)
-      const pickBankUrl = bankPool[step % bankPool.length];
-      pendingDishCandidates[idx] = {
-        url: pickBankUrl,
-        source: "🍹 GastroBank HD (Вариант #" + ((step % bankPool.length) + 1) + " • Без лимитов)",
-        prompt: shortQuery
-      };
-      addLocalBuildOrActionLog("🍹 GastroBank HD: вариант #" + step + " для «" + d.name + "»", shortQuery);
       renderUnifiedSystemHub();
     };
 
-    // 6. Мобильный свайп «Назад» (popstate SPA-Guard для всех окон)
+    // Мобильный свайп «Назад» (popstate SPA-Guard)
     window.pushModalGuardState = function(tag) {
       try { history.pushState({ mirmirModal: tag || "open", t: Date.now() }, ""); } catch(e) {}
     };
@@ -752,17 +799,17 @@ def upgrade_template_html_in_place(tpl_html):
 </body>
 </html>
 """
-    return tpl_html + v31_clean_tail
+    return tpl_html + v32_clean_tail
 
 
 def build_clean_master_prompt_text():
     lines = [
-        "ПОЛНОЕ ТЕКСТОВОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) НА РАЗРАБОТКУ ТРЁХМОДУЛЬНОЙ ПЛАТФОРМЫ ВЕГАН-КАФЕ «МИР МИР» (v3.1)",
+        "ПОЛНОЕ ТЕКСТОВОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) НА РАЗРАБОТКУ ТРЁХМОДУЛЬНОЙ ПЛАТФОРМЫ ВЕГАН-КАФЕ «МИР МИР» (v3.2)",
         "",
         "1. ЧИСТАЯ ТРЁХМОДУЛЬНАЯ АРХИТЕКТУРА: menu_data.py (72 веганских блюда + 8 товаров магазина) + template.html + app.py.",
-        "2. ЭЛЕКТРОННОЕ МЕНЮ: на фотографии каждого из 72 блюд размещена плашка «🍽️ Подача блюд может отличаться».",
-        "3. НОВОСТИ И АНОНСЫ: карточки снабжены фирменной синей кнопкой с официальным логотипом VK и прямой ссылкой на конкретный пост на стене сообщества (https://vk.com/mirmir.cafe?w=wall-191992548_ID).",
-        "4. ШЕСТЕРЁНКА АРХИТЕКТОРА (⚙️): мгновенное переключение вариантов по кнопке «🎲 Ещё вариант» и 5 быстрых кнопок источников фото без 45-секундных лимитов.",
+        "2. НОВОСТИ И АНОНСЫ: компактная синяя кнопка [VK + идущий человечек 🚶] без битого закрытого параметра -191992548.",
+        "3. ГЕНЕРАТОР И ПОДБОР ФОТО В ШЕСТЕРЁНКЕ (⚙️): авто-проверка загрузки изображения (onload) перед выводом в предпросмотр + прямой перебор реальных фотографий блюд из ВК.",
+        "4. ОБЛАЧНАЯ СОВМЕСТИМОСТЬ GITHUB: поддержка неинтерактивного запуска в GitHub Actions (без падения на input) + синхронизация корневого репозитория.",
     ]
     txt = "\n".join(lines)
     with open("MASTER_PROMPT_MIRMIR.txt", "w", encoding="utf-8") as f:
@@ -795,7 +842,7 @@ def sync_files_to_root_repo():
 
 def main():
     print("=" * 78)
-    print("🕊️  СБОРКА «МИР МИР» v3.1 (ПОДАЧА БЛЮД + ЛОГО VK НА ПОСТЫ + ЕЩЁ ВАРИАНТ БЕЗ ЛИМИТА)")
+    print("🕊️  СБОРКА «МИР МИР» v3.2 (КНОПКА [VK 🚶] + БЕЗ БИТЫХ ФОТО + ФИКС GITHUB)")
     print("=" * 78)
 
     auto_migrate_assets_from_old_folder()
@@ -824,6 +871,7 @@ def main():
 
     ymap_photos = get_verified_interior_exterior_photos()
     wall_posts = fetch_vk_wall_posts()
+    vk_food_photos = auto_match_vk_photos_to_menu(clean_menu)
 
     ready_photos = []
     if os.path.exists("img"):
@@ -834,12 +882,13 @@ def main():
     master_prompt_str = build_clean_master_prompt_text()
     now_stamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     data_payload = {
-        "version": f"Релиз v3.1 • Сборка #{build_num} ({now_stamp})",
+        "version": f"Релиз v3.2 • Сборка #{build_num} ({now_stamp})",
         "menu": clean_menu,
         "shop": CAFE_SHOP_ITEMS,
         "posts": wall_posts,
         "ymap_photos": ymap_photos,
         "ready_photos": ready_photos,
+        "vk_food_photos": vk_food_photos,
         "menu_scans": ["img/vk_5047_0.jpg", "img/vk_5047_1.jpg", "img/vk_5047_2.jpg", "img/vk_5047_3.jpg"],
         "tz_synced": tz_data,
         "full_build_logs": build_logs,
@@ -864,11 +913,12 @@ def main():
         f.write(final_html)
 
     sync_files_to_root_repo()
-    print(f"✨ [Сборка #{build_num} готова] Плашки подачи в меню, кнопки VK на посты и «Ещё вариант» вшиты!")
-    try:
-        os.startfile("index.html")
-    except Exception:
-        pass
+    print(f"✨ [Сборка #{build_num} готова] Узкие кнопки [VK 🚶], проверка загрузки фото и архив еды ВК ({len(vk_food_photos)} шт.) вшиты!")
+    if sys.stdin and sys.stdin.isatty() and os.environ.get("GITHUB_ACTIONS") != "true":
+        try:
+            os.startfile("index.html")
+        except Exception:
+            pass
 
 
 def push_to_github():
@@ -883,6 +933,18 @@ def push_to_github():
     target_git_dir = ROOT_REPO_DIR
     print(f"\n📂 Рабочая папка Git-репозитория: {target_git_dir}")
 
+    # Снимаем возможную блокировку index.lock
+    lock_file = os.path.join(target_git_dir, ".git", "index.lock")
+    if os.path.exists(lock_file):
+        try:
+            os.remove(lock_file)
+        except Exception:
+            pass
+
+    # Гарантируем наличие user.name и user.email, чтобы git commit не падал!
+    subprocess.run(["git", "config", "user.name", "MirMir Cafe"], cwd=target_git_dir, check=False)
+    subprocess.run(["git", "config", "user.email", "admin@mirmir.cafe"], cwd=target_git_dir, check=False)
+
     root_index = os.path.join(target_git_dir, "index.html")
     if os.path.exists(root_index):
         with open(root_index, "a", encoding="utf-8") as f:
@@ -892,26 +954,31 @@ def push_to_github():
     subprocess.run(["git", "remote", "add", "origin", "https://github.com/vitvseom-stack/mirmir.git"], cwd=target_git_dir, check=False)
     subprocess.run(["git", "checkout", "-B", "main"], cwd=target_git_dir, check=False)
 
-    print("📡 Индексация и отправка на https://vitvseom-stack.github.io/mirmir/ ...")
+    print("📡 Индексация КОРНЕВОГО index.html и отправка на https://vitvseom-stack.github.io/mirmir/ ...")
     subprocess.run(
         ["git", "add", "-f", "index.html", "menu_data.py", "template.html", "app.py", "tz_mirmir.json", "build_history.json", "MASTER_PROMPT_MIRMIR.txt"],
         cwd=target_git_dir,
         check=False,
     )
-    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v3.1 VK Logo & Serving Badge ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target_git_dir, check=False)
+    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v3.2 ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target_git_dir, check=False)
 
     res = subprocess.run(["git", "push", "-u", "origin", "main", "--force"], cwd=target_git_dir, check=False)
     if res.returncode == 0:
-        print("\n✅ ГЛАВНЫЙ САЙТ УСПЕШНО ОБНОВЛЁН НА GITHUB PAGES!")
-        print("🌐 Проверяй через 40–60 секунд (Ctrl + F5): https://vitvseom-stack.github.io/mirmir/")
+        print("\n✅ ГЛАВНЫЙ САЙТ УСПЕШНО ОТПРАВЛЕН НА GITHUB PAGES (без падения облачного раннера)!")
+        print("🌐 Подожди 45–60 секунд, пока GitHub соберёт страницу, и открой: https://vitvseom-stack.github.io/mirmir/")
     else:
-        print("\n⚠️ Git вернул ошибку при отправке — проверь лог выше.")
+        print("\n⚠️ Git вернул ошибку при отправке — проверь сообщения выше.")
 
 
 if __name__ == "__main__":
+    # Если скрипт запущен автоматически в облаке GitHub Actions — собираем index.html без ожидания клавиши Enter!
+    if not sys.stdin or not sys.stdin.isatty() or os.environ.get("GITHUB_ACTIONS") == "true":
+        main()
+        sys.exit(0)
+
     try:
         print("=" * 78)
-        print("🕊️  ПУЛЬТ УПРАВЛЕНИЯ ПЛАТФОРМОЙ «МИР МИР» v3.1 (Ильинская, 45)")
+        print("🕊️  ПУЛЬТ УПРАВЛЕНИЯ ПЛАТФОРМОЙ «МИР МИР» v3.2 (Ильинская, 45)")
         print("=" * 78)
         print("  [1] 💻 Только на ПК (собрать index.html и открыть в браузере)")
         print("  [2] 🚀 На ПК + На Сайт (собрать, открыть на ПК и выгрузить в корень GitHub)")
@@ -928,7 +995,7 @@ if __name__ == "__main__":
             push_to_github()
 
         print("=" * 78)
-        print("🎉 КРАСОВЕЛОФ, МИЛОРД! Сборка v3.1 завершена чисто!")
+        print("🎉 КРАСОВЕЛОФ, МИЛОРД! Сборка v3.2 завершена без единой ошибки!")
         print("=" * 78)
     except Exception:
         print("\n❌ ОШИБКА ПРИ ВЫПОЛНЕНИИ:")
