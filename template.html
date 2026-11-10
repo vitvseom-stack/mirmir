@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мир Мир — Веган-кафе & Чайная • Нижний Новгород, Ильинская, 45</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Manrope', sans-serif; background-color: #F6E4CE; color: #2E3D28; overflow-x: hidden; }
+    .font-serif { font-family: 'Cormorant Garamond', serif; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #556432; border-radius: 99px; }
+    @keyframes float-dove { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-7px) rotate(2deg)} }
+    @keyframes float-cube { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+    @keyframes spin-wm { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+    @keyframes leaf-fall { 0%{transform:translateY(-10vh) translateX(0) rotate(0deg);opacity:.85} 50%{transform:translateY(50vh) translateX(25px) rotate(180deg);opacity:.7} 100%{transform:translateY(105vh) translateX(-20px) rotate(360deg);opacity:0} }
+    @keyframes mirmir-zoom-breathe { 0%{transform:scale(1)} 35%{transform:scale(0.93)} 78%{transform:scale(1.07)} 100%{transform:scale(1.03)} }
+    .dove-float { animation: float-dove 5s ease-in-out infinite; }
+    .bento-anim { animation: float-cube 4s ease-in-out infinite; transition: all 0.3s ease; border: 2px solid rgba(242,184,128,0.75); }
+    .wm-spin { animation: spin-wm 60s linear infinite; }
+    .stage-3d { perspective: 1200px; position: relative; width: 100%; height: 280px; display: flex; align-items: center; justify-content: center; }
+    .slide-3d { position: absolute; width: 195px; height: 268px; transition: all 0.6s cubic-bezier(0.25,1,0.5,1); transform-style: preserve-3d; cursor: pointer; }
+    .hero-interior-dynamic-bg {
+      background-image: linear-gradient(95deg, rgba(20,32,16,0.88) 0%, rgba(30,46,24,0.75) 55%, rgba(20,32,16,0.86) 100%), var(--hero-slide-bg, url('img/ymap_org_0.jpg'));
+      background-size: cover; background-position: center; transition: background-image 0.7s ease-in-out;
+    }
+    #pc-v26-authentic-wings { display: none; }
+    @media (min-width: 900px) {
+      body:not(.cfg-no-wings) { background-color: #1A2416 !important; }
+      body:not(.cfg-no-wings) #pc-v26-authentic-wings { display: block !important; }
+      body:not(.cfg-no-wings) main.max-w-7xl {
+        background: rgba(246, 228, 206, 0.96); backdrop-filter: blur(12px); border-radius: 2.8rem;
+        padding: 2.2rem 2.5rem !important; margin-top: 1.5rem !important;
+        box-shadow: 0 30px 95px rgba(0,0,0,0.72), 0 0 0 2px rgba(242,184,128,0.35); position: relative; z-index: 10;
+      }
+      body:not(.cfg-no-vibe) .zoom-card:hover img, body:not(.cfg-no-vibe) .zoom-img:hover {
+        animation: mirmir-zoom-breathe 1.35s cubic-bezier(0.35, 0, 0.25, 1) infinite alternate !important;
+      }
+      body:not(.cfg-no-vibe) .zoom-card:hover { border-color: #D48238 !important; box-shadow: 0 14px 32px rgba(46,61,40,0.24) !important; }
+    }
+    body.cfg-no-float .dove-float, body.cfg-no-float .bento-anim { animation: none !important; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- Боковые фото-кулисы ПК -->
+  <div id="pc-v26-authentic-wings" class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute left-0 top-0 bottom-0 w-1/3 overflow-hidden">
+      <img id="left-wing-img" src="img/ymap_org_0.jpg" class="w-full h-full object-cover opacity-60 scale-105 filter saturate-125 contrast-110">
+      <div class="absolute inset-0" style="background:linear-gradient(90deg, rgba(20,30,16,0.18) 0%, rgba(26,36,22,0.94) 94%);"></div>
+      <div class="absolute top-28 left-8 w-24 h-24 opacity-90 dove-float" data-dove-holder></div>
+    </div>
+    <div class="absolute right-0 top-0 bottom-0 w-1/3 overflow-hidden">
+      <img id="right-wing-img" src="img/ymap_org_1.jpg" class="w-full h-full object-cover opacity-65 scale-105 filter saturate-125 contrast-110">
+      <div class="absolute inset-0" style="background:linear-gradient(270deg, rgba(20,30,16,0.18) 0%, rgba(26,36,22,0.94) 94%);"></div>
+      <div class="absolute top-28 right-8 w-24 h-24 opacity-90 dove-float" style="animation-delay:1.4s" data-dove-holder></div>
+    </div>
+  </div>
+  <div id="falling-leaves-box" class="fixed inset-0 pointer-events-none z-40 overflow-hidden hidden"></div>
+
+  <!-- Верхняя шапка -->
+  <header class="sticky top-0 z-40 backdrop-blur-md border-b border-stone-300/60" style="background:rgba(246,228,206,0.94);">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-2">
+      <a href="#" class="flex items-center gap-2.5">
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex-shrink-0 shadow-lg hover:scale-110 transition" data-dove-holder></div>
+        <div>
+          <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#2E3D28] block leading-none">Mir Mir</span>
+          <div id="header-work-status" class="mt-0.5"></div>
+        </div>
+      </a>
+      <div class="hidden lg:flex items-center gap-2">
+        <button onclick="openMenu('Все')" class="px-3 py-2 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white text-xs font-extrabold shadow cursor-pointer transition">📖 Меню</button>
+        <button onclick="openBookTableModal()" class="px-3.5 py-2 rounded-xl bg-[#2E3D28] hover:bg-[#556432] text-[#F2B880] border border-[#F2B880]/50 text-xs font-extrabold shadow cursor-pointer transition">🪑 Бронь столика</button>
+        <button onclick="openDeliveryModal()" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-extrabold shadow-md cursor-pointer transition">🛵 Доставка из кафе</button>
+        <button onclick="openCafeShopModal()" class="px-3.5 py-2 rounded-xl bg-[#D48238] hover:opacity-95 text-white text-xs font-extrabold shadow-lg cursor-pointer transition border border-white/50">🛍️ Магазин кафе</button>
+        <button onclick="openBowlBuilder()" class="px-3 py-2 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white text-xs font-extrabold shadow cursor-pointer transition">🥗 Боул</button>
+        <button onclick="openRadioSelectorModal()" id="radio-btn" class="px-3 py-2 rounded-xl bg-white hover:bg-amber-50 text-[#2E3D28] border border-stone-300 text-xs font-extrabold cursor-pointer transition flex items-center gap-1">
+          <span class="inline-block w-4 h-4" data-dove-holder></span><span>📻 Радио</span>
+        </button>
+        <a href="https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=taxi&z=18" onclick="openYandexTaxiTo45(event)" class="px-3 py-2 rounded-xl bg-[#FC3F1D] hover:opacity-90 text-white text-xs font-extrabold shadow cursor-pointer transition">🚕 Такси в кафе</a>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button onclick="openBookTableModal()" class="lg:hidden px-2.5 py-2 rounded-xl bg-[#2E3D28] text-[#F2B880] text-[11px] font-extrabold shadow cursor-pointer">🪑 Бронь</button>
+        <button onclick="openCafeShopModal()" class="lg:hidden px-2.5 py-2 rounded-xl bg-[#D48238] text-white text-[11px] font-extrabold shadow cursor-pointer">🛍️ Магазин</button>
+        <button onclick="openDeliveryModal()" class="lg:hidden px-2.5 py-2 rounded-xl bg-emerald-700 text-white text-[11px] font-extrabold shadow cursor-pointer">🛵</button>
+        <button onclick="openRadioSelectorModal()" id="radio-btn-mob" class="lg:hidden px-2.5 py-2 rounded-xl bg-white border border-stone-300 text-xs font-bold cursor-pointer">📻</button>
+        <button onclick="toggleCart()" class="relative px-3.5 py-2 rounded-xl bg-[#2E3D28] text-white font-bold text-xs flex items-center gap-1.5 shadow cursor-pointer">
+          <span>🛒</span><span id="cart-badge" class="px-1.5 py-0.5 rounded-full bg-[#D48238] text-white text-[10px]">0</span>
+        </button>
+      </div>
+    </div>
+    <div class="border-t border-stone-300/50 bg-[#FDF8F2]/90">
+      <div id="sticky-rail" class="max-w-7xl mx-auto px-3 sm:px-6 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar"></div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 py-5 space-y-10 flex-1 w-full">
+    <!-- Первый экран (Hero) -->
+    <section class="rounded-[2.4rem] overflow-hidden shadow-2xl border-2 border-[#556432]/40 grid grid-cols-1 lg:grid-cols-12 bg-[#23311E]">
+      <div id="hero-left-col" class="lg:col-span-7 p-6 sm:p-8 pt-7 flex flex-col justify-between gap-4 text-white relative overflow-hidden hero-interior-dynamic-bg">
+        <div id="hero-work-badges" class="flex flex-wrap items-center gap-2 relative z-10"></div>
+        <div class="relative z-10 space-y-2.5">
+          <div class="flex items-center gap-3.5">
+            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-2xl border-2 border-[#F2B880] dove-float flex-shrink-0" data-dove-holder></div>
+            <h1 class="font-serif text-3xl sm:text-5xl font-bold leading-none tracking-tight drop-shadow">Мир Мир — пространство вкуса и уюта</h1>
+          </div>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
+            <p class="italic text-[#F6E4CE] text-sm sm:text-lg border-l-2 border-[#D48238] pl-3 flex-1">«Гармония этичной растительной кухни, редкого китайского чая и живого общения на Ильинской, 45.»</p>
+            <div onclick="openMenu('Сезонные спешлы от Шефа')" class="zoom-card cursor-pointer p-3 rounded-2xl bg-gradient-to-br from-[#D48238] to-[#b56622] text-white shadow-xl border-2 border-[#FFFDF9]/80 flex items-center gap-2.5 sm:w-64 flex-shrink-0 transition">
+              <img src="img/vk_5128_1.jpg" class="w-12 h-12 rounded-xl object-cover border border-white/60 flex-shrink-0">
+              <div class="min-w-0">
+                <span class="text-[9px] font-extrabold uppercase tracking-wider bg-black/30 px-2 py-0.5 rounded-full">🔥 Новинки меню</span>
+                <div class="font-serif font-bold text-base leading-tight mt-0.5">Сезонные спешлы от Шефа</div>
+                <span class="text-[11px] text-amber-100 underline font-bold">Смотреть 9 блюд ➔</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Слайдер фотографий из Яндекс.Карт -->
+        <div class="relative z-10 p-2 rounded-3xl bg-black/45 backdrop-blur-md border-2 border-[#F2B880]/45 shadow-2xl">
+          <div class="relative h-56 sm:h-64 rounded-2xl overflow-hidden bg-[#182214]">
+            <img id="hero-interior-slide-img" src="img/ymap_org_0.jpg" onclick="openSuperZoom(this.src, 'Галерея интерьера и атмосферы кафе «Мир Мир»')" class="w-full h-full object-cover transition-opacity duration-300 cursor-zoom-in">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none"></div>
+            <span id="hero-interior-slide-tag" class="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#2E3D28]/90 text-[#F2B880] border border-[#F2B880]/40 text-[10px] font-extrabold uppercase tracking-wider">Яндекс.Карты • Галерея зала</span>
+            <button onclick="openSuperZoom(document.getElementById('hero-interior-slide-img').src, 'Галерея интерьера кафе «Мир Мир»')" class="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/75 hover:bg-[#D48238] text-white text-[10px] font-extrabold cursor-pointer shadow">🔍 Лупа</button>
+            <button onclick="stepInteriorSlide(-1)" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-[#D48238] text-white font-bold text-xs cursor-pointer transition flex items-center justify-center">◀</button>
+            <button onclick="stepInteriorSlide(1)" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/60 hover:bg-[#D48238] text-white font-bold text-xs cursor-pointer transition flex items-center justify-center">▶</button>
+            <div class="absolute bottom-3 left-3.5 right-3.5 flex items-end justify-between gap-2">
+              <div id="hero-interior-slide-title" class="font-serif text-base sm:text-xl font-bold text-white drop-shadow leading-snug">🏛️ Исторический кирпичный свод и уютный зал на Ильинской, 45</div>
+              <div id="hero-interior-dots" class="flex items-center gap-1.5 flex-shrink-0 pb-1"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative z-10 p-3.5 rounded-2xl bg-black/45 backdrop-blur-md border border-[#F2B880]/35">
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <span class="text-[#F2B880] font-extrabold uppercase text-[11px] tracking-wider">✨ Вкусная рекомендация дня</span>
+            <button onclick="rollRandomGastroPulse()" class="px-3 py-1 rounded-full bg-[#D48238] hover:opacity-95 text-white font-extrabold text-[10px] cursor-pointer shadow">🎲 Другое сочетание</button>
+          </div>
+          <div id="ai-pulse-random-text" class="text-white font-semibold text-xs sm:text-sm transition-opacity duration-200 leading-relaxed"></div>
+        </div>
+
+        <div class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div onclick="openBowlBuilder()" class="bento-anim zoom-card cursor-pointer h-24 rounded-2xl overflow-hidden relative group">
+            <img src="img/vk_5055_0.jpg" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-2.5 flex items-end"><span class="text-xs font-extrabold text-white leading-tight">🥗 Собрать свой Боул</span></div>
+          </div>
+          <div onclick="openMenu('Чайная карта')" class="bento-anim zoom-card cursor-pointer h-24 rounded-2xl overflow-hidden relative group" style="animation-delay:0.6s">
+            <img src="img/vk_5122_0.jpg" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-2.5 flex items-end"><span class="text-xs font-extrabold text-white leading-tight">🍵 Чай 300 / 900 мл</span></div>
+          </div>
+          <div onclick="openMenu('Десерты без сахара')" class="bento-anim zoom-card cursor-pointer h-24 rounded-2xl overflow-hidden relative group" style="animation-delay:1.2s">
+            <img src="img/vk_5069_0.jpg" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-2.5 flex items-end"><span class="text-xs font-extrabold text-white leading-tight">🍰 Десерты без сахара</span></div>
+          </div>
+          <div onclick="openCafeShopModal()" class="bento-anim zoom-card cursor-pointer h-24 rounded-2xl overflow-hidden relative group" style="animation-delay:1.8s">
+            <img src="img/vk_5087_1.jpg" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent p-2.5 flex items-end"><span class="text-xs font-extrabold text-white leading-tight">🛍️ Домашний Тофу & Хлеб</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Правая колонка: 3D-карусель + 3 ряда Спешлов -->
+      <div class="lg:col-span-5 bg-[#23311E] p-4 sm:p-5 flex flex-col items-center justify-between relative overflow-hidden gap-2">
+        <!-- Плавный фоновый слайдер фото интерьера в правой колонке + вращающийся медальон с Голубкой мира -->
+        <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          <img id="right-col-bg-photo" src="img/ymap_org_0.jpg" class="w-full h-full object-cover opacity-30 scale-105 transition-all duration-1000 filter saturate-125 contrast-110">
+          <div class="absolute inset-0" style="background:radial-gradient(circle at center, rgba(28,42,24,0.35) 0%, rgba(26,38,22,0.88) 85%);"></div>
+        </div>
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.28] z-0">
+          <div class="w-[370px] h-[370px] wm-spin" data-dove-holder></div>
+        </div>
+        <div class="relative z-10 flex items-center gap-2">
+          <button onclick="step3DCarousel(-1)" class="w-7 h-7 rounded-full bg-white/15 hover:bg-white/30 text-white text-xs font-bold cursor-pointer">◀</button>
+          <span class="text-[11px] font-extrabold uppercase px-3 py-1 rounded-full bg-black/45 text-[#F2B880] border border-[#F2B880]/40">📖 Листайте страницы меню зала</span>
+          <button onclick="step3DCarousel(1)" class="w-7 h-7 rounded-full bg-white/15 hover:bg-white/30 text-white text-xs font-bold cursor-pointer">▶</button>
+        </div>
+        <div id="stage-3d-box" class="stage-3d relative z-10"></div>
+        <div class="relative z-20 w-full bg-black/45 backdrop-blur-md p-3 rounded-2xl border border-[#F2B880]/40 space-y-1.5 mt-1">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#F2B880]">🔥 Сезонные спешлы от Шефа (9 новинок)</span>
+            <button onclick="openMenu('Все')" class="text-[10px] font-extrabold text-amber-300 hover:underline cursor-pointer">Все блюда (72) ➔</button>
+          </div>
+          <div id="hero-specials-3rows" class="space-y-1.5"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Новости и анонсы -->
+    <section id="news-section-wrap" class="space-y-4">
+      <div class="flex items-end justify-between gap-2">
+        <div>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#D48238]">Жизнь и события нашего кафе</span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[#2E3D28]">Последние новости и анонсы</h2>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="stepNewsPage(-1)" class="w-9 h-9 rounded-full bg-[#2E3D28] text-[#F2B880] font-bold text-xs cursor-pointer shadow">◀</button>
+          <button onclick="stepNewsPage(1)" class="w-9 h-9 rounded-full bg-[#D48238] text-white font-bold text-xs cursor-pointer shadow">▶</button>
+        </div>
+      </div>
+      <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-3 gap-5"></div>
+      <div class="pt-1 flex items-center justify-start">
+        <a href="https://vk.com/mirmir.cafe" target="_blank" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#2E3D28] hover:bg-[#D48238] text-[#F2B880] hover:text-white text-xs font-extrabold transition shadow-md">📘 читать все новости на VK ↗</a>
+      </div>
+    </section>
+
+    <!-- Меню по разделам -->
+    <section class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+        <div>
+          <span class="text-[11px] font-extrabold uppercase tracking-widest text-[#D48238]">Этичная растительная кухня • Выбор объёма порции</span>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold text-[#2E3D28]">Меню кафе по разделам</h2>
+        </div>
+        <button onclick="exportPDF()" class="self-start sm:self-auto px-4 py-2 rounded-xl bg-white hover:bg-amber-50 text-[#2E3D28] border border-stone-300 text-xs font-extrabold shadow-sm cursor-pointer">📥 Скачать всё меню в PDF</button>
+      </div>
+      <div id="cat-showcase-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+    </section>
+
+    <!-- Карта и контакты -->
+    <section class="rounded-[2.2rem] bg-[#2E3D28] text-white p-6 sm:p-8 shadow-2xl border-2 border-[#556432] grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+      <div class="lg:col-span-5 space-y-4">
+        <span class="px-3 py-1 rounded-full bg-white/10 text-[#F2B880] text-[10px] font-extrabold uppercase tracking-wider">Ждём вас в гости каждый день</span>
+        <h2 class="font-serif text-3xl sm:text-4xl font-bold leading-tight">Нижний Новгород, ул. Ильинская, 45</h2>
+        <p class="text-xs sm:text-sm text-white/85 leading-relaxed">Ежедневно с 12:00 до 21:00. По будням с 12:00 до 16:00 действует скидка −30% на Комбо-Ланч (Суп + Основное блюдо + Напиток). Телефон кафе: <a href="tel:+79200282858" class="text-[#F2B880] font-extrabold underline">+7 (920) 028-28-58</a></p>
+        <div class="flex flex-wrap gap-2.5 pt-1">
+          <button onclick="openBookTableModal()" class="px-4 py-2.5 rounded-xl bg-[#D48238] hover:opacity-95 text-white text-xs font-extrabold shadow-lg cursor-pointer">🪑 Забронировать столик</button>
+          <a href="https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=taxi&z=18" onclick="openYandexTaxiTo45(event)" class="px-4 py-2.5 rounded-xl bg-[#FC3F1D] hover:opacity-90 text-white text-xs font-extrabold shadow-lg cursor-pointer">🚕 Вызвать Такси к дому 45</a>
+          <button onclick="openDeliveryModal()" class="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-extrabold shadow cursor-pointer">🛵 Заказать доставку</button>
+        </div>
+      </div>
+      <div class="lg:col-span-7 h-72 sm:h-80 rounded-2xl overflow-hidden border-2 border-[#F2B880]/40 shadow-xl bg-stone-800">
+        <iframe src="https://yandex.ru/map-widget/v1/?ll=43.990383%2C56.322355&z=17&oid=7309581265&ol=biz" class="w-full h-full border-0" allowfullscreen></iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 pt-4 pb-10 text-center text-xs text-stone-600 flex flex-row items-center justify-center gap-3 relative z-20">
+    <span class="font-bold text-[#2E3D28]">🕊️ Веган-кафе & Чайная «Мир Мир» • Нижний Новгород, ул. Ильинская, 45 • Ежедневно 12:00–21:00</span>
+    <button onclick="openUnifiedSystemHub('dishes72')" title="Открыть Центр Управления" class="w-9 h-9 rounded-full bg-[#2E3D28] hover:bg-[#556432] text-[#F2B880] text-base flex items-center justify-center shadow-md cursor-pointer transition transform hover:rotate-90 border border-[#D48238]">⚙️</button>
+  </footer>
+
+  <!-- Супер-Лайтбокс z-200 -->
+  <div id="super-zoom-lightbox" onclick="closeSuperZoom()" class="fixed inset-0 z-[200] bg-black/92 backdrop-blur-md hidden items-center justify-center p-3 sm:p-8 cursor-zoom-out">
+    <div onclick="event.stopPropagation()" class="relative max-w-5xl w-full flex flex-col items-center gap-3">
+      <div class="w-full flex items-center justify-between text-white px-2">
+        <span id="super-zoom-caption" class="font-serif text-xl sm:text-2xl font-bold text-[#F2B880] truncate">🔍 Просмотр фотографии</span>
+        <div class="flex items-center gap-2">
+          <a id="super-zoom-dl" href="#" download="mirmir_photo.jpg" target="_blank" class="px-3.5 py-1.5 rounded-xl bg-[#556432] hover:bg-[#D48238] text-white text-xs font-extrabold">💾 Открыть оригинал</a>
+          <button onclick="closeSuperZoom()" class="w-10 h-10 rounded-full bg-white/20 hover:bg-red-600 text-white font-bold text-lg cursor-pointer">✕</button>
+        </div>
+      </div>
+      <img id="super-zoom-img" src="" class="max-h-[82vh] max-w-full object-contain rounded-2xl shadow-2xl border-2 border-[#F2B880]/50 bg-[#141C11]">
+    </div>
+  </div>
+
+  <!-- Всплывающая галерея готовых фото z-140 -->
+  <div id="ready-gallery-popup" class="fixed inset-0 z-[140] bg-black/85 backdrop-blur-md hidden items-center justify-center p-2 sm:p-6">
+    <div class="bg-[#FDF8F2] rounded-[2.2rem] max-w-5xl w-full h-[88vh] flex flex-col justify-between overflow-hidden border-4 border-[#D48238] shadow-2xl">
+      <div class="p-4 sm:p-5 bg-[#2E3D28] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold block">Витрина всех скачанных фото из папки img/ (Яндекс.Карты + ВК + Макро)</span>
+          <h3 id="ready-popup-title" class="font-serif text-2xl sm:text-3xl font-bold">📸 Выберите готовое фото для блюда</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <input id="ready-popup-filter" oninput="renderReadyGalleryPopupGrid()" placeholder="🔍 Фильтр (ymap, vk, macro)..." class="px-3 py-1.5 rounded-xl bg-white text-stone-900 text-xs font-bold">
+          <button onclick="closeReadyGalleryPopup()" class="w-9 h-9 rounded-full bg-white/15 hover:bg-red-600 text-white font-bold cursor-pointer">✕</button>
+        </div>
+      </div>
+      <div id="ready-popup-grid" class="p-4 sm:p-6 overflow-y-auto flex-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 custom-scroll"></div>
+    </div>
+  </div>
+  <input type="file" id="pc-dish-file-input" accept="image/*" class="hidden" onchange="handlePcFileSelected(event)">
+
+  <!-- Модалки Меню, Боула, Магазина, Брони, Доставки, Радио, Корзины, Шестерёнки и Мастер-Промпта -->
+  <div id="menu-modal" class="fixed inset-0 z-[65] bg-black/80 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5">
+    <div class="bg-[#FDF8F2] rounded-[2.2rem] max-w-6xl w-full h-[92vh] flex flex-col justify-between overflow-hidden border-4 border-[#556432] shadow-2xl">
+      <div class="p-4 sm:p-5 bg-[#2E3D28] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3"><div class="w-11 h-11 flex-shrink-0" data-dove-holder></div><div><span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">100% Растительная кухня • 72 позиции</span><h3 class="font-serif text-2xl sm:text-3xl font-bold leading-none mt-0.5">📖 Электронное меню кафе «Мир Мир»</h3></div></div>
+        <div class="flex items-center gap-2"><input id="menu-search-inp" oninput="renderDishes()" placeholder="🔍 Поиск блюда..." class="px-3.5 py-2 rounded-xl bg-white text-stone-900 text-xs sm:text-sm font-semibold w-48 sm:w-64"><button onclick="closeMenu()" class="w-9 h-9 rounded-full bg-white/15 hover:bg-red-600 text-white font-bold cursor-pointer">✕</button></div>
+      </div>
+      <div id="menu-cat-tabs" class="px-4 py-2.5 bg-[#F6E4CE] border-b border-stone-300 flex items-center gap-2 overflow-x-auto no-scrollbar"></div>
+      <div id="menu-dishes-grid" class="p-4 sm:p-6 overflow-y-auto flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 custom-scroll"></div>
+    </div>
+  </div>
+
+  <div id="bowl-modal" class="fixed inset-0 z-[70] bg-black/80 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5">
+    <div class="bg-[#FDF8F2] rounded-[2.2rem] max-w-2xl w-full max-h-[92vh] flex flex-col justify-between overflow-hidden border-4 border-[#D48238] shadow-2xl">
+      <div class="p-4 sm:p-5 bg-[#2E3D28] text-white flex items-center justify-between"><div><span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">В базе: запечённые овощи + коул слоу + ферментированные овощи</span><h3 class="font-serif text-2xl sm:text-3xl font-bold">🥗 Соберите свой идеальный Боул</h3></div><button onclick="closeBowlBuilder()" class="w-9 h-9 rounded-full bg-white/15 text-white font-bold cursor-pointer">✕</button></div>
+      <div id="bowl-builder-body" class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 custom-scroll text-xs sm:text-sm"></div>
+    </div>
+  </div>
+
+  <div id="cafe-shop-modal" class="fixed inset-0 z-[75] bg-black/85 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5">
+    <div class="bg-[#FDF8F2] rounded-[2.2rem] max-w-5xl w-full h-[90vh] flex flex-col justify-between overflow-hidden border-4 border-[#D48238] shadow-2xl">
+      <div class="p-4 sm:p-6 bg-[#2E3D28] text-white flex items-center justify-between gap-3"><div class="flex items-center gap-3.5"><div class="w-12 h-12 flex-shrink-0" data-dove-holder></div><div><span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">Ремесленная Гастро-Лавка на Ильинской, 45</span><h3 class="font-serif text-2xl sm:text-4xl font-bold leading-none mt-0.5">🛍️ Магазин кафе «Мир Мир»</h3></div></div><div class="flex items-center gap-2"><button onclick="closeCafeShopModal();toggleCart()" class="px-4 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer shadow">🛒 Корзина</button><button onclick="closeCafeShopModal()" class="w-9 h-9 rounded-full bg-white/15 text-white font-bold cursor-pointer">✕</button></div></div>
+      <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-5 custom-scroll"><div id="cafe-shop-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div></div>
+    </div>
+  </div>
+
+  <div id="book-table-modal" class="fixed inset-0 z-[77] bg-black/80 backdrop-blur-md hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-[#FDF8F2] rounded-t-[2rem] sm:rounded-[2.2rem] max-w-lg w-full p-5 sm:p-7 border-4 border-[#556432] shadow-2xl space-y-4 text-xs sm:text-sm">
+      <div class="flex justify-between items-center border-b border-stone-200 pb-3"><div class="flex items-center gap-3"><div class="w-11 h-11 flex-shrink-0" data-dove-holder></div><div><span class="text-[10px] font-extrabold uppercase tracking-wider text-[#D48238]">Нижний Новгород • ул. Ильинская, 45</span><h3 class="font-serif text-2xl sm:text-3xl font-bold text-[#2E3D28]">🪑 Бронь столика в «Мир Мир»</h3></div></div><button onclick="closeBookTableModal()" class="w-9 h-9 rounded-full bg-white shadow font-bold cursor-pointer">✕</button></div>
+      <div class="space-y-2.5">
+        <select id="book-zone" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-300 text-xs sm:text-sm font-bold text-[#2E3D28]"><option value="🛋️ Изумрудный велюровый диван с картинами">🛋️ Изумрудный велюровый диван с картинами</option><option value="🏛️ Уютный столик под историческим кирпичным сводом">🏛️ Уютный столик под историческим кирпичным сводом</option><option value="🍵 Большой стол для китайской чайной церемонии">🍵 Большой стол для китайской чайной церемонии</option><option value="🌿 Столик у живых растений в основном зале">🌿 Столик у живых растений в основном зале</option></select>
+        <div class="grid grid-cols-3 gap-2"><input id="book-date" type="date" class="w-full px-2.5 py-2 rounded-xl bg-white border border-stone-300 text-xs"><input id="book-time" type="time" value="18:00" class="w-full px-2.5 py-2 rounded-xl bg-white border border-stone-300 text-xs"><select id="book-guests" class="w-full px-2.5 py-2 rounded-xl bg-white border border-stone-300 text-xs font-bold"><option value="1 гость">1 гость</option><option value="2 гостя" selected>2 гостя</option><option value="3 гостя">3 гостя</option><option value="4 гостя">4 гостя</option><option value="Компания 5–8 человек">5–8 гостей</option></select></div>
+        <input id="book-name" placeholder="Ваше имя *" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-300 text-sm"><input id="book-phone" placeholder="Телефон или @Telegram *" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-300 text-sm"><input id="book-comm" placeholder="Пожелания (заварить чай к приходу и т.д.)" class="w-full px-3.5 py-2 rounded-xl bg-white border border-stone-300 text-xs">
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1"><a href="tel:+79200282858" class="py-3 px-4 rounded-xl bg-[#556432] text-white font-extrabold text-xs text-center flex items-center justify-center shadow">📞 +7 (920) 028-28-58</a><button onclick="submitTableBooking()" class="py-3 px-4 rounded-xl bg-[#D48238] text-white font-extrabold text-xs shadow-lg cursor-pointer">🪑 Забронировать в Telegram</button></div>
+    </div>
+  </div>
+
+  <div id="delivery-modal" class="fixed inset-0 z-[76] bg-black/80 backdrop-blur-md hidden items-end sm:items-center justify-center p-0 sm:p-4"></div>
+
+  <div id="radio-selector-modal" class="fixed inset-0 z-[78] bg-black/80 backdrop-blur-md hidden items-center justify-center p-3">
+    <div class="bg-[#FDF8F2] rounded-[2.2rem] max-w-lg w-full p-5 sm:p-6 border-4 border-[#556432] shadow-2xl space-y-3.5">
+      <div class="flex items-center justify-between border-b border-stone-200 pb-3"><div class="flex items-center gap-3"><div class="w-11 h-11 flex-shrink-0" data-dove-holder></div><div><span class="text-[10px] font-extrabold uppercase tracking-wider text-[#D48238]">4 атмосферных потока • РФ без VPN</span><h3 class="font-serif text-2xl font-bold text-[#2E3D28]">📻 Радио «Мир Мир»</h3></div></div><button onclick="document.getElementById('radio-selector-modal').classList.add('hidden');document.getElementById('radio-selector-modal').classList.remove('flex')" class="w-9 h-9 rounded-full bg-white shadow font-bold cursor-pointer">✕</button></div>
+      <div class="space-y-2">
+        <button onclick="playMirMirWave('hangdrum')" class="w-full p-3.5 rounded-2xl border-2 border-teal-700 bg-teal-50/60 hover:bg-teal-100 text-left flex items-center justify-between cursor-pointer"><div class="font-serif text-xl font-bold text-[#2E3D28]">🛸 1. Радио Ханг Драм (Hang Drum & Handpan)</div><span class="px-3 py-1 rounded-xl bg-teal-800 text-white text-xs font-extrabold">▶ Эфир</span></button>
+        <button onclick="playMirMirWave('ambient')" class="w-full p-3.5 rounded-2xl border-2 border-[#556432] bg-white hover:bg-emerald-50 text-left flex items-center justify-between cursor-pointer"><div class="font-serif text-xl font-bold text-[#2E3D28]">🌌 2. Эмбиент & Чилл (Live Stream)</div><span class="px-3 py-1 rounded-full bg-[#556432] text-white text-xs font-extrabold">▶ Эфир</span></button>
+        <button onclick="playMirMirWave('reggae')" class="w-full p-3.5 rounded-2xl border-2 border-[#D48238] bg-white hover:bg-amber-50 text-left flex items-center justify-between cursor-pointer"><div class="font-serif text-xl font-bold text-[#2E3D28]">🌴 3. Рэгги & Даб Радио (Live Stream)</div><span class="px-3 py-1 rounded-xl bg-[#D48238] text-white text-xs font-extrabold">▶ Эфир</span></button>
+        <button onclick="playMirMirWave('mantra')" class="w-full p-3.5 rounded-2xl border-2 border-purple-700/60 bg-white hover:bg-purple-50 text-left flex items-center justify-between cursor-pointer"><div class="font-serif text-xl font-bold text-[#2E3D28]">🕉️ 4. Мантры, Ситар & Гоа (Live Stream)</div><span class="px-3 py-1 rounded-xl bg-purple-800 text-white text-xs font-extrabold">▶ Эфир</span></button>
+      </div>
+      <div class="pt-2 border-t border-stone-200 flex items-center justify-between gap-2"><span id="radio-now-status" class="text-xs font-extrabold text-[#556432] truncate">🔇 Сейчас радио выключено</span><div class="flex items-center gap-2"><input id="radio-vol-slider" type="range" min="0" max="100" value="75" oninput="setMirMirRadioVol(this.value)" class="w-20 accent-[#556432]"><button onclick="stopMirMirRadio()" class="px-3.5 py-2 rounded-xl bg-stone-200 hover:bg-red-100 text-stone-800 font-extrabold text-xs cursor-pointer">⏹ Стоп</button></div></div>
+    </div>
+  </div>
+
+  <div id="cart-drawer" class="fixed inset-0 z-[72] bg-black/75 backdrop-blur-sm hidden justify-end">
+    <div class="bg-[#FDF8F2] w-full max-w-md h-full flex flex-col justify-between p-5 border-l-4 border-[#556432] shadow-2xl">
+      <div class="flex items-center justify-between border-b border-stone-200 pb-3"><h3 class="font-serif text-2xl font-bold text-[#2E3D28]">🛒 Ваш заказ в «Мир Мир»</h3><button onclick="toggleCart()" class="w-9 h-9 rounded-full bg-white shadow font-bold cursor-pointer">✕</button></div>
+      <div id="cart-items-box" class="flex-1 overflow-y-auto py-4 space-y-2.5 custom-scroll"></div>
+      <div class="border-t border-stone-200 pt-3 space-y-3"><div id="cart-combo-hint" class="p-2.5 rounded-xl bg-amber-50 border border-[#D48238]/40 text-xs text-stone-700"></div><div class="flex items-center justify-between text-lg font-extrabold text-[#2E3D28]"><span>Итого:</span><span id="cart-sum">0 ₽</span></div><div class="grid grid-cols-2 gap-2"><button onclick="toggleCart();openDeliveryModal()" class="py-3 rounded-xl bg-emerald-700 text-white font-extrabold text-xs cursor-pointer shadow">🛵 Оформить доставку</button><button onclick="sendOrderToTelegram()" class="py-3 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer shadow-lg">📲 Заказать в Telegram</button></div></div>
+    </div>
+  </div>
+
+  <div id="unified-system-hub" class="fixed inset-0 z-[80] bg-black/85 backdrop-blur-md hidden items-center justify-center p-2 sm:p-4">
+    <div class="bg-[#FDF8F2] rounded-[2.2rem] max-w-6xl w-full h-[92vh] flex flex-col justify-between overflow-hidden border-4 border-[#556432] shadow-2xl">
+      <div class="p-4 sm:p-5 bg-[#2E3D28] text-white flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div class="flex items-center gap-3"><div class="w-11 h-11 flex-shrink-0" data-dove-holder></div><div><span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">Мульти-движок фото (Openverse HD + Wikimedia + Flux AI + Выгрузка с ПК)</span><h3 class="font-serif text-2xl sm:text-3xl font-bold leading-none mt-0.5">⚙️ Шестерёнка Архитектора: Все 72 блюда, Задачи, Логи & Эффекты</h3></div></div>
+        <div id="hub-top-tabs" class="flex items-center gap-1.5 flex-wrap"></div>
+      </div>
+      <div id="hub-main-body" class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 custom-scroll"></div>
+    </div>
+  </div>
+
+  <div id="master-prompt-modal" class="fixed inset-0 z-[85] bg-black/85 backdrop-blur-md hidden items-center justify-center p-2 sm:p-5">
+    <div class="bg-[#FDF8F2] rounded-[2rem] max-w-5xl w-full h-[90vh] flex flex-col justify-between overflow-hidden border-4 border-[#D48238] shadow-2xl">
+      <div class="p-4 sm:p-5 bg-[#2E3D28] text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3"><div class="w-11 h-11 flex-shrink-0" data-dove-holder></div><div><span class="text-[10px] uppercase tracking-widest text-[#F2B880] font-extrabold">Чистая Трёхмодульная Архитектура • Аудит 7/7</span><h3 class="font-serif text-2xl sm:text-3xl font-bold leading-none mt-0.5">🧬 Текстовый Мастер-Промпт архитектуры сайта</h3></div></div>
+        <div class="flex items-center gap-2 flex-wrap"><button onclick="copyMasterPromptText()" class="px-4 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-[#1A2416] font-extrabold text-xs sm:text-sm shadow-lg cursor-pointer">📋 Скопировать Промпт (1 клик)</button><button onclick="downloadMasterPromptFile()" class="px-4 py-2.5 rounded-xl bg-emerald-800 hover:bg-emerald-700 text-white font-extrabold text-xs sm:text-sm shadow cursor-pointer">💾 Скачать .TXT</button><button onclick="closeMasterPromptModal()" class="w-9 h-9 rounded-full bg-white/15 text-white font-bold cursor-pointer ml-1">✕</button></div>
+      </div>
+      <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-3 custom-scroll"><textarea id="server-master-prompt-data" readonly class="w-full h-[70vh] p-5 rounded-2xl bg-white text-stone-900 font-sans text-xs sm:text-sm leading-relaxed border-2 border-[#556432]/40 shadow-inner focus:outline-none"></textarea></div>
+    </div>
+  </div>
+
+  <script>
+    const DATA = __MIRMIR_DATA_JSON__;
+    const SIGN_DOVE_SVG = '<svg viewBox="0 0 120 120" class="w-full h-full drop-shadow-md" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="60" cy="60" r="57" fill="#6E6538" stroke="#262919" stroke-width="4"/><circle cx="60" cy="60" r="52" stroke="#F2B880" stroke-width="1.2" stroke-opacity="0.55"/><path d="M22 44 C17 39, 19 34, 25 35 L36 42 C33 32, 36 22, 45 20 C48 26, 51 34, 53 41 C57 31, 63 24, 71 23 C69 32, 67 40, 65 47 C74 44, 83 45, 89 51 C91 53, 94 56, 98 57 L92 60 C89 67, 81 74, 69 75 C56 76, 44 70, 37 61 L23 64 C18 64, 17 59, 21 56 L29 52 L20 49 C17 47, 18 44, 22 44 Z" fill="#FFFDF9"/><circle cx="85" cy="52" r="1.8" fill="#6E6538"/><path d="M55 56 L66 53 M58 61 L69 58" stroke="#6E6538" stroke-width="2" stroke-linecap="round"/><path d="M96 57 C92 48, 86 40, 77 35" stroke="#FFFDF9" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="89" cy="43" rx="4.5" ry="2.2" transform="rotate(-30 89 43)" fill="#FFFDF9"/><ellipse cx="83" cy="37" rx="4.5" ry="2.2" transform="rotate(-15 83 37)" fill="#FFFDF9"/><ellipse cx="77" cy="34" rx="4" ry="2" transform="rotate(10 77 34)" fill="#FFFDF9"/><ellipse cx="93" cy="48" rx="4" ry="2" transform="rotate(25 93 48)" fill="#FFFDF9"/><text x="60" y="96" text-anchor="middle" fill="#FFFDF9" font-family="Manrope, sans-serif" font-weight="800" font-size="14.5" letter-spacing="1.5">МИР МИР</text></svg>';
+
+    function esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+
+    let cart = [], currentMenuCategory = "Все", currentNewsPage = 0, curInteriorSlide = 0, cur3DSlide = 0;
+    let pendingDishCandidates = {}, selectedAiEnginePerDish = {}, activePcFileDishIdx = 0, activeGalleryTargetDishIdx = 0;
+    const STORAGE_DISH_OVERRIDES = "mirmir_clean_dish_overrides_v1";
+    const STORAGE_ACTION_LOGS = "mirmir_clean_action_logs_v1";
+    const STORAGE_CHECKLIST = "mirmir_clean_checklist_v1";
+
+    function getInteriorSlidesList() {
+      const ymaps = (DATA.ymap_photos && DATA.ymap_photos.length) ? DATA.ymap_photos : ["img/ymap_org_0.jpg", "img/ymap_org_1.jpg"];
+      const titles = ["🏛️ Исторический кирпичный свод и уютный зал на Ильинской, 45", "🕊️ Фирменная кованая вывеска с белой Голубкой мира", "🕯️ Атмосфера живого общения, картин и редкого чая", "🌿 Уютные диванные зоны и зелёный оазис", "🍵 Чайная культура и авторская растительная кухня"];
+      return ymaps.map((src, i) => ({ src, title: titles[i % titles.length] + " (Кадр #" + (i + 1) + ")", tag: "Яндекс.Карты • Фото #" + (i + 1) + " из " + ymaps.length }));
+    }
+    function stepInteriorSlide(d) { const s = getInteriorSlidesList(); curInteriorSlide = (curInteriorSlide + d + s.length) % s.length; renderInteriorSlideState(); }
+    function setInteriorSlide(i) { curInteriorSlide = i; renderInteriorSlideState(); }
+    function renderInteriorSlideState() {
+      const slides = getInteriorSlidesList(), s = slides[curInteriorSlide] || slides[0];
+      const imgEl = document.getElementById("hero-interior-slide-img"), titleEl = document.getElementById("hero-interior-slide-title"), tagEl = document.getElementById("hero-interior-slide-tag"), dotsBox = document.getElementById("hero-interior-dots"), heroLeft = document.getElementById("hero-left-col");
+      if (imgEl && s) { imgEl.style.opacity = "0.3"; setTimeout(() => { imgEl.src = s.src; imgEl.style.opacity = "1"; }, 140); }
+      if (titleEl && s) titleEl.innerText = s.title;
+      if (tagEl && s) tagEl.innerText = s.tag;
+      if (heroLeft && s) heroLeft.style.setProperty("--hero-slide-bg", "url('" + s.src + "')");
+      if (dotsBox) dotsBox.innerHTML = slides.slice(0, 14).map((_, i) => '<button onclick="setInteriorSlide(' + i + ')" class="h-2 rounded-full transition-all cursor-pointer ' + (i === curInteriorSlide ? 'w-6 bg-[#D48238]' : 'w-2 bg-white/40 hover:bg-white/70') + '"></button>').join("");
+    }
+
+    function renderWorkStatusBadges() {
+      const now = new Date(), day = now.getDay(), dec = now.getHours() + now.getMinutes() / 60;
+      const isOpen = (dec >= 12.0 && dec < 21.0), isLunch = (day >= 1 && day <= 5 && dec >= 12.0 && dec < 16.0);
+      const hBox = document.getElementById("header-work-status");
+      if (hBox) hBox.innerHTML = '<div class="flex items-center gap-1.5 flex-wrap"><span class="text-[10px] text-[#2E3D28] font-extrabold">Ильинская, 45</span>' + (isOpen ? '<span class="px-2 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] font-extrabold">🟢 ОТКРЫТО</span>' : '<span class="px-2 py-0.5 rounded-md bg-red-600 text-white text-[10px] font-extrabold">🔴 ЗАКРЫТО ДО 12:00</span>') + (isLunch ? '<span class="px-2 py-0.5 rounded-md bg-amber-400 text-[#1A2416] text-[10px] font-extrabold">🔥 БИЗНЕС-ЛАНЧ −30%</span>' : '<span class="text-[10px] text-[#556432] font-extrabold">12:00–21:00</span>') + '</div>';
+      const heroBox = document.getElementById("hero-work-badges");
+      if (heroBox) heroBox.innerHTML = (isOpen ? '<span class="px-3.5 py-1 rounded-full bg-emerald-600 text-white text-xs font-extrabold shadow">🟢 ОТКРЫТО ДО 21:00</span>' : '<span class="px-3.5 py-1 rounded-full bg-red-600 text-white text-xs font-extrabold shadow">🔴 ЗАКРЫТО ДО 12:00</span>') + ' ' + (isLunch ? '<span class="px-3.5 py-1 rounded-full bg-amber-400 text-[#1A2416] text-xs font-extrabold shadow animate-pulse">🔥 ИДЁТ БИЗНЕС-ЛАНЧ −30% (до 16:00)</span>' : '<span class="px-3.5 py-1 rounded-full bg-[#D48238] text-white text-xs font-extrabold shadow">🔥 Бизнес-Ланч −30% (будни 12:00–16:00)</span>');
+    }
+
+    function renderHeroRightColumn() {
+      const scans = (DATA.menu_scans && DATA.menu_scans.length) ? DATA.menu_scans : ["img/vk_5047_0.jpg", "img/vk_5047_1.jpg", "img/vk_5047_2.jpg", "img/vk_5047_3.jpg"];
+      const sheetTitles = [{title: "🥗 Страница 1: Супы и Боулы", cat: "Супы"}, {title: "🍵 Страница 4: Чайная карта", cat: "Чайная карта"}, {title: "🍰 Страница 3: Десерты и Смузи", cat: "Десерты без сахара"}, {title: "🍕 Страница 2: Салаты и Выпечка", cat: "Бургеры и Из печи"}];
+      const stBox = document.getElementById("stage-3d-box");
+      if (stBox) {
+        stBox.innerHTML = scans.map((s, i) => {
+          const meta = sheetTitles[i] || {title: "Страница меню", cat: "Все"};
+          return '<div class="slide-3d" onclick="openMenu(\'' + meta.cat + '\')"><div class="w-full h-full rounded-3xl overflow-hidden shadow-2xl border-4 border-[#FFFDF9] bg-[#FFFDF9] flex flex-col justify-between"><div class="flex-1 overflow-hidden flex items-center justify-center p-1"><img src="' + esc(s) + '" class="max-w-full max-h-full object-contain"></div><div class="bg-[#2E3D28] px-2.5 py-1.5 text-white flex items-center justify-between"><span class="text-[10px] font-extrabold text-[#F2B880] truncate">' + meta.title + '</span><button onclick="event.stopPropagation();openSuperZoom(\'' + esc(s) + '\', \'' + meta.title + '\')" class="text-[9px] bg-white/20 hover:bg-[#D48238] px-2 py-0.5 rounded font-bold cursor-pointer">Лупа 🔍</button></div></div></div>';
+        }).join("");
+        update3DCarouselPositions();
+      }
+      const rowsBox = document.getElementById("hero-specials-3rows");
+      if (rowsBox) {
+        const specials = (DATA.menu || []).filter(d => d.category === "Сезонные спешлы от Шефа" || d.photo_type === "real").slice(0, 9);
+        const mkRow = (arr) => '<div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5">' + arr.map(d => {
+          const idx = DATA.menu.indexOf(d), pr = d.sizes ? d.sizes[0].price : d.price;
+          return '<div onclick="openMenu(\'Сезонные спешлы от Шефа\')" class="zoom-card bg-[#FDF8F2] text-stone-900 rounded-xl p-1.5 flex items-center gap-2 cursor-pointer shadow border border-[#F2B880]/60 min-w-0 transition"><img src="' + esc(d.photo) + '" onclick="event.stopPropagation();openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="w-10 h-10 rounded-lg object-cover flex-shrink-0 cursor-zoom-in"><div class="min-w-0 flex-1"><div class="font-bold text-[10px] text-[#2E3D28] truncate leading-tight">' + esc(d.name) + '</div><div class="flex items-center justify-between mt-0.5"><strong class="text-[11px] text-[#D48238]">' + pr + ' ₽</strong><button onclick="event.stopPropagation();addToCart(' + idx + ',0)" class="px-1.5 py-0.5 rounded bg-[#556432] hover:bg-[#2E3D28] text-white text-[9px] font-extrabold cursor-pointer">+</button></div></div></div>';
+        }).join("") + '</div>';
+        rowsBox.innerHTML = mkRow(specials.slice(0, 3)) + mkRow(specials.slice(3, 6)) + mkRow(specials.slice(6, 9));
+      }
+    }
+    function update3DCarouselPositions() {
+      const stBox = document.getElementById("stage-3d-box"); if (!stBox) return;
+      const sl = stBox.querySelectorAll(".slide-3d"), tot = sl.length; if (!tot) return;
+      sl.forEach((el, idx) => {
+        const d = (idx - cur3DSlide + tot) % tot;
+        if (d === 0) { el.style.transform = "translateX(0) translateZ(60px) scale(1)"; el.style.zIndex = "30"; el.style.opacity = "1"; }
+        else if (d === 1) { el.style.transform = "translateX(50px) translateZ(-35px) rotateY(-16deg) scale(0.86)"; el.style.zIndex = "20"; el.style.opacity = "0.82"; }
+        else if (d === tot - 1) { el.style.transform = "translateX(-50px) translateZ(-35px) rotateY(16deg) scale(0.86)"; el.style.zIndex = "20"; el.style.opacity = "0.82"; }
+        else { el.style.transform = "translateX(0) translateZ(-90px) scale(0.74)"; el.style.zIndex = "10"; el.style.opacity = "0.35"; }
+      });
+    }
+    function step3DCarousel(delta) { const stBox = document.getElementById("stage-3d-box"), tot = stBox ? stBox.querySelectorAll(".slide-3d").length : 4; cur3DSlide = (cur3DSlide + delta + tot) % tot; update3DCarouselPositions(); }
+
+    function renderNewsPosts() {
+      const grid = document.getElementById("posts-grid"); if (!grid) return;
+      const posts = (DATA.posts && DATA.posts.length) ? DATA.posts : [];
+      const slice = posts.slice(currentNewsPage * 3, currentNewsPage * 3 + 3);
+      grid.innerHTML = slice.map(p => {
+        const vkUrl = p.vk_url || (p.id ? "https://vk.com/wall-191992548_" + p.id : "https://vk.com/mirmir.cafe");
+        return '<article class="zoom-card bg-[#FFFDF9] rounded-3xl p-4 border border-[#556432]/25 shadow-sm flex flex-col justify-between gap-3 transition"><div class="space-y-2.5"><div class="flex items-center justify-between text-[11px] font-extrabold text-[#D48238]"><span>📅 ' + esc(p.date || "Новость кафе") + '</span><span>❤️ ' + esc(p.likes || 25) + '</span></div><h3 class="font-serif text-xl font-bold text-[#1F2B1A] leading-snug">' + esc(p.title || "Событие в «Мир Мир»") + '</h3><div class="relative rounded-2xl overflow-hidden bg-[#F4ECE1] flex items-center justify-center"><img src="' + esc(p.photo) + '" onclick="openSuperZoom(\'' + esc(p.photo) + '\', \'' + esc(p.title) + '\')" class="w-full h-auto max-h-[340px] object-contain cursor-zoom-in block mx-auto"><button onclick="openSuperZoom(\'' + esc(p.photo) + '\', \'' + esc(p.title) + '\')" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/75 hover:bg-[#D48238] text-white text-[10px] font-extrabold cursor-pointer shadow">🔍 Лупа</button></div><p class="text-xs sm:text-sm text-stone-700 leading-relaxed whitespace-pre-line">' + esc(p.text || "") + '</p></div><div class="pt-2.5 border-t border-stone-200/80 flex items-center justify-start"><a href="' + esc(vkUrl) + '" target="_blank" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#2E3D28] hover:bg-[#D48238] text-[#F2B880] hover:text-white text-[11px] font-extrabold transition shadow cursor-pointer">читать на VK ↗</a></div></article>';
+      }).join("");
+    }
+    function stepNewsPage(d) { const maxP = Math.max(1, Math.ceil(((DATA.posts || []).length) / 3)); currentNewsPage = (currentNewsPage + d + maxP) % maxP; renderNewsPosts(); }
+
+    const CATEGORY_COVERS = { "Сезонные спешлы от Шефа": "img/vk_5128_1.jpg", "Супы": "img/vk_5057_1.jpg", "Боулы и Омлеты": "img/vk_5055_0.jpg", "Салаты": "img/macro_caesar_romaine.jpg", "Лапша": "img/vk_5057_0.jpg", "Бургеры и Из печи": "img/vk_5085_1.jpg", "Десерты без сахара": "img/vk_5069_0.jpg", "Барное меню: Смузи и Кофе": "img/macro_strawberry_banana.jpg", "Чайная карта": "img/vk_5122_0.jpg" };
+    function renderCategoryShowcaseAndRail() {
+      const cats = Array.from(new Set((DATA.menu || []).map(d => d.category)));
+      const rail = document.getElementById("sticky-rail");
+      if (rail) rail.innerHTML = ["Все", ...cats].map(c => '<button onclick="openMenu(\'' + esc(c) + '\')" class="px-3.5 py-1.5 rounded-full ' + (c === "Все" ? 'bg-[#2E3D28] text-[#F2B880] font-extrabold shadow' : 'bg-white hover:bg-[#F6E4CE] text-[#2E3D28] border border-stone-300/80 font-bold') + ' text-xs whitespace-nowrap cursor-pointer transition">' + (c === "Все" ? "📖 Все блюда (" + DATA.menu.length + ")" : esc(c)) + '</button>').join("");
+      const grid = document.getElementById("cat-showcase-grid");
+      if (grid) grid.innerHTML = cats.map(c => {
+        const count = (DATA.menu || []).filter(d => d.category === c).length, cov = CATEGORY_COVERS[c] || "img/vk_5128_1.jpg";
+        return '<div onclick="openMenu(\'' + esc(c) + '\')" class="zoom-card bg-white rounded-3xl p-3.5 border border-stone-200/80 shadow-sm cursor-pointer flex flex-col justify-between gap-3 transition"><div class="relative h-44 rounded-2xl overflow-hidden bg-stone-800"><img src="' + esc(cov) + '" class="w-full h-full object-cover"><div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-4 flex items-end justify-between"><h3 class="font-serif text-2xl font-bold text-white leading-tight">' + esc(c) + '</h3><span class="px-2.5 py-1 rounded-full bg-[#D48238] text-white text-[11px] font-extrabold whitespace-nowrap">' + count + ' поз.</span></div></div><button class="w-full py-2.5 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white font-extrabold text-xs cursor-pointer transition">📖 Открыть раздел</button></div>';
+      }).join("");
+    }
+
+    function openMenu(cat) { try { history.pushState({guard:"menu"}, ""); } catch(e){} currentMenuCategory = cat || "Все"; const m = document.getElementById("menu-modal"); if (m) { m.classList.remove("hidden"); m.classList.add("flex"); renderDishes(); } }
+    function closeMenu() { const m = document.getElementById("menu-modal"); if (m) { m.classList.add("hidden"); m.classList.remove("flex"); } }
+    function renderDishes() {
+      applyManualOverridesToMenuData();
+      const tabsBox = document.getElementById("menu-cat-tabs"), grid = document.getElementById("menu-dishes-grid"); if (!grid) return;
+      const cats = ["Все", ...Array.from(new Set((DATA.menu || []).map(d => d.category)))];
+      if (tabsBox) tabsBox.innerHTML = cats.map(c => '<button onclick="currentMenuCategory=\'' + esc(c) + '\';renderDishes()" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap cursor-pointer transition ' + (currentMenuCategory === c ? 'bg-[#2E3D28] text-[#F2B880] shadow' : 'bg-white text-[#2E3D28] border border-stone-300') + '">' + esc(c) + '</button>').join("");
+      const q = (document.getElementById("menu-search-inp")?.value || "").toLowerCase();
+      const filtered = (DATA.menu || []).filter(d => (currentMenuCategory === "Все" || d.category === currentMenuCategory) && (!q || d.name.toLowerCase().includes(q) || (d.desc || "").toLowerCase().includes(q)));
+      grid.innerHTML = filtered.map(d => {
+        const realIdx = DATA.menu.indexOf(d), badgeText = d.photo_type === "real" ? "📸 Фото блюда" : "🌿 Ингредиенты состава";
+        const buttonsHtml = (d.sizes && d.sizes.length > 1)
+          ? '<div class="grid grid-cols-2 gap-1.5 pt-2">' + d.sizes.map((sz, sIdx) => '<button onclick="addToCart(' + realIdx + ',' + sIdx + ')" class="py-2 px-2 rounded-xl bg-[#556432] hover:bg-[#D48238] text-white font-extrabold text-[11px] cursor-pointer transition shadow-sm">' + esc(sz.label) + ' • ' + sz.price + ' ₽ +</button>').join("") + '</div>'
+          : '<div class="flex items-center justify-between pt-2 border-t border-stone-100"><div><span class="text-[11px] text-stone-400 font-bold block">' + esc(d.weight || "") + '</span><strong class="text-lg font-extrabold text-[#2E3D28]">' + d.price + ' ₽</strong></div><button onclick="addToCart(' + realIdx + ',0)" class="px-4 py-2 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs cursor-pointer shadow">+ В корзину</button></div>';
+        return '<div class="zoom-card bg-white rounded-3xl p-3.5 border border-stone-200 shadow-sm flex flex-col justify-between gap-2 transition"><div><div class="relative h-44 rounded-2xl overflow-hidden mb-2.5 bg-stone-100"><img src="' + esc(d.photo) + '" onclick="openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in"><span class="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-black/70 text-[#F2B880] text-[10px] font-extrabold">' + badgeText + '</span><button onclick="openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-2 right-2 px-2 py-0.5 rounded-lg bg-black/75 hover:bg-[#D48238] text-white text-[10px] font-extrabold cursor-pointer">🔍 Лупа</button></div><span class="text-[10px] font-extrabold uppercase text-[#556432]">' + esc(d.category) + '</span><h4 class="font-serif text-xl font-bold text-[#2E3D28] leading-snug">' + esc(d.name) + '</h4><p class="text-xs text-stone-600 mt-1 leading-relaxed">' + esc(d.desc || "") + '</p></div>' + buttonsHtml + '</div>';
+      }).join("");
+    }
+
+    function addToCart(idx, sIdx) {
+      const d = DATA.menu[idx]; if (!d) return;
+      let name = d.name, price = d.price || 0;
+      if (d.sizes && d.sizes[sIdx]) { name = d.name + " (" + d.sizes[sIdx].label + ")"; price = d.sizes[sIdx].price; }
+      const key = idx + "_" + (sIdx || 0), ex = cart.find(x => x.key === key);
+      if (ex) ex.qty++; else cart.push({ key, idx, sIdx: sIdx || 0, name, price, category: d.category, qty: 1 });
+      updateCart(); showToast("🥗 Добавлено: " + name);
+    }
+    function updateCart() {
+      const badge = document.getElementById("cart-badge"), cnt = cart.reduce((s, x) => s + x.qty, 0);
+      if (badge) badge.innerText = cnt;
+      const box = document.getElementById("cart-items-box"), sumEl = document.getElementById("cart-sum"), hintEl = document.getElementById("cart-combo-hint");
+      let rawSum = 0, hasSoup = false, hasMain = false, hasDrink = false;
+      cart.forEach(x => {
+        rawSum += x.price * x.qty;
+        if (x.category === "Супы") hasSoup = true;
+        if (["Боулы и Омлеты", "Салаты", "Лапша", "Бургеры и Из печи", "Сезонные спешлы от Шефа"].includes(x.category)) hasMain = true;
+        if (["Барное меню: Смузи и Кофе", "Чайная карта"].includes(x.category)) hasDrink = true;
+      });
+      const isCombo = (hasSoup && hasMain && hasDrink), finalSum = isCombo ? Math.round(rawSum * 0.7) : rawSum;
+      if (sumEl) sumEl.innerText = finalSum + " ₽" + (isCombo ? " (−30% Комбо!)" : "");
+      if (hintEl) hintEl.innerHTML = isCombo ? "🎉 <b>Активирована скидка −30% на Комбо-Ланч!</b>" : "💡 Соберите <b>Суп + Основное блюдо + Напиток</b> для скидки −30% на Комбо!";
+      if (box) box.innerHTML = !cart.length ? '<div class="text-center text-stone-400 py-12 text-sm">Корзина пока пуста 🌿</div>' : cart.map((x, i) => '<div class="p-3 rounded-2xl bg-white border border-stone-200 flex items-center justify-between gap-2 text-xs"><div class="min-w-0 flex-1"><div class="font-bold text-[#2E3D28] truncate">' + esc(x.name) + '</div><div class="text-[#D48238] font-extrabold">' + x.price + ' ₽ × ' + x.qty + '</div></div><div class="flex items-center gap-1.5"><button onclick="changeCartQty(' + i + ',-1)" class="w-7 h-7 rounded-lg bg-stone-100 font-bold cursor-pointer">−</button><span class="font-extrabold w-4 text-center">' + x.qty + '</span><button onclick="changeCartQty(' + i + ',1)" class="w-7 h-7 rounded-lg bg-[#556432] text-white font-bold cursor-pointer">+</button></div></div>').join("");
+    }
+    function changeCartQty(i, d) { if (!cart[i]) return; cart[i].qty += d; if (cart[i].qty <= 0) cart.splice(i, 1); updateCart(); }
+    function toggleCart() { const dr = document.getElementById("cart-drawer"); if (dr) { dr.classList.toggle("hidden"); dr.classList.toggle("flex"); updateCart(); } }
+    function sendOrderToTelegram() {
+      if (!cart.length) { alert("Сначала добавьте блюда в корзину!"); return; }
+      const lines = ["🕊️ ЗАКАЗ В КАФЕ «Мир Мир» (Ильинская, 45):"];
+      cart.forEach(x => lines.push("• " + x.name + " × " + x.qty + " = " + (x.price * x.qty) + " ₽"));
+      lines.push("", "💰 ИТОГО: " + (document.getElementById("cart-sum")?.innerText || ""));
+      const txt = lines.join("\n"); if (navigator.clipboard) navigator.clipboard.writeText(txt);
+      window.open("https://t.me/mirmir_chef?text=" + encodeURIComponent(txt), "_blank");
+    }
+    function showToast(msg) {
+      const t = document.createElement("div"); t.innerText = msg;
+      t.className = "fixed bottom-16 left-1/2 -translate-x-1/2 z-[210] bg-[#2E3D28] text-[#F2B880] border-2 border-[#D48238] px-4 py-2.5 rounded-2xl shadow-2xl font-extrabold text-xs whitespace-nowrap";
+      document.body.appendChild(t); setTimeout(() => t.remove(), 1900);
+    }
+
+    let bowlState = { sizePrice: 540, sizeLabel: "Большой Боул 450 г", base: "Зелёная гречка", prot: "Тофу печёный", sauce: "Ореховый", extras: [] };
+    function openBowlBuilder() { try { history.pushState({guard:"bowl"}, ""); } catch(e){} const m = document.getElementById("bowl-modal"); if (m) { m.classList.remove("hidden"); m.classList.add("flex"); renderBowlBuilderUI(); } }
+    function closeBowlBuilder() { const m = document.getElementById("bowl-modal"); if (m) { m.classList.add("hidden"); m.classList.remove("flex"); } }
+    function renderBowlBuilderUI() {
+      const box = document.getElementById("bowl-builder-body"); if (!box) return;
+      const bases = ["Зелёная гречка", "Бурый рис", "Киноа", "Кус-кус"], prots = ["Тофу печёный", "Фалафель", "Сейтан пряный", "Нут томлёный"], sauces = ["Ореховый", "Тахини", "Зелёный песто", "Манго-чили"];
+      const extrasSpec = [{ name: "Авокадо 45 г", price: 120 }, { name: "Вторая малая основа", price: 90 }, { name: "Вторая большая основа", price: 120 }, { name: "Доп. соус", price: 60 }, { name: "Крафтовый хлеб", price: 60 }];
+      const total = bowlState.sizePrice + bowlState.extras.reduce((s, e) => s + e.price, 0);
+      box.innerHTML = '<div><label class="font-extrabold uppercase text-[#556432] block mb-1.5">1. Размер:</label><div class="grid grid-cols-2 gap-2"><button onclick="bowlState.sizePrice=540;bowlState.sizeLabel=\'Большой Боул 450 г\';renderBowlBuilderUI()" class="p-3 rounded-2xl border-2 font-extrabold cursor-pointer ' + (bowlState.sizePrice===540 ? 'border-[#D48238] bg-amber-50' : 'border-stone-200 bg-white') + '">Большой 450 г — 540 ₽</button><button onclick="bowlState.sizePrice=350;bowlState.sizeLabel=\'Полбоул 225 г\';renderBowlBuilderUI()" class="p-3 rounded-2xl border-2 font-extrabold cursor-pointer ' + (bowlState.sizePrice===350 ? 'border-[#D48238] bg-amber-50' : 'border-stone-200 bg-white') + '">Полбоул 225 г — 350 ₽</button></div></div>' +
+        '<div><label class="font-extrabold uppercase text-[#556432] block mb-1.5">2. Гарнир:</label><div class="grid grid-cols-2 sm:grid-cols-4 gap-2">' + bases.map(b => '<button onclick="bowlState.base=\'' + b + '\';renderBowlBuilderUI()" class="p-2.5 rounded-xl border-2 font-bold cursor-pointer ' + (bowlState.base===b ? 'border-[#556432] bg-emerald-50' : 'border-stone-200 bg-white') + '">' + b + '</button>').join("") + '</div></div>' +
+        '<div><label class="font-extrabold uppercase text-[#556432] block mb-1.5">3. Белок:</label><div class="grid grid-cols-2 sm:grid-cols-4 gap-2">' + prots.map(p => '<button onclick="bowlState.prot=\'' + p + '\';renderBowlBuilderUI()" class="p-2.5 rounded-xl border-2 font-bold cursor-pointer ' + (bowlState.prot===p ? 'border-[#556432] bg-emerald-50' : 'border-stone-200 bg-white') + '">' + p + '</button>').join("") + '</div></div>' +
+        '<div><label class="font-extrabold uppercase text-[#556432] block mb-1.5">4. Соус:</label><div class="grid grid-cols-2 sm:grid-cols-4 gap-2">' + sauces.map(s => '<button onclick="bowlState.sauce=\'' + s + '\';renderBowlBuilderUI()" class="p-2.5 rounded-xl border-2 font-bold cursor-pointer ' + (bowlState.sauce===s ? 'border-[#556432] bg-emerald-50' : 'border-stone-200 bg-white') + '">' + s + '</button>').join("") + '</div></div>' +
+        '<div><label class="font-extrabold uppercase text-[#556432] block mb-1.5">5. Добавки:</label><div class="flex flex-wrap gap-2">' + extrasSpec.map(ex => { const has = bowlState.extras.some(x => x.name === ex.name); return '<button onclick="toggleBowlExtra(\'' + ex.name + '\',' + ex.price + ')" class="px-3 py-1.5 rounded-xl border-2 font-bold cursor-pointer ' + (has ? 'border-[#D48238] bg-amber-100' : 'border-stone-200 bg-white') + '">' + (has ? '✓ ' : '+ ') + ex.name + ' (+' + ex.price + ' ₽)</button>'; }).join("") + '</div></div>' +
+        '<div class="pt-3 border-t border-stone-200 flex items-center justify-between"><strong class="text-2xl font-extrabold text-[#2E3D28]">' + total + ' ₽</strong><button onclick="addCustomBowlToCart(' + total + ')" class="px-6 py-3 rounded-2xl bg-[#D48238] text-white font-extrabold text-sm shadow-xl cursor-pointer">+ Добавить Боул 🛒</button></div>';
+    }
+    function toggleBowlExtra(nm, pr) { const i = bowlState.extras.findIndex(x => x.name === nm); if (i >= 0) bowlState.extras.splice(i, 1); else bowlState.extras.push({name: nm, price: pr}); renderBowlBuilderUI(); }
+    function addCustomBowlToCart(total) {
+      const exStr = bowlState.extras.length ? " + " + bowlState.extras.map(x => x.name).join(", ") : "";
+      const fullName = "🥗 " + bowlState.sizeLabel + " [" + bowlState.base + ", " + bowlState.prot + ", соус " + bowlState.sauce + exStr + "]";
+      cart.push({ key: "bowl_" + Date.now(), idx: 800, sIdx: 0, name: fullName, price: total, category: "Боулы и Омлеты", qty: 1 });
+      updateCart(); closeBowlBuilder(); showToast(fullName);
+    }
+
+    function openCafeShopModal() {
+      try { history.pushState({guard:"shop"}, ""); } catch(e){}
+      const m = document.getElementById("cafe-shop-modal"); if (!m) return;
+      m.classList.remove("hidden"); m.classList.add("flex");
+      const grid = document.getElementById("cafe-shop-grid");
+      if (grid) grid.innerHTML = (DATA.shop || []).map((it, i) => '<div class="zoom-card bg-white rounded-3xl p-3.5 border border-stone-200 shadow-sm flex flex-col justify-between"><div><div class="h-40 rounded-2xl overflow-hidden mb-3 relative"><img src="' + esc(it.photo) + '" onclick="openSuperZoom(\'' + esc(it.photo) + '\', \'' + esc(it.name) + '\')" class="w-full h-full object-cover cursor-zoom-in"><span class="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-[#2E3D28]/90 text-[#F2B880] text-[10px] font-extrabold">' + esc(it.weight) + '</span><button onclick="openSuperZoom(\'' + esc(it.photo) + '\', \'' + esc(it.name) + '\')" class="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/75 text-white text-[10px] font-bold cursor-pointer">🔍 Лупа</button></div><h4 class="font-serif text-lg font-bold text-[#2E3D28] leading-snug">' + esc(it.name) + '</h4><p class="text-xs text-stone-600 mt-1">' + esc(it.desc) + '</p></div><div class="pt-3 mt-3 border-t border-stone-100 flex items-center justify-between"><strong class="text-lg font-extrabold text-[#2E3D28]">' + it.price + ' ₽</strong><button onclick="addShopItemToCart(' + i + ')" class="px-3.5 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer shadow">+ В корзину 🛒</button></div></div>').join("");
+    }
+    function closeCafeShopModal() { const m = document.getElementById("cafe-shop-modal"); if (m) { m.classList.add("hidden"); m.classList.remove("flex"); } }
+    function addShopItemToCart(i) {
+      const it = (DATA.shop || [])[i]; if (!it) return;
+      const key = "shop_" + it.id, ex = cart.find(x => x.key === key);
+      if (ex) ex.qty++; else cart.push({ key, idx: 900 + i, sIdx: 0, name: "🛍️ [Магазин] " + it.name + " (" + it.weight + ")", price: it.price, category: "Магазин кафе", qty: 1 });
+      updateCart(); showToast("🛍️ Добавлено: " + it.name);
+    }
+
+    function openBookTableModal() {
+      const m = document.getElementById("book-table-modal"); if (!m) return;
+      const dInp = document.getElementById("book-date"); if (dInp && !dInp.value) dInp.value = new Date().toISOString().split("T")[0];
+      m.classList.remove("hidden"); m.classList.add("flex");
+    }
+    function closeBookTableModal() { const m = document.getElementById("book-table-modal"); if (m) { m.classList.add("hidden"); m.classList.remove("flex"); } }
+    function submitTableBooking() {
+      const zone = document.getElementById("book-zone")?.value || "", dt = document.getElementById("book-date")?.value || "", tm = document.getElementById("book-time")?.value || "", gst = document.getElementById("book-guests")?.value || "2 гостя", name = (document.getElementById("book-name")?.value || "").trim(), phone = (document.getElementById("book-phone")?.value || "").trim(), comm = (document.getElementById("book-comm")?.value || "").trim();
+      if (!name || !phone) { alert("Укажите ваше имя и телефон!"); return; }
+      const txt = ["🪑 БРОНЬ СТОЛИКА В КАФЕ «Мир Мир»", "👤 Гость: " + name, "📞 Связь: " + phone, "📅 Когда: " + dt + " в " + tm, "👥 Гостей: " + gst, "🏛️ Зона: " + zone, comm ? "💬 Пожелания: " + comm : ""].filter(Boolean).join("\n");
+      if (navigator.clipboard) navigator.clipboard.writeText(txt);
+      window.open("https://t.me/mirmir_chef?text=" + encodeURIComponent(txt), "_blank");
+    }
+
+    function openDeliveryModal() {
+      const m = document.getElementById("delivery-modal"); if (!m) return;
+      m.classList.remove("hidden"); m.classList.add("flex");
+      const cnt = cart.reduce((s, x) => s + x.qty, 0), sumTxt = document.getElementById("cart-sum")?.innerText || "0 ₽";
+      m.innerHTML = '<div class="bg-[#FDF8F2] rounded-t-[2rem] sm:rounded-[2.2rem] max-w-lg w-full p-5 sm:p-7 border-4 border-[#556432] shadow-2xl space-y-4 text-xs sm:text-sm"><div class="flex justify-between items-center border-b border-stone-200 pb-3"><h3 class="font-serif text-2xl sm:text-3xl font-bold text-[#2E3D28]">🛵 Доставка из кафе «Мир Мир»</h3><button onclick="document.getElementById(\'delivery-modal\').classList.add(\'hidden\')" class="w-9 h-9 rounded-full bg-white shadow font-bold cursor-pointer">✕</button></div><div class="p-3.5 rounded-2xl bg-[#F6E4CE]/70 text-[#556432] font-extrabold">🛒 Сейчас в корзине: ' + cnt + ' поз. (' + sumTxt + ')</div><div class="space-y-2.5"><input id="deliv-name" placeholder="Ваше имя *" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-300 text-sm"><input id="deliv-phone" placeholder="Телефон или @Telegram *" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-300 text-sm"><input id="deliv-addr" placeholder="Адрес доставки (улица, дом, кв.) *" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-stone-300 text-sm"><input id="deliv-comm" placeholder="Пожелания" class="w-full px-3.5 py-2 rounded-xl bg-white border border-stone-300 text-xs"></div><div class="grid grid-cols-2 gap-2.5"><button onclick="document.getElementById(\'delivery-modal\').classList.add(\'hidden\');openMenu(\'Все\')" class="py-3 rounded-xl bg-[#556432] text-white font-extrabold text-xs cursor-pointer">📖 Открыть меню</button><button onclick="submitDeliveryOrder()" class="py-3 rounded-xl bg-[#D48238] text-white font-extrabold text-xs shadow-lg cursor-pointer">🛵 Отправить заказ</button></div></div>';
+    }
+    function submitDeliveryOrder() {
+      const name = (document.getElementById("deliv-name")?.value || "").trim(), phone = (document.getElementById("deliv-phone")?.value || "").trim(), addr = (document.getElementById("deliv-addr")?.value || "").trim(), comm = (document.getElementById("deliv-comm")?.value || "").trim();
+      if (!cart.length || !name || !phone || !addr) { alert("Заполните корзину, имя, телефон и адрес!"); return; }
+      const lines = ["🛵 ЗАКАЗ НА ДОСТАВКУ «Мир Мир»", "👤 Имя: " + name, "📞 Связь: " + phone, "📍 Адрес: " + addr, comm ? "💬 Пожелания: " + comm : "", "", "📋 Заказ:"];
+      cart.forEach(x => lines.push("• " + x.name + " × " + x.qty + " = " + (x.price * x.qty) + " ₽"));
+      lines.push("", "💰 ИТОГО: " + (document.getElementById("cart-sum")?.innerText || ""));
+      window.open("https://t.me/mirmir_chef?text=" + encodeURIComponent(lines.join("\n")), "_blank");
+    }
+    function openYandexTaxiTo45(e) { if (e) e.preventDefault(); if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) window.location.href = "yandextaxi://route?end-lat=56.322355&end-lon=43.990383"; else window.open("https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=taxi&z=18", "_blank"); }
+
+    const GUEST_DAILY_SUGGESTIONS = [
+      "🍲 Попробуйте сегодня: пряный бразильский суп «Ватапа» + сэндвич «Елена Руз» с вешенками + согревающий чай «Масала»!",
+      "🌴 Карибское настроение: салат «Тропикал Кубана» с ананасом и авокадо + плов «Арос кон каморонос» + «Домашняя кола» с Саган Дайля!",
+      "🍄 Лесной фаворит: пицца «Том Ям» с лисичками и эдамаме + «Крем-суп из зелёного горошка» + тайваньский «Габа Улун»!",
+      "🔥 Сытный комбо-сет (−30% в будни 12–16): тайский «Том Ям» + «Мир-Бургер» с шоколадной курагой + ягодный смузи!"
+    ];
+    function rollRandomGastroPulse() { const el = document.getElementById("ai-pulse-random-text"); if (el) el.innerText = GUEST_DAILY_SUGGESTIONS[Math.floor(Math.random() * GUEST_DAILY_SUGGESTIONS.length)]; }
+
+    const RADIO_STREAMS = {
+      hangdrum: { title: "🛸 Ханг Драм & Хэндпан", urls: ["https://ice2.somafm.com/fluid-128-mp3", "https://radiorecord.hostingradio.ru/organic96.aacp"] },
+      ambient: { title: "🌌 Эмбиент & Чилл", urls: ["https://radiorecord.hostingradio.ru/ambient96.aacp", "https://ice2.somafm.com/groovesalad-128-mp3"] },
+      reggae: { title: "🌴 Рэгги & Даб", urls: ["https://listen.181fm.com/181-reggae_128k.mp3", "https://radiorecord.hostingradio.ru/summer96.aacp"] },
+      mantra: { title: "🕉️ Мантры & Восток", urls: ["https://ice2.somafm.com/suburbsofgoa-128-mp3", "https://radiorecord.hostingradio.ru/hypno96.aacp"] }
+    };
+    let mirStreamAudio = null, hangDrumResonatorTimer = null, hangAudioCtx = null;
+    function startHangDrumAcousticOverlay() {
+      if (hangDrumResonatorTimer) clearInterval(hangDrumResonatorTimer);
+      if (!hangAudioCtx) hangAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (hangAudioCtx.state === "suspended") hangAudioCtx.resume();
+      const dKurd = [146.83, 220.00, 233.08, 261.63, 293.66, 329.63, 349.23, 392.00, 440.00];
+      const strike = (f, ms) => setTimeout(() => {
+        if (!hangDrumResonatorTimer) return;
+        const now = hangAudioCtx.currentTime, osc = hangAudioCtx.createOscillator(), g = hangAudioCtx.createGain();
+        osc.type = "sine"; osc.frequency.setValueAtTime(f * 1.008, now); osc.frequency.exponentialRampToValueAtTime(f, now + 0.04);
+        g.gain.setValueAtTime(0.0001, now); g.gain.linearRampToValueAtTime(0.035, now + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, now + 2.8);
+        osc.connect(g); g.connect(hangAudioCtx.destination); osc.start(now); osc.stop(now + 2.9);
+      }, ms);
+      const loop = () => { strike(146.83, 0); [400, 850, 1400, 1950].forEach(ms => { if (Math.random() > 0.25) strike(dKurd[Math.floor(Math.random() * dKurd.length)], ms); }); };
+      hangDrumResonatorTimer = setInterval(loop, 2500); loop();
+    }
+    function openRadioSelectorModal() { const m = document.getElementById("radio-selector-modal"); if (m) { m.classList.remove("hidden"); m.classList.add("flex"); } }
+    function stopMirMirRadio() { if (mirStreamAudio) { mirStreamAudio.pause(); mirStreamAudio.src = ""; } if (hangDrumResonatorTimer) { clearInterval(hangDrumResonatorTimer); hangDrumResonatorTimer = null; } const st = document.getElementById("radio-now-status"); if (st) st.innerText = "🔇 Сейчас радио выключено"; }
+    function setMirMirRadioVol(v) { if (mirStreamAudio) mirStreamAudio.volume = Math.max(0, Math.min(1, v / 100)); }
+    function playMirMirWave(k, idx = 0) {
+      const stObj = RADIO_STREAMS[k]; if (hangDrumResonatorTimer) { clearInterval(hangDrumResonatorTimer); hangDrumResonatorTimer = null; }
+      if (k === "hangdrum") startHangDrumAcousticOverlay();
+      if (!stObj || idx >= stObj.urls.length) return;
+      if (mirStreamAudio) { mirStreamAudio.pause(); mirStreamAudio.src = ""; }
+      mirStreamAudio = new Audio(stObj.urls[idx]); mirStreamAudio.volume = 0.7;
+      const st = document.getElementById("radio-now-status"); if (st) st.innerText = "🔊 В эфире: " + stObj.title;
+      mirStreamAudio.onerror = () => playMirMirWave(k, idx + 1);
+      mirStreamAudio.play().catch(() => { if (k !== "hangdrum") playMirMirWave(k, idx + 1); });
+    }
+
+    function openSuperZoom(u, c) {
+      const b = document.getElementById("super-zoom-lightbox"), im = document.getElementById("super-zoom-img"), cap = document.getElementById("super-zoom-caption"), dl = document.getElementById("super-zoom-dl");
+      if (!b || !im) return; im.src = u; if (cap) cap.innerText = c ? ("🔍 " + c) : "🔍 Полный размер"; if (dl) dl.href = u;
+      b.classList.remove("hidden"); b.classList.add("flex");
+    }
+    function closeSuperZoom() { const b = document.getElementById("super-zoom-lightbox"); if (b) { b.classList.add("hidden"); b.classList.remove("flex"); } }
+    function exportPDF() { window.print(); }
+
+    // Управление 72 блюдами и мульти-движок фото (Openverse HD + Wikimedia + Flux AI)
+    function getManualDishOverrides() { const s = (DATA.tz_synced && DATA.tz_synced.dishes) ? DATA.tz_synced.dishes : {}; let l = {}; try { l = JSON.parse(localStorage.getItem(STORAGE_DISH_OVERRIDES) || "{}"); } catch(e){} return Object.assign({}, s, l); }
+    function saveManualDishOverrides(o) { localStorage.setItem(STORAGE_DISH_OVERRIDES, JSON.stringify(o)); }
+    function applyManualOverridesToMenuData() {
+      const ov = getManualDishOverrides();
+      (DATA.menu || []).forEach(d => {
+        if (!d.ai_default_photo) d.ai_default_photo = d.photo;
+        if (!d.ai_default_type) d.ai_default_type = d.photo_type;
+        if (ov[d.name] && ov[d.name].photo) { d.photo = ov[d.name].photo; d.photo_type = "real"; d.is_manual_override = true; }
+        else { d.photo = d.ai_default_photo; d.photo_type = d.ai_default_type; d.is_manual_override = false; }
+      });
+    }
+    function addLocalBuildOrActionLog(status, stats) {
+      let logs = []; try { logs = JSON.parse(localStorage.getItem(STORAGE_ACTION_LOGS) || "[]"); } catch(e){}
+      const t = new Date().toLocaleDateString("ru-RU") + " " + new Date().toLocaleTimeString("ru-RU", {hour:"2-digit", minute:"2-digit"});
+      logs.unshift({ version: "Действие в ⚙️ (" + t + ")", timestamp: t, model: "Мульти-движок", status, stats });
+      localStorage.setItem(STORAGE_ACTION_LOGS, JSON.stringify(logs.slice(0, 80)));
+    }
+
+    async function generateDishCandidateAI(idx) {
+      const d = DATA.menu[idx]; if (!d) return;
+      const engine = selectedAiEnginePerDish[idx] || "openverse_hd";
+      const prmInp = document.getElementById("hub-ai-prm-" + idx), btn = document.getElementById("hub-ai-btn-" + idx);
+      if (btn) { btn.innerText = "⏳ Поиск/ИИ..."; btn.disabled = true; }
+      let queryTxt = (prmInp ? prmInp.value.trim() : "") || d.ai_prompt || d.name;
+
+      // Если текст на русском — переводим на английский
+      if (/[а-яё]/i.test(queryTxt)) {
+        try {
+          const tr = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(queryTxt.slice(0, 180)) + "&langpair=ru|en");
+          const tj = await tr.json();
+          if (tj.responseData && tj.responseData.translatedText) queryTxt = tj.responseData.translatedText;
+        } catch(e) { queryTxt = d.ai_prompt || "vegan dish food"; }
+      }
+
+      if (engine === "openverse_hd") {
+        try {
+          const shortQ = queryTxt.split(",")[0].replace(/close-up|studio|food photography of/gi, "").trim();
+          const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent(shortQ + " food") + "&page_size=15");
+          const j = await r.json();
+          if (j.results && j.results.length) {
+            const pick = j.results[Math.floor(Math.random() * j.results.length)];
+            pendingDishCandidates[idx] = { url: pick.url, source: "📸 Openverse HD (Реальное фото)", prompt: shortQ };
+            addLocalBuildOrActionLog("📸 Найдено реальное фото Openverse HD для «" + d.name + "»", shortQ);
+            renderUnifiedSystemHub(); return;
+          }
+        } catch(e) {}
+      } else if (engine === "wikimedia") {
+        try {
+          const shortQ = queryTxt.split(",")[0].trim();
+          const r = await fetch("https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=" + encodeURIComponent("filetype:bitmap " + shortQ) + "&gsrlimit=12&prop=imageinfo&iiprop=url&format=json&origin=*");
+          const j = await r.json();
+          const pages = j.query && j.query.pages ? Object.values(j.query.pages) : [];
+          const imgs = pages.map(p => p.imageinfo && p.imageinfo[0] && p.imageinfo[0].url).filter(Boolean);
+          if (imgs.length) {
+            const pickUrl = imgs[Math.floor(Math.random() * imgs.length)];
+            pendingDishCandidates[idx] = { url: pickUrl, source: "🥗 Wikimedia Food Commons", prompt: shortQ };
+            addLocalBuildOrActionLog("🥗 Найдено фото Wikimedia для «" + d.name + "»", shortQ);
+            renderUnifiedSystemHub(); return;
+          }
+        } catch(e) {}
+      }
+
+      const seed = Math.floor(Math.random() * 899999) + 100000;
+      const aiUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent("Close-up studio vegan food photography of " + queryTxt + ", ceramic plate on wooden table, natural lighting, 8k, no text") + "?width=768&height=768&seed=" + seed + "&model=flux&nologo=true";
+      pendingDishCandidates[idx] = { url: aiUrl, source: "🎨 Flux AI (Seed #" + seed + ")", prompt: queryTxt };
+      addLocalBuildOrActionLog("🎨 Сгенерирован ИИ-вариант для «" + d.name + "»", queryTxt.slice(0, 100));
+      renderUnifiedSystemHub();
+    }
+
+    function approveCandidateDishPhoto(idx) {
+      const cand = pendingDishCandidates[idx]; if (!cand || !cand.url) return;
+      approveAndLockDishPhoto(idx, cand.url, "✅ Утверждено (" + cand.source + ")");
+      delete pendingDishCandidates[idx]; renderUnifiedSystemHub();
+    }
+    function discardCandidateDishPhoto(idx) { delete pendingDishCandidates[idx]; renderUnifiedSystemHub(); }
+    function approveAndLockDishPhoto(idx, newUrl, reason) {
+      const d = DATA.menu[idx]; if (!d || !newUrl) return;
+      const ov = getManualDishOverrides(); ov[d.name] = { photo: newUrl, updated_at: new Date().toLocaleString("ru-RU") };
+      saveManualDishOverrides(ov); applyManualOverridesToMenuData(); renderHeroRightColumn(); renderDishes();
+      addLocalBuildOrActionLog(reason + " для «" + d.name + "»", newUrl.startsWith("data:") ? "[Файл с ПК]" : newUrl);
+      showToast("✅ Утверждено для «" + d.name + "»!");
+    }
+
+    function openReadyGalleryPopup(dishIdx) {
+      activeGalleryTargetDishIdx = dishIdx;
+      const m = document.getElementById("ready-gallery-popup"), t = document.getElementById("ready-popup-title"), d = DATA.menu[dishIdx];
+      if (t && d) t.innerHTML = '📸 Выберите готовое фото для: <span class="text-[#F2B880] underline">' + esc(d.name) + '</span>';
+      if (m) { m.classList.remove("hidden"); m.classList.add("flex"); renderReadyGalleryPopupGrid(); }
+    }
+    function closeReadyGalleryPopup() { const m = document.getElementById("ready-gallery-popup"); if (m) { m.classList.add("hidden"); m.classList.remove("flex"); } }
+    function renderReadyGalleryPopupGrid() {
+      const grid = document.getElementById("ready-popup-grid"); if (!grid) return;
+      const q = (document.getElementById("ready-popup-filter")?.value || "").toLowerCase();
+      const photos = (DATA.ready_photos || []).filter(p => !q || p.toLowerCase().includes(q)), idx = activeGalleryTargetDishIdx;
+      grid.innerHTML = photos.map(src => '<div class="bg-white p-2.5 rounded-2xl border-2 border-stone-200 hover:border-[#D48238] shadow-sm flex flex-col justify-between gap-2"><div class="relative h-36 rounded-xl overflow-hidden bg-stone-100"><img src="' + esc(src) + '" onclick="openSuperZoom(\'' + esc(src) + '\', \'Готовое фото: ' + esc(src) + '\')" class="w-full h-full object-cover cursor-zoom-in"><button onclick="openSuperZoom(\'' + esc(src) + '\', \'Готовое фото: ' + esc(src) + '\')" class="absolute top-2 right-2 px-2.5 py-1 rounded-lg bg-black/75 text-white text-[10px] font-extrabold cursor-pointer">🔍 Лупа</button></div><code class="text-[10px] font-bold text-stone-600 truncate block">' + esc(src) + '</code><button onclick="closeReadyGalleryPopup();approveAndLockDishPhoto(' + idx + ',\'' + esc(src) + '\',\'📸 Выбрано из готовых\');renderUnifiedSystemHub()" class="w-full py-2 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold text-xs cursor-pointer">✅ Утвердить это фото</button></div>').join("");
+    }
+
+    function triggerPcFileUpload(idx) { activePcFileDishIdx = idx; const inp = document.getElementById("pc-dish-file-input"); if (inp) { inp.value = ""; inp.click(); } }
+    function handlePcFileSelected(ev) {
+      const file = ev.target.files && ev.target.files[0]; if (!file) return;
+      const idx = activePcFileDishIdx, reader = new FileReader();
+      reader.onload = e => {
+        const im = new Image();
+        im.onload = () => {
+          const c = document.createElement("canvas"); let w = im.width, h = im.height;
+          if (w > 720 || h > 720) { if (w > h) { h = Math.round(h * 720 / w); w = 720; } else { w = Math.round(w * 720 / h); h = 720; } }
+          c.width = w; c.height = h; c.getContext("2d").drawImage(im, 0, 0, w, h);
+          pendingDishCandidates[idx] = { url: c.toDataURL("image/jpeg", 0.84), source: "📁 Файл с ПК (" + file.name + ")", prompt: file.name };
+          renderUnifiedSystemHub();
+        };
+        im.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+    function applyCustomUrlInput(idx) { const u = (document.getElementById("hub-url-" + idx)?.value || "").trim(); if (!u) return; approveAndLockDishPhoto(idx, u, "🔗 Ручной URL"); renderUnifiedSystemHub(); }
+    function resetDishToAiAuto(idx) { const d = DATA.menu[idx]; if (!d) return; const ov = getManualDishOverrides(); delete ov[d.name]; saveManualDishOverrides(ov); delete pendingDishCandidates[idx]; applyManualOverridesToMenuData(); renderHeroRightColumn(); renderDishes(); renderUnifiedSystemHub(); }
+
+    const DEFAULT_CHECKLIST = [
+      { task: "Чистая 3-модульная пересборка проекта (menu_data.py + template.html + app.py)", done: true, bug_info: "Устранены обрывы потока и конфликты регулярок." },
+      { task: "Мульти-движок подбора фото в шестерёнке ⚙️: Openverse HD (реальные фото еды) + Wikimedia + Flux AI + Загрузка с ПК", done: true, bug_info: "Позволяет искать реальные фото блюд без галлюцинаций нейросети и смотреть их через Лупу z-200." },
+      { task: "Полные необрезанные фото в Новостях + кнопка «читать на VK ↗» + плавный Зум на ПК", done: true, bug_info: "Встроено нативно в шаблон." }
+    ];
+    function getChecklistItems() { try { const r = localStorage.getItem(STORAGE_CHECKLIST); if (r) return JSON.parse(r); } catch(e){} return DEFAULT_CHECKLIST; }
+    function saveChecklistItems(a) { localStorage.setItem(STORAGE_CHECKLIST, JSON.stringify(a)); }
+
+    const SITE_TOGGLES_SPEC = [
+      { key: "wings", label: "🖼️ Боковые кулисы ПК (Интерьер & Вывеска)", def: true },
+      { key: "vibe", label: "🔍 Плавное Отдаление-Приближение фото при наведении", def: true },
+      { key: "leaves", label: "🍃 Падающие чайные листья на экране", def: false },
+      { key: "float", label: "🧊 Плавная левитация Голубок и карточек", def: true }
+    ];
+    function getToggleStates() { let st = {}; try { st = JSON.parse(localStorage.getItem("mirmir_clean_toggles_v1") || "{}"); } catch(e){} SITE_TOGGLES_SPEC.forEach(s => { if (st[s.key] === undefined) st[s.key] = s.def; }); return st; }
+    function applySiteToggles() {
+      const st = getToggleStates();
+      document.body.classList.toggle("cfg-no-wings", !st.wings);
+      document.body.classList.toggle("cfg-no-vibe", !st.vibe);
+      document.body.classList.toggle("cfg-no-float", !st.float);
+      const lb = document.getElementById("falling-leaves-box");
+      if (lb) { if (st.leaves) { lb.classList.remove("hidden"); if (!lb.innerHTML) lb.innerHTML = Array.from({length: 14}).map(() => '<div style="position:absolute;left:' + (Math.random()*95) + 'vw;top:-5vh;font-size:22px;animation:leaf-fall ' + (8+Math.random()*6) + 's linear infinite;">🍃</div>').join(""); } else lb.classList.add("hidden"); }
+    }
+    function flipSiteToggle(k) { const st = getToggleStates(); st[k] = !st[k]; localStorage.setItem("mirmir_clean_toggles_v1", JSON.stringify(st)); applySiteToggles(); renderUnifiedSystemHub(); }
+
+    let hubActiveTab = "dishes72";
+    function openUnifiedSystemHub(t) { if (t) hubActiveTab = t; const m = document.getElementById("unified-system-hub"); if (m) { m.classList.remove("hidden"); m.classList.add("flex"); renderUnifiedSystemHub(); } }
+    function closeUnifiedSystemHub() { const m = document.getElementById("unified-system-hub"); if (m) { m.classList.add("hidden"); m.classList.remove("flex"); } }
+
+    function renderUnifiedSystemHub() {
+      const tabsBox = document.getElementById("hub-top-tabs"), bodyBox = document.getElementById("hub-main-body"); if (!tabsBox || !bodyBox) return;
+      const ov = getManualDishOverrides(), manualCount = Object.keys(ov).filter(k => ov[k] && ov[k].photo).length;
+      const chkList = getChecklistItems(), doneCount = chkList.filter(x => x.done).length;
+      const srvLogs = Array.isArray(DATA.full_build_logs) ? DATA.full_build_logs : [];
+      let locLogs = []; try { locLogs = JSON.parse(localStorage.getItem(STORAGE_ACTION_LOGS) || "[]"); } catch(e){}
+      const allLogs = [...locLogs, ...srvLogs];
+      const tabBtn = (id, lbl) => '<button onclick="hubActiveTab=\'' + id + '\';renderUnifiedSystemHub()" class="px-3.5 py-2 rounded-xl font-extrabold text-xs cursor-pointer transition ' + (hubActiveTab === id ? 'bg-[#D48238] text-white shadow-lg border border-white/50' : 'bg-white/10 text-white/85 hover:bg-white/20') + '">' + lbl + '</button>';
+
+      tabsBox.innerHTML = [
+        tabBtn("dishes72", "🍲 Все 72 блюда: Фото (" + (manualCount ? "Утверждено: " + manualCount : "Гибрид") + ")"),
+        tabBtn("checklist", "📋 Список задач (" + doneCount + "/" + chkList.length + ")"),
+        tabBtn("logs", "📜 Логи сборок (" + allLogs.length + ")"),
+        tabBtn("journal", "📝 Журнал идей"),
+        tabBtn("toggles", "⚡ Изменяшки & Промпт"),
+        '<button onclick="closeUnifiedSystemHub()" class="w-9 h-9 rounded-full bg-white/15 hover:bg-red-600 text-white font-bold cursor-pointer ml-1">✕</button>'
+      ].join("");
+
+      if (hubActiveTab === "dishes72") {
+        const qFilter = (document.getElementById("hub-dish-search")?.value || "").toLowerCase();
+        const catFilter = document.getElementById("hub-dish-cat")?.value || "Все";
+        const categories = ["Все", ...Array.from(new Set((DATA.menu || []).map(d => d.category)))];
+        const readyPhotos = DATA.ready_photos || [];
+
+        const rowsHtml = (DATA.menu || []).map((d, idx) => {
+          if (catFilter !== "Все" && d.category !== catFilter) return "";
+          if (qFilter && !d.name.toLowerCase().includes(qFilter) && !d.category.toLowerCase().includes(qFilter)) return "";
+          const isManual = !!d.is_manual_override;
+          const cand = pendingDishCandidates[idx];
+          const curEngine = selectedAiEnginePerDish[idx] || "openverse_hd";
+          const pr = d.sizes ? d.sizes[0].price : d.price;
+          const badgeHtml = isManual ? '<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-400 text-[10px] font-extrabold">✅ Утверждено вручную</span>' : '<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-extrabold">🤖 Авто-парсинг</span>';
+
+          const candBox = cand ? '<div class="mt-3 p-3.5 rounded-2xl bg-[#2E3D28] text-white border-2 border-[#D48238] shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4"><div class="flex items-center gap-4"><div class="relative w-28 h-28 rounded-2xl overflow-hidden border-2 border-[#F2B880] bg-black/40 flex-shrink-0"><img src="' + esc(cand.url) + '" onclick="openSuperZoom(\'' + esc(cand.url) + '\', \'Кандидат: ' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in"><button onclick="openSuperZoom(\'' + esc(cand.url) + '\', \'Кандидат: ' + esc(d.name) + '\')" class="absolute bottom-1 right-1 px-2 py-0.5 rounded bg-black/80 text-white text-[10px] font-bold cursor-pointer">🔍 Лупа</button></div><div class="space-y-1"><span class="px-2 py-0.5 rounded-full bg-amber-400 text-[#1A2416] text-[10px] font-extrabold">' + esc(cand.source) + '</span><h5 class="font-serif text-xl font-bold text-[#F2B880]">👁️ Предпросмотр для «' + esc(d.name) + '»</h5><p class="text-xs text-white/85">Нажмите «🔍 Лупа» для просмотра во весь экран или «✅ Утвердить в меню»!</p></div></div><div class="flex sm:flex-col gap-2"><button onclick="approveCandidateDishPhoto(' + idx + ')" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs cursor-pointer shadow">✅ Утвердить в меню</button><button onclick="generateDishCandidateAI(' + idx + ')" class="px-3.5 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">🎲 Ещё вариант</button><button onclick="discardCandidateDishPhoto(' + idx + ')" class="px-3 py-1.5 rounded-xl bg-white/15 text-white text-xs cursor-pointer">✕ Отмена</button></div></div>' : '';
+
+          return '<div class="bg-white p-4 rounded-3xl border-2 ' + (isManual ? 'border-[#D48238] bg-amber-50/15' : 'border-stone-200') + ' shadow-sm"><div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3.5"><div class="flex items-center gap-3.5 min-w-0 lg:w-1/3"><div class="relative w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 border-2 border-[#556432]/40 bg-stone-100"><img src="' + esc(d.photo) + '" onclick="openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in"><button onclick="openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-1 right-1 px-2 py-0.5 rounded bg-black/75 text-white text-[10px] font-extrabold cursor-pointer">🔍 Лупа</button></div><div class="min-w-0 space-y-1"><div class="flex items-center gap-1.5 flex-wrap"><span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-[#F6E4CE] text-[#556432]">' + esc(d.category) + '</span>' + badgeHtml + '</div><h4 class="font-serif font-bold text-lg text-[#2E3D28] leading-tight">' + esc(d.name) + ' <span class="text-xs font-sans text-[#D48238]">(' + pr + ' ₽)</span></h4><code class="text-[10px] text-stone-400 block truncate">' + esc(d.photo.startsWith("data:") ? "[Файл с ПК]" : d.photo) + '</code></div></div>' +
+            '<div class="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-2.5"><div class="bg-amber-50/70 p-2.5 rounded-2xl border border-amber-300/80 space-y-1.5"><div class="flex items-center justify-between gap-1"><label class="text-[10px] font-extrabold uppercase text-[#D48238]">🎨 1. Подбор / Генерация фото:</label><select onchange="selectedAiEnginePerDish[' + idx + ']=this.value" class="px-2 py-0.5 rounded bg-white border text-[10px] font-bold text-[#2E3D28]"><option value="openverse_hd" ' + (curEngine==="openverse_hd"?"selected":"") + '>📸 1. Openverse HD (Без лимитов)</option><option value="wikimedia" ' + (curEngine==="wikimedia"?"selected":"") + '>🥗 2. Wikimedia Gastro (Без лимитов)</option><option value="flickr_food" ' + (curEngine==="flickr_food"?"selected":"") + '>🍲 3. Flickr Gastro (Мгновенно)</option><option value="local_ready" ' + (curEngine==="local_ready"?"selected":"") + '>🌿 4. Из архива img/ (Мгновенно)</option><option value="turbo_ai" ' + (curEngine==="turbo_ai"?"selected":"") + '>⚡ 5. Turbo SDXL AI (Быстрый ИИ)</option><option value="flux_ai" ' + (curEngine==="flux_ai"?"selected":"") + '>🎨 6. Flux Realism AI (ИИ)</option></select></div><div class="flex gap-1.5"><input id="hub-ai-prm-' + idx + '" value="' + esc(d.ai_prompt || d.name) + '" class="flex-1 px-2.5 py-1.5 rounded-xl bg-white border text-xs"><button id="hub-ai-btn-' + idx + '" onclick="generateDishCandidateAI(' + idx + ')" class="px-3 py-1.5 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer whitespace-nowrap shadow">🔍 Найти / Сгенерировать</button></div></div>' +
+            '<div class="bg-stone-50 p-2.5 rounded-2xl border border-stone-200 flex flex-col justify-between"><label class="text-[10px] font-extrabold uppercase text-stone-600 block mb-1">🔗 2. Прямая ссылка или путь img/...:</label><div class="flex gap-1.5"><input id="hub-url-' + idx + '" placeholder="https://... или img/..." class="flex-1 px-2.5 py-1.5 rounded-xl bg-white border text-xs"><button onclick="applyCustomUrlInput(' + idx + ')" class="px-3 py-1.5 rounded-xl bg-[#556432] text-white font-extrabold text-xs cursor-pointer whitespace-nowrap">✅ Утвердить URL</button></div></div></div>' +
+            '<div class="flex sm:flex-row lg:flex-col gap-1.5 w-full lg:w-auto justify-end"><button onclick="openReadyGalleryPopup(' + idx + ')" class="px-3.5 py-2 rounded-xl bg-[#2E3D28] text-[#F2B880] font-extrabold text-xs cursor-pointer whitespace-nowrap shadow">📸 Из готовых (' + readyPhotos.length + ')</button><button onclick="triggerPcFileUpload(' + idx + ')" class="px-3.5 py-2 rounded-xl bg-emerald-700 text-white font-extrabold text-xs cursor-pointer whitespace-nowrap shadow">📁 С компьютера</button>' + (isManual ? '<button onclick="resetDishToAiAuto(' + idx + ')" class="px-3 py-1.5 rounded-xl bg-stone-200 text-stone-800 font-bold text-[10px] cursor-pointer">🔄 Сбросить</button>' : '') + '</div></div>' + candBox + '</div>';
+        }).join("");
+
+        bodyBox.innerHTML = '<div class="space-y-3"><div class="bg-[#F6E4CE]/90 p-3.5 rounded-2xl border-2 border-[#556432]/30 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5"><div class="flex flex-1 gap-2 flex-col sm:flex-row"><select id="hub-dish-cat" onchange="renderUnifiedSystemHub()" class="px-3 py-2 rounded-xl bg-white border text-xs font-extrabold text-[#2E3D28]">' + categories.map(c => '<option value="' + esc(c) + '" ' + (c === catFilter ? 'selected' : '') + '>' + esc(c) + '</option>').join("") + '</select><input id="hub-dish-search" oninput="renderUnifiedSystemHub()" value="' + esc(qFilter) + '" placeholder="🔍 Поиск по всем 72 блюдам меню..." class="flex-1 px-3.5 py-2 rounded-xl bg-white border text-xs sm:text-sm"></div><button onclick="exportDishOverridesToJson()" class="px-4 py-2 rounded-xl bg-[#2E3D28] text-[#F2B880] font-extrabold text-xs cursor-pointer shadow">💾 Скачать tz_mirmir.json</button></div><div class="space-y-2.5">' + rowsHtml + '</div></div>';
+      } else if (hubActiveTab === "checklist") {
+        const rows = chkList.map((item, i) => '<tr class="' + (item.done ? 'bg-emerald-50/40' : 'bg-amber-50/70') + ' border-b border-stone-200"><td class="p-3 font-bold text-stone-900 text-xs sm:text-sm">' + (i + 1) + '. ' + esc(item.task) + '</td><td class="p-3"><button onclick="toggleChecklistItem(' + i + ')" class="px-3 py-1.5 rounded-xl font-extrabold text-xs cursor-pointer ' + (item.done ? 'bg-emerald-700 text-white' : 'bg-amber-500 text-stone-900') + '">' + (item.done ? '✅ Сделано' : '⏳ В работе') + '</button></td><td class="p-3 text-xs text-stone-700">' + esc(item.bug_info || "") + '</td></tr>').join("");
+        bodyBox.innerHTML = '<div class="space-y-4"><div class="bg-white p-4 rounded-2xl border-2 border-[#556432] flex gap-2"><input id="chk-new-task" placeholder="Новая задача..." class="flex-1 px-3 py-2 rounded-xl border text-xs"><button onclick="addNewChecklistItem()" class="px-4 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">+ Добавить</button></div><div class="overflow-x-auto rounded-2xl border-2 border-[#2E3D28] bg-white"><table class="w-full text-left border-collapse"><thead><tr class="bg-[#2E3D28] text-[#F2B880] text-[11px] uppercase"><th class="p-3">Задача</th><th class="p-3">Статус</th><th class="p-3">Решение</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+      } else if (hubActiveTab === "logs") {
+        bodyBox.innerHTML = '<div class="space-y-2.5">' + allLogs.map(lg => '<div class="bg-white p-3.5 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between gap-2"><div><span class="px-2.5 py-0.5 rounded-full bg-[#2E3D28] text-[#F2B880] text-[10px] font-extrabold">' + esc(lg.version) + '</span> <span class="text-xs font-bold text-emerald-800 ml-2">🕒 ' + esc(lg.timestamp) + '</span><div class="text-xs sm:text-sm font-bold text-[#2E3D28] mt-1">' + esc(lg.status) + '</div><div class="text-xs text-stone-500">' + esc(lg.stats || "") + '</div></div><span class="px-3 py-1 rounded-xl bg-emerald-100 text-emerald-900 font-extrabold text-[11px]">✅ Записано</span></div>').join("") + '</div>';
+      } else if (hubActiveTab === "journal") {
+        let localTasks = []; try { localTasks = JSON.parse(localStorage.getItem("mirmir_clean_tz_journal_v1") || "[]"); } catch(e){}
+        const allTasks = [...localTasks, ...((DATA.tz_synced && DATA.tz_synced.tasks) || [])];
+        bodyBox.innerHTML = '<div class="space-y-4"><div class="bg-white p-4 rounded-2xl border-2 border-[#556432] space-y-2.5"><h4 class="font-serif text-xl font-bold text-[#2E3D28]">✍️ Добавить заметку в ТЗ</h4><div class="flex gap-2"><input id="tz-new-input" placeholder="Текст идеи или задачи..." class="flex-1 px-3 py-2 rounded-xl border text-xs"><button onclick="saveNewTzClean()" class="px-5 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">💾 Сохранить</button></div></div><div class="space-y-2.5">' + allTasks.map(t => '<div class="bg-white p-4 rounded-2xl border border-stone-200 space-y-1"><div class="text-xs font-extrabold text-emerald-800">' + esc(t.date || "") + ' • ' + esc(t.author || "Команда") + '</div><div class="text-sm font-bold text-stone-900">' + esc(t.user_tz) + '</div></div>').join("") + '</div></div>';
+      } else {
+        const st = getToggleStates();
+        bodyBox.innerHTML = '<div class="space-y-4"><div class="bg-white p-5 rounded-3xl border-2 border-[#556432] grid grid-cols-1 sm:grid-cols-2 gap-3">' + SITE_TOGGLES_SPEC.map(s => '<div onclick="flipSiteToggle(\'' + s.key + '\')" class="p-3.5 rounded-2xl border-2 cursor-pointer flex items-center justify-between ' + (st[s.key] ? 'bg-emerald-50 border-[#556432]' : 'bg-stone-50 border-stone-200') + '"><span class="text-xs font-extrabold">' + s.label + '</span><span class="px-3 py-1 rounded-full text-[11px] font-extrabold ' + (st[s.key] ? 'bg-[#556432] text-white' : 'bg-stone-300') + '">' + (st[s.key] ? 'ВКЛ' : 'ВЫКЛ') + '</span></div>').join("") + '</div><div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div onclick="openMasterPromptModal()" class="p-5 rounded-2xl bg-white border-2 border-amber-400 cursor-pointer hover:shadow-lg"><div class="text-2xl">🧬</div><div class="font-serif text-xl font-bold">Текстовый Мастер-Промпт (Архитектура 1:1)</div><p class="text-xs text-stone-600">Открыть чистое описание 3-модульной системы</p></div><div onclick="exportPDF()" class="p-5 rounded-2xl bg-white border-2 border-[#556432] cursor-pointer hover:shadow-lg"><div class="text-2xl">📥</div><div class="font-serif text-xl font-bold">Печатный PDF-Каталог всех 72 блюд</div><p class="text-xs text-stone-600">Сформировать и распечатать меню</p></div></div></div>';
+      }
+    }
+
+    function toggleChecklistItem(i) { const l = getChecklistItems(); if (l[i]) { l[i].done = !l[i].done; saveChecklistItems(l); renderUnifiedSystemHub(); } }
+    function addNewChecklistItem() { const t = (document.getElementById("chk-new-task")?.value || "").trim(); if (!t) return; const l = getChecklistItems(); l.unshift({ task: t, done: false, bug_info: "Добавлено вручную" }); saveChecklistItems(l); renderUnifiedSystemHub(); }
+    function saveNewTzClean() {
+      const txt = (document.getElementById("tz-new-input")?.value || "").trim(); if (!txt) return;
+      const entry = { date: new Date().toLocaleString("ru-RU"), author: "Виталий", user_tz: txt };
+      let local = []; try { local = JSON.parse(localStorage.getItem("mirmir_clean_tz_journal_v1") || "[]"); } catch(e){}
+      local.unshift(entry); localStorage.setItem("mirmir_clean_tz_journal_v1", JSON.stringify(local));
+      try { fetch("https://ntfy.sh/mirmir_tz_sync_nn45_v30", { method: "POST", body: JSON.stringify(entry) }); } catch(e){}
+      renderUnifiedSystemHub();
+    }
+    function exportDishOverridesToJson() { const b = new Blob([JSON.stringify({ updated_at: new Date().toLocaleString("ru-RU"), dishes: getManualDishOverrides() }, null, 2)], {type: "application/json"}), a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "tz_mirmir.json"; a.click(); }
+    function openMasterPromptModal() { const m = document.getElementById("master-prompt-modal"), ta = document.getElementById("server-master-prompt-data"); if (ta) ta.value = DATA.master_prompt_text || ""; if (m) { m.classList.remove("hidden"); m.classList.add("flex"); } }
+    function closeMasterPromptModal() { const m = document.getElementById("master-prompt-modal"); if (m) { m.classList.add("hidden"); m.classList.remove("flex"); } }
+    function copyMasterPromptText() { const ta = document.getElementById("server-master-prompt-data"); if (ta) { navigator.clipboard.writeText(ta.value); showToast("🧬 Мастер-Промпт скопирован!"); } }
+    function downloadMasterPromptFile() { const ta = document.getElementById("server-master-prompt-data"); if (!ta) return; const b = new Blob([ta.value], {type: "text/plain;charset=utf-8"}), a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = "MASTER_PROMPT_MIRMIR.txt"; a.click(); }
+
+    
+    
+    
+    // === 🚀 АПГРЕЙД v2.7: СЛЕВА ТОЛЬКО ИНТЕРЬЕР/ЭКСТЕРЬЕР + СПРАВА ПОД МЕНЮ 2 КРУПНЫХ ПОЛЯ ДЛЯ КАРТИНОК БЛЮД ===
+    window.getInteriorSlidesList = function() {
+      return [
+        { src: "img/ymap_org_0.jpg", title: "🏛️ Исторический кирпичный свод и уютный зал на Ильинской, 45", tag: "Интерьер зала" },
+        { src: "img/ymap_org_1.jpg", title: "🕊️ Фирменная кованая вывеска с белой Голубкой мира у входа", tag: "Экстерьер • Ильинская, 45" },
+        { src: "img/vk_5068_0.jpg", title: "🛋️ Изумрудный велюровый диван, живой кирпич и картины", tag: "Атмосфера «Мир Мир»" },
+        { src: "img/vk_5122_0.jpg", title: "🕯️ Вечерние чаепития при свечах и редкий китайский чай", tag: "Чайная культура" },
+        { src: "img/vk_5134_0.jpg", title: "🌿 Уютное зелёное пространство для встреч и живого общения", tag: "Интерьер кафе" }
+      ];
+    };
+
+    window.rightSpecialsPairIdx = 0;
+
+    window.stepRightSpecialsPair = function(delta) {
+      const specials = (DATA.menu || []).filter(d => d.category === "Сезонные спешлы от Шефа" || d.photo_type === "real");
+      const maxPairs = Math.max(1, Math.ceil(specials.length / 2));
+      window.rightSpecialsPairIdx = (window.rightSpecialsPairIdx + delta + maxPairs) % maxPairs;
+      window.renderRightTwoPictureFields();
+    };
+
+    window.renderRightTwoPictureFields = function() {
+      const rowsBox = document.getElementById("hero-specials-3rows");
+      if (!rowsBox) return;
+      const boxWrapper = rowsBox.parentElement;
+      if (boxWrapper) {
+        const hdr = boxWrapper.querySelector(".flex.items-center.justify-between");
+        if (hdr) {
+          hdr.innerHTML =
+            '<div class="flex items-center gap-1.5">' +
+              '<span class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#F2B880]">🔥 Сезонные спешлы от Шефа</span>' +
+              '<button onclick="stepRightSpecialsPair(-1)" class="w-6 h-6 rounded-full bg-white/15 hover:bg-[#D48238] text-white text-[10px] font-bold cursor-pointer">◀</button>' +
+              '<button onclick="stepRightSpecialsPair(1)" class="w-6 h-6 rounded-full bg-white/15 hover:bg-[#D48238] text-white text-[10px] font-bold cursor-pointer">▶</button>' +
+            '</div>' +
+            '<button onclick="openMenu(\'Сезонные спешлы от Шефа\')" class="text-[10px] font-extrabold text-amber-300 hover:underline cursor-pointer">Все блюда (72) ➔</button>';
+        }
+      }
+
+      const specials = (DATA.menu || []).filter(d => d.category === "Сезонные спешлы от Шефа" || d.photo_type === "real");
+      const start = (window.rightSpecialsPairIdx * 2) % Math.max(1, specials.length);
+      const pair = [specials[start], specials[(start + 1) % specials.length]].filter(Boolean);
+
+      rowsBox.innerHTML = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">' + pair.map(d => {
+        const idx = DATA.menu.indexOf(d);
+        const pr = d.sizes ? d.sizes[0].price : d.price;
+        return '<div onclick="openMenu(\'Сезонные спешлы от Шефа\')" class="zoom-card bg-[#FDF8F2] text-stone-900 rounded-2xl p-2.5 flex flex-col justify-between gap-2 cursor-pointer shadow-lg border-2 border-[#F2B880]/70 transition">' +
+          '<div class="relative h-32 sm:h-36 w-full rounded-xl overflow-hidden bg-stone-200">' +
+            '<img src="' + esc(d.photo) + '" onclick="event.stopPropagation();openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
+            '<span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/70 text-[#F2B880] text-[9px] font-extrabold">' + esc(d.weight || "Хит шефа") + '</span>' +
+            '<button onclick="event.stopPropagation();openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-md bg-black/75 hover:bg-[#D48238] text-white text-[9px] font-extrabold cursor-pointer">🔍 Лупа</button>' +
+          '</div>' +
+          '<div class="space-y-1">' +
+            '<div class="font-serif font-bold text-sm sm:text-base text-[#2E3D28] leading-tight line-clamp-2">' + esc(d.name) + '</div>' +
+            '<div class="flex items-center justify-between pt-1 border-t border-stone-200/80">' +
+              '<strong class="text-sm font-extrabold text-[#D48238]">' + pr + ' ₽</strong>' +
+              '<button onclick="event.stopPropagation();addToCart(' + idx + ',0)" class="px-2.5 py-1 rounded-lg bg-[#556432] hover:bg-[#2E3D28] text-white text-[10px] font-extrabold cursor-pointer shadow">+ В заказ</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }).join("") + '</div>';
+    };
+
+    const _origRenderHeroRight = window.renderHeroRightColumn;
+    window.renderHeroRightColumn = function() {
+      if (_origRenderHeroRight) _origRenderHeroRight();
+      window.renderRightTwoPictureFields();
+    };
+
+    let rightColBgIdx = 0;
+    setInterval(() => {
+      const rightImg = document.getElementById("right-col-bg-photo");
+      const slides = window.getInteriorSlidesList();
+      if (rightImg && slides.length) {
+        rightColBgIdx = (rightColBgIdx + 1) % slides.length;
+        rightImg.style.opacity = "0.12";
+        setTimeout(() => {
+          rightImg.src = slides[rightColBgIdx].src;
+          rightImg.style.opacity = "0.32";
+        }, 320);
+      }
+    }, 3800);
+
+    setInterval(() => {
+      window.stepRightSpecialsPair(1);
+    }, 5200);
+    
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll("[data-dove-holder]").forEach(el => { el.innerHTML = SIGN_DOVE_SVG; });
+      if (DATA.ymap_photos && DATA.ymap_photos.length >= 2) {
+        const lw = document.getElementById("left-wing-img"), rw = document.getElementById("right-wing-img");
+        if (lw) lw.src = DATA.ymap_photos[0]; if (rw) rw.src = DATA.ymap_photos[1];
+      }
+      applyManualOverridesToMenuData(); renderWorkStatusBadges(); rollRandomGastroPulse();
+      renderInteriorSlideState(); setInterval(() => stepInteriorSlide(1), 4200);
+      renderHeroRightColumn(); setInterval(() => step3DCarousel(1), 4500);
+      renderNewsPosts(); renderCategoryShowcaseAndRail(); applySiteToggles();
+    });
+  </script>
+</body>
+</html>
