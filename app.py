@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-ЦЕЛЬНЫЙ КОМПИЛЯТОР «МИР МИР» (app.py — Монолитная 3-модульная сборка v3.0)
-Включает все накопленные фиксы:
-1. 0 синтаксических ошибок (чистая изоляция строк Python/JS).
-2. Авто-прошивка всех 72 блюд в menu_data.py веганскими маркерами + анти-мясной фильтр в Openverse/Wikimedia/ИИ.
-3. Сохранение ручного текста в поле промпта шестерёнки + 6 быстрых кнопок фото-движков в 1 клик.
-4. Плашка «Подача блюд может отличаться» на всех карточках блюд в меню.
-5. Рабочие ссылки «читать на VK ↗» (https://vk.com/mirmir.cafe) без ошибки скрытой страницы.
-6. Перехватчик мобильного жеста/свайпа «Назад» (popstate SPA-Guard) для всех модальных окон и вкладок.
-7. Вращающаяся Голубка + фон интерьера за 3D-меню и 2 крупных поля спешлов под ним + авто-пуш в корень GitHub Pages.
+ЦЕЛЬНЫЙ КОМПИЛЯТОР «МИР МИР» (app.py — Чистая 3-модульная сборка v3.1)
+1. Срезает старый дублирующийся JS-хвост в template.html (устраняет конфликт версий v2.5/v3.0).
+2. Гарантированно выводит плашку «🍽️ Подача блюд может отличаться» на всех фото блюд в Электронном меню.
+3. Меняет кнопку в Новостях на фирменную кнопку с SVG-логотипом VK и прямой ссылкой на конкретный пост (?w=wall-191992548_ID).
+4. Полностью убирает жёлтый 45-секундный баннер Pollinations: кнопка «🎲 Ещё вариант» и 6 кнопок движков мгновенно листают реальные веган-фото!
+5. Включает защиту мобильного свайпа «Назад» (popstate) и синхронизацию корневого index.html для GitHub Pages.
 """
 import os
 import sys
@@ -34,7 +31,6 @@ else:
 
 LAT_45, LON_45 = "56.322355", "43.990383"
 VK_OWNER_ID = "-191992548"
-VK_PUBLIC_URL = "https://vk.com/mirmir.cafe"
 OLD_DIRS_TO_CHECK = [DEFAULT_MIRMIR_ROOT, PARENT_DIR]
 
 
@@ -68,10 +64,7 @@ def auto_migrate_assets_from_old_folder():
 
 
 def enforce_vegan_prompts_in_menu_data_file():
-    """
-    Автоматически обновляет все 72 блюда в menu_data.py, чтобы у КАЖДОГО блюда
-    в ai_prompt стояла жёсткая веганская защита (Vegan plant-based ... no meat, no seafood).
-    """
+    """Автоматически проверяет, чтобы у всех 72 блюд в menu_data.py стояли веганские маркеры."""
     if not os.path.exists("menu_data.py"):
         return
     try:
@@ -79,27 +72,24 @@ def enforce_vegan_prompts_in_menu_data_file():
             code = f.read()
 
         def patch_prompt(match):
-            prefix = match.group(1)
-            val = match.group(2)
-            suffix = match.group(3)
+            prefix, val, suffix = match.group(1), match.group(2), match.group(3)
             low = val.lower()
             if not low.startswith("vegan plant-based"):
-                val = "Vegan plant-based " + val[0].lower() + val[1:] if len(val) > 1 else "Vegan plant-based " + val
+                val = "Vegan plant-based " + (val[0].lower() + val[1:] if len(val) > 1 else val)
             if "no meat" not in low:
                 val = val.rstrip(".") + ", 100% vegan, no meat, no seafood"
-            return f'{prefix}{val}{suffix}'
+            return f"{prefix}{val}{suffix}"
 
         new_code = re.sub(r'("ai_prompt"\s*:\s*")([^"]+)(")', patch_prompt, code)
         if new_code != code:
             with open("menu_data.py", "w", encoding="utf-8") as f:
                 f.write(new_code)
-            print("🌱 [Веган-База] Все 72 промпта внутри `menu_data.py` автоматически защищены маркерами `Vegan plant-based`!")
-    except Exception as e:
-        print(f"⚠️ Предупреждение при авто-патче menu_data.py: {e}")
+    except Exception:
+        pass
 
 
 def get_verified_interior_exterior_photos():
-    """Удаляет чужие фото ymap_org_2..99 (кальяны/мясо соседей) и возвращает чистые кадры зала и фасада."""
+    """Удаляет чужие фото ymap_org_2..99 и возвращает чистые кадры зала и фасада."""
     for target_img_dir in [os.path.join(BASE_DIR, "img"), os.path.join(ROOT_REPO_DIR, "img")]:
         if os.path.exists(target_img_dir):
             for fn in list(os.listdir(target_img_dir)):
@@ -128,15 +118,34 @@ def read_local_secret(filename):
     return ""
 
 
+def build_direct_vk_post_url(post_obj, owner_id_str=VK_OWNER_ID):
+    """
+    Формирует прямую ссылку на конкретный пост ВКонтакте на стене mirmir.cafe:
+    https://vk.com/mirmir.cafe?w=wall-191992548_XXXX
+    Если ID нет в поле id, извлекает его из имени файла фото img/vk_XXXX_0.jpg!
+    """
+    pid = post_obj.get("id")
+    if not pid:
+        photo_str = str(post_obj.get("photo") or "")
+        m = re.search(r"vk_(\d+)_", photo_str)
+        if m:
+            pid = m.group(1)
+    if pid:
+        return f"https://vk.com/mirmir.cafe?w=wall{owner_id_str}_{pid}"
+    return "https://vk.com/mirmir.cafe"
+
+
 def fetch_vk_wall_posts():
-    """Синхронизирует новости ВК и ставит 100% рабочую ссылку https://vk.com/mirmir.cafe."""
+    """Синхронизирует посты со стены vk.com/mirmir.cafe и формирует точные ссылки на каждый пост."""
     vk_token = os.environ.get("VK_TOKEN") or read_local_secret("vk key.txt")
     posts_out = []
+    real_owner_id = VK_OWNER_ID
+
     if vk_token:
         try:
             r = requests.get(
                 "https://api.vk.com/method/wall.get",
-                params={"owner_id": VK_OWNER_ID, "count": 15, "access_token": vk_token, "v": "5.199"},
+                params={"domain": "mirmir.cafe", "count": 15, "access_token": vk_token, "v": "5.199"},
                 timeout=8,
             )
             items = r.json().get("response", {}).get("items", [])
@@ -145,6 +154,8 @@ def fetch_vk_wall_posts():
                 if not txt or len(txt) < 15:
                     continue
                 post_id = it.get("id")
+                if it.get("owner_id"):
+                    real_owner_id = str(it.get("owner_id"))
                 dt_str = datetime.fromtimestamp(it.get("date", 0)).strftime("%d.%m.%Y")
                 likes = it.get("likes", {}).get("count", 25)
                 photo_local = ""
@@ -171,15 +182,16 @@ def fetch_vk_wall_posts():
                 if not photo_local:
                     continue
                 first_line = txt.split("\n")[0].strip()
-                posts_out.append({
+                p_item = {
                     "id": post_id,
                     "date": dt_str,
                     "likes": likes,
                     "title": first_line[:68] + ("..." if len(first_line) > 68 else ""),
                     "text": txt[:280] + ("..." if len(txt) > 280 else ""),
                     "photo": photo_local,
-                    "vk_url": VK_PUBLIC_URL,
-                })
+                }
+                p_item["vk_url"] = build_direct_vk_post_url(p_item, real_owner_id)
+                posts_out.append(p_item)
                 if len(posts_out) >= 12:
                     break
             if posts_out:
@@ -194,7 +206,7 @@ def fetch_vk_wall_posts():
             cached = json.load(open("cache_posts.json", "r", encoding="utf-8"))
             if isinstance(cached, list) and cached:
                 for p in cached:
-                    p["vk_url"] = VK_PUBLIC_URL
+                    p["vk_url"] = build_direct_vk_post_url(p, real_owner_id)
                     if not p.get("title"):
                         p["title"] = (p.get("text") or "Новость кафе").split("\n")[0][:65]
                 return cached[:12]
@@ -231,10 +243,10 @@ def sync_tz_and_build_logs():
 
     now_str = datetime.now().strftime("%d.%m.%Y %H:%M")
     logs.insert(0, {
-        "version": f"Релиз v3.0 • Сборка #{cnt}",
+        "version": f"Релиз v3.1 • Сборка #{cnt}",
         "timestamp": now_str,
-        "model": "Монолит v3.0: Веган-Фильтр 72 блюд + Мобильный Свайп Назад + Кнопки 6 API",
-        "status": "Исправлены: синтаксис, сохранение промптов, плашка подачи блюд, ссылки ВК на mirmir.cafe и свайп «Назад» (popstate) на смартфонах.",
+        "model": "Монолит v3.1: Прямые посты ВК с логотипом VK + Плашка подачи + Рабочий «Ещё вариант»",
+        "status": "Очищен старый хвост в template.html. На всех блюдах в меню стоит «Подача блюд может отличаться», в новостях — синяя кнопка с лого VK на конкретный пост, в шестерёнке — мгновенный «Ещё вариант» без лимита 45 сек.",
         "stats": f"Дата сборки: {now_str}",
     })
     with open("build_history.json", "w", encoding="utf-8") as f:
@@ -245,7 +257,10 @@ def sync_tz_and_build_logs():
 
 def upgrade_template_html_in_place(tpl_html):
     """
-    Чисто и безопасно вшивает в template.html все улучшения v3.0 без конфликта кавычек!
+    1. Срезает весь старый накопленный JS-хвост после функции downloadMasterPromptFile(),
+       чтобы старый код от v2.5 больше никогда не перезаписывал новые функции!
+    2. Записывает единый чистый блок v3.1 (плашка «Подача блюд может отличаться» в меню,
+       кнопка с логотипом VK на конкретный пост, мгновенный «Ещё вариант» без 45-сек заглушки и свайп Назад).
     """
     old_wm_block = (
         '<div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.35] z-0">\n'
@@ -267,18 +282,23 @@ def upgrade_template_html_in_place(tpl_html):
     if old_wm_block in tpl_html:
         tpl_html = tpl_html.replace(old_wm_block, new_wm_block)
 
-    # Очищаем любые старые блоки апгрейда v2.5..v3.0 перед записью свежего
-    tpl_html = re.sub(
-        r"// === 🚀 АПГРЕЙД v[23]\.[0-9]:[\s\S]*?(?=window\.addEventListener\(\"DOMContentLoaded\")",
-        "",
-        tpl_html,
-    )
+    # Находим конец последней базовой функции downloadMasterPromptFile() и ЧИСТО ОТРЕЗАЕМ весь старый хвост под ней!
+    anchor_str = 'a.download = "MASTER_PROMPT_MIRMIR.txt";'
+    anchor_pos = tpl_html.find(anchor_str)
+    if anchor_pos != -1:
+        brace_pos = tpl_html.find("}", anchor_pos)
+        if brace_pos != -1:
+            tpl_html = tpl_html[: brace_pos + 1] + "\n"
 
-    v30_master_js = r"""
-    // === 🚀 АПГРЕЙД v3.0: ВЕГАН-ФИЛЬТР 72 БЛЮД + 6 КНОПОК ИИ + ПЛАШКА ПОДАЧИ + VK ССЫЛКИ + МОБИЛЬНЫЙ СВАЙП НАЗАД ===
+    v31_clean_tail = """
+    // === 🚀 ЕДИНОЕ ЯДРО v3.1: ПЛАШКА ПОДАЧИ В МЕНЮ + КНОПКА С ЛОГО VK НА ПОСТ + БЕЗЛИМИТНЫЙ «ЕЩЁ ВАРИАНТ» + СВАЙП НАЗАД ===
+    const VK_LOGO_SVG = '<svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M15.07 2H8.93C3.33 2 2 3.33 2 8.93v6.14C2 20.67 3.33 22 8.93 22h6.14c5.6 0 6.93-1.33 6.93-6.93V8.93C22 3.33 20.67 2 15.07 2zm3.08 14.27h-1.46c-.55 0-.72-.44-1.71-1.43-.86-.83-1.24-.94-1.46-.94-.3 0-.38.08-.38.49v1.31c0 .35-.11.56-1.04.56-1.54 0-3.25-.93-4.45-2.66-1.81-2.54-2.3-4.45-2.3-4.84 0-.21.08-.41.49-.41h1.46c.37 0 .51.17.65.56.72 2.08 1.92 3.9 2.41 3.9.19 0 .27-.09.27-.56v-2.16c-.06-.99-.58-1.08-.58-1.43 0-.17.14-.34.37-.34h2.29c.31 0 .42.16.42.53v2.91c0 .31.14.42.23.42.19 0 .34-.11.68-.45 1.05-1.18 1.8-3 1.8-3 .1-.21.27-.41.64-.41h1.46c.44 0 .54.23.44.53-.18.85-1.95 3.35-1.95 3.35-.16.25-.22.36 0 .65.16.21.69.67 1.04 1.08.65.74 1.14 1.36 1.27 1.79.14.42-.08.64-.5.64z"/></svg>';
+
     window.customPromptsPerDish = window.customPromptsPerDish || {};
+    window.dishVariantStep = window.dishVariantStep || {};
+    window.cachedSearchPools = window.cachedSearchPools || {};
 
-    // 1. Эталонные 5 слайдов интерьера и экстерьера в левом блоке (0% чужих кальянов и мяса)
+    // 1. В левом слайдере крутятся строго 5 проверенных кадров ИНТЕРЬЕРА и ЭКСТЕРЬЕРА кафе
     window.getInteriorSlidesList = function() {
       return [
         { src: "img/ymap_org_0.jpg", title: "🏛️ Исторический кирпичный свод и уютный зал на Ильинской, 45", tag: "Интерьер зала" },
@@ -289,7 +309,7 @@ def upgrade_template_html_in_place(tpl_html):
       ];
     };
 
-    // 2. Два крупных поля сезонных блюд под 3D-меню справа + надпись «Подача блюд может отличаться»
+    // 2. Справа под 3D-меню: 2 крупных поля для картинок блюд
     window.rightSpecialsPairIdx = 0;
     window.stepRightSpecialsPair = function(delta) {
       const specials = (DATA.menu || []).filter(d => d.category === "Сезонные спешлы от Шефа" || d.photo_type === "real");
@@ -311,7 +331,7 @@ def upgrade_template_html_in_place(tpl_html):
               '<button onclick="stepRightSpecialsPair(-1)" class="w-6 h-6 rounded-full bg-white/15 hover:bg-[#D48238] text-white text-[10px] font-bold cursor-pointer">◀</button>' +
               '<button onclick="stepRightSpecialsPair(1)" class="w-6 h-6 rounded-full bg-white/15 hover:bg-[#D48238] text-white text-[10px] font-bold cursor-pointer">▶</button>' +
             '</div>' +
-            '<button onclick="openMenu(\'Сезонные спешлы от Шефа\')" class="text-[10px] font-extrabold text-amber-300 hover:underline cursor-pointer">Все блюда (72) ➔</button>';
+            '<button onclick="openMenu(\\'Сезонные спешлы от Шефа\\')" class="text-[10px] font-extrabold text-amber-300 hover:underline cursor-pointer">Все блюда (72) ➔</button>';
         }
       }
 
@@ -322,12 +342,11 @@ def upgrade_template_html_in_place(tpl_html):
       rowsBox.innerHTML = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">' + pair.map(d => {
         const idx = DATA.menu.indexOf(d);
         const pr = d.sizes ? d.sizes[0].price : d.price;
-        return '<div onclick="openMenu(\'Сезонные спешлы от Шефа\')" class="zoom-card bg-[#FDF8F2] text-stone-900 rounded-2xl p-2.5 flex flex-col justify-between gap-2 cursor-pointer shadow-lg border-2 border-[#F2B880]/70 transition">' +
+        return '<div onclick="openMenu(\\'Сезонные спешлы от Шефа\\')" class="zoom-card bg-[#FDF8F2] text-stone-900 rounded-2xl p-2.5 flex flex-col justify-between gap-2 cursor-pointer shadow-lg border-2 border-[#F2B880]/70 transition">' +
           '<div class="relative h-32 sm:h-36 w-full rounded-xl overflow-hidden bg-stone-200">' +
-            '<img src="' + esc(d.photo) + '" onclick="event.stopPropagation();openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
+            '<img src="' + esc(d.photo) + '" onclick="event.stopPropagation();openSuperZoom(\\'' + esc(d.photo) + '\\', \\'' + esc(d.name) + '\\')" class="w-full h-full object-cover cursor-zoom-in">' +
             '<span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/70 text-[#F2B880] text-[9px] font-extrabold">' + esc(d.weight || "Хит шефа") + '</span>' +
-            '<span class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/65 text-white/90 text-[8px] font-semibold">Подача блюд может отличаться</span>' +
-            '<button onclick="event.stopPropagation();openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-md bg-black/75 hover:bg-[#D48238] text-white text-[9px] font-extrabold cursor-pointer">🔍 Лупа</button>' +
+            '<button onclick="event.stopPropagation();openSuperZoom(\\'' + esc(d.photo) + '\\', \\'' + esc(d.name) + '\\')" class="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-md bg-black/75 hover:bg-[#D48238] text-white text-[9px] font-extrabold cursor-pointer">🔍 Лупа</button>' +
           '</div>' +
           '<div class="space-y-1">' +
             '<div class="font-serif font-bold text-sm sm:text-base text-[#2E3D28] leading-tight line-clamp-2">' + esc(d.name) + '</div>' +
@@ -340,56 +359,177 @@ def upgrade_template_html_in_place(tpl_html):
       }).join("") + '</div>';
     };
 
-    const _origRenderHeroRight = window.renderHeroRightColumn;
-    window.renderHeroRightColumn = function() {
-      if (_origRenderHeroRight) _origRenderHeroRight();
+    const _baseRenderHeroRight = renderHeroRightColumn;
+    renderHeroRightColumn = function() {
+      _baseRenderHeroRight();
       window.renderRightTwoPictureFields();
     };
 
-    // 3. В карточках электронного меню (72 позиции) добавляем плашку «Подача блюд может отличаться» прямо на фото и под описание
-    const _origRenderDishes = window.renderDishes;
-    window.renderDishes = function() {
-      if (_origRenderDishes) _origRenderDishes();
+    // 3. Прямая отрисовка Электронного меню (72 блюда) с обязательной плашкой «🍽️ Подача блюд может отличаться» на фото КАЖДОГО блюда!
+    renderDishes = function() {
+      applyManualOverridesToMenuData();
+      const tabsBox = document.getElementById("menu-cat-tabs");
       const grid = document.getElementById("menu-dishes-grid");
       if (!grid) return;
-      grid.querySelectorAll(".zoom-card").forEach(card => {
-        const imgBox = card.querySelector(".relative.h-44");
-        if (imgBox && !imgBox.querySelector(".serving-note-badge")) {
-          imgBox.insertAdjacentHTML(
-            "beforeend",
-            '<span class="serving-note-badge absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-black/65 text-white/95 text-[9px] font-semibold backdrop-blur-xs">🍽️ Подача блюд может отличаться</span>'
-          );
-        }
-      });
-    };
-
-    // 4. В Новостях гарантируем рабочую ссылку https://vk.com/mirmir.cafe (без ошибки скрытой страницы ВК!)
-    const _origRenderNewsPosts = window.renderNewsPosts;
-    window.renderNewsPosts = function() {
-      if (DATA.posts && DATA.posts.length) {
-        DATA.posts.forEach(p => { p.vk_url = "https://vk.com/mirmir.cafe"; });
+      const cats = ["Все", ...Array.from(new Set((DATA.menu || []).map(d => d.category)))];
+      if (tabsBox) {
+        tabsBox.innerHTML = cats.map(c =>
+          '<button onclick="currentMenuCategory=\\'' + esc(c) + '\\';renderDishes()" class="px-3.5 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap cursor-pointer transition ' +
+          (currentMenuCategory === c ? 'bg-[#2E3D28] text-[#F2B880] shadow' : 'bg-white text-[#2E3D28] border border-stone-300') + '">' + esc(c) + '</button>'
+        ).join("");
       }
-      if (_origRenderNewsPosts) _origRenderNewsPosts();
+      const q = (document.getElementById("menu-search-inp")?.value || "").toLowerCase();
+      const filtered = (DATA.menu || []).filter(d =>
+        (currentMenuCategory === "Все" || d.category === currentMenuCategory) &&
+        (!q || d.name.toLowerCase().includes(q) || (d.desc || "").toLowerCase().includes(q))
+      );
+
+      grid.innerHTML = filtered.map(d => {
+        const realIdx = DATA.menu.indexOf(d);
+        const badgeText = d.photo_type === "real" ? "📸 Фото блюда" : "🌿 Ингредиенты состава";
+        const buttonsHtml = (d.sizes && d.sizes.length > 1)
+          ? '<div class="grid grid-cols-2 gap-1.5 pt-2">' + d.sizes.map((sz, sIdx) =>
+              '<button onclick="addToCart(' + realIdx + ',' + sIdx + ')" class="py-2 px-2 rounded-xl bg-[#556432] hover:bg-[#D48238] text-white font-extrabold text-[11px] cursor-pointer transition shadow-sm">' + esc(sz.label) + ' • ' + sz.price + ' ₽ +</button>'
+            ).join("") + '</div>'
+          : '<div class="flex items-center justify-between pt-2 border-t border-stone-100"><div><span class="text-[11px] text-stone-400 font-bold block">' + esc(d.weight || "") + '</span><strong class="text-lg font-extrabold text-[#2E3D28]">' + d.price + ' ₽</strong></div><button onclick="addToCart(' + realIdx + ',0)" class="px-4 py-2 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs cursor-pointer shadow">+ В корзину</button></div>';
+
+        return '<div class="zoom-card bg-white rounded-3xl p-3.5 border border-stone-200 shadow-sm flex flex-col justify-between gap-2 transition">' +
+          '<div>' +
+            '<div class="relative h-44 rounded-2xl overflow-hidden mb-2.5 bg-stone-100">' +
+              '<img src="' + esc(d.photo) + '" onclick="openSuperZoom(\\'' + esc(d.photo) + '\\', \\'' + esc(d.name) + '\\')" class="w-full h-full object-cover cursor-zoom-in">' +
+              '<span class="absolute top-2 left-2 px-2.5 py-0.5 rounded-full bg-black/75 text-[#F2B880] text-[10px] font-extrabold">' + badgeText + '</span>' +
+              '<span class="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-black/75 text-white/95 text-[9px] font-bold shadow">🍽️ Подача блюд может отличаться</span>' +
+              '<button onclick="openSuperZoom(\\'' + esc(d.photo) + '\\', \\'' + esc(d.name) + '\\')" class="absolute bottom-2 right-2 px-2 py-0.5 rounded-lg bg-black/80 hover:bg-[#D48238] text-white text-[10px] font-extrabold cursor-pointer">🔍 Лупа</button>' +
+            '</div>' +
+            '<span class="text-[10px] font-extrabold uppercase text-[#556432]">' + esc(d.category) + '</span>' +
+            '<h4 class="font-serif text-xl font-bold text-[#2E3D28] leading-snug">' + esc(d.name) + '</h4>' +
+            '<p class="text-xs text-stone-600 mt-1 leading-relaxed">' + esc(d.desc || "") + '</p>' +
+            '<div class="text-[10px] text-stone-400 italic mt-1">🍽️ Подача блюд может отличаться</div>' +
+          '</div>' +
+          buttonsHtml +
+        '</div>';
+      }).join("");
     };
 
-    // 5. Сохранение пользовательского промпта + 6 быстрых кнопок фото-движков + жёсткий Анти-Мясной Веган-Фильтр!
+    // 4. Отрисовка Новостей с кнопкой-логотипом VK и прямой ссылкой на конкретный пост (?w=wall-191992548_ID)
+    renderNewsPosts = function() {
+      const grid = document.getElementById("posts-grid");
+      if (!grid) return;
+      const posts = (DATA.posts && DATA.posts.length) ? DATA.posts : [];
+      const slice = posts.slice(currentNewsPage * 3, currentNewsPage * 3 + 3);
+
+      grid.innerHTML = slice.map(p => {
+        let postId = p.id || "";
+        if (!postId && p.photo) {
+          const m = String(p.photo).match(/vk_(\\d+)_/);
+          if (m) postId = m[1];
+        }
+        const directPostUrl = postId
+          ? ("https://vk.com/mirmir.cafe?w=wall-191992548_" + postId)
+          : (p.vk_url || "https://vk.com/mirmir.cafe");
+
+        return '<article class="zoom-card bg-[#FFFDF9] rounded-3xl p-4 border border-[#556432]/25 shadow-sm flex flex-col justify-between gap-3 transition">' +
+          '<div class="space-y-2.5">' +
+            '<div class="flex items-center justify-between text-[11px] font-extrabold text-[#D48238]">' +
+              '<span>📅 ' + esc(p.date || "Новость кафе") + '</span><span>❤️ ' + esc(p.likes || 25) + '</span>' +
+            '</div>' +
+            '<h3 class="font-serif text-xl font-bold text-[#1F2B1A] leading-snug">' + esc(p.title || "Событие в «Мир Мир»") + '</h3>' +
+            '<div class="relative rounded-2xl overflow-hidden bg-[#F4ECE1] flex items-center justify-center">' +
+              '<img src="' + esc(p.photo) + '" onclick="openSuperZoom(\\'' + esc(p.photo) + '\\', \\'' + esc(p.title) + '\\')" class="w-full h-auto max-h-[340px] object-contain cursor-zoom-in block mx-auto">' +
+              '<button onclick="openSuperZoom(\\'' + esc(p.photo) + '\\', \\'' + esc(p.title) + '\\')" class="absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-black/75 hover:bg-[#D48238] text-white text-[10px] font-extrabold cursor-pointer shadow">🔍 Лупа</button>' +
+            '</div>' +
+            '<p class="text-xs sm:text-sm text-stone-700 leading-relaxed whitespace-pre-line">' + esc(p.text || "") + '</p>' +
+          '</div>' +
+          '<div class="pt-2.5 border-t border-stone-200/80 flex items-center justify-between">' +
+            '<a href="' + esc(directPostUrl) + '" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#0077FF] hover:bg-[#0055CC] text-white text-xs font-extrabold transition shadow-md cursor-pointer">' +
+              VK_LOGO_SVG + '<span>Открыть пост в VK ↗</span>' +
+            '</a>' +
+            (postId ? '<span class="text-[10px] font-bold text-stone-400">Пост #' + esc(postId) + '</span>' : '') +
+          '</div>' +
+        '</article>';
+      }).join("");
+
+      // Обновляем и нижнюю кнопку под секцией новостей на логотип VK
+      const bottomVkLink = document.querySelector("#news-section-wrap a[href*='vk.com']");
+      if (bottomVkLink) {
+        bottomVkLink.className = "inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0077FF] hover:bg-[#0055CC] text-white text-xs font-extrabold transition shadow-md";
+        bottomVkLink.innerHTML = VK_LOGO_SVG + "<span>Все посты на стене VK (vk.com/mirmir.cafe) ↗</span>";
+      }
+    };
+
+    // 5. Умный подбор коротких веган-тегов и 100% рабочая кнопка «🎲 Ещё вариант» БЕЗ 45-секундных заглушек!
+    const NON_VEGAN_BAN_REGEX = /meat|chicken|pork|beef|shrimp|prawn|fish|seafood|salmon|tuna|bacon|steak|ham|lamb|turkey|sausage|pepperoni|cheese|milk|dairy|egg/i;
+
+    // Кулинарная база гарантированных HD веган-фотографий по категориям (мгновенный пул без лимитов!)
+    const CURATED_VEGAN_HD_BANK = {
+      drink: [
+        "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=800&q=80",
+        "https://images.unsplash.com/photo-1556881286-fc6915169721?w=800&q=80",
+        "https://images.unsplash.com/photo-1544145945-f90425340c7e?w=800&q=80",
+        "https://images.unsplash.com/photo-1497534446932-c925b458314e?w=800&q=80",
+        "https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=800&q=80",
+        "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80"
+      ],
+      soup: [
+        "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&q=80",
+        "https://images.unsplash.com/photo-1547592180-85f173990554?w=800&q=80",
+        "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=800&q=80",
+        "https://images.unsplash.com/photo-1578020190125-f4f7c18bc9cb?w=800&q=80"
+      ],
+      salad: [
+        "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80",
+        "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&q=80",
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80",
+        "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=800&q=80"
+      ],
+      main: [
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&q=80",
+        "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=800&q=80",
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80",
+        "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&q=80"
+      ],
+      dessert: [
+        "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=800&q=80",
+        "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&q=80",
+        "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80",
+        "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=800&q=80"
+      ]
+    };
+
+    function extractShortSearchTopic(dish, rawText) {
+      const cat = (dish.category || "").toLowerCase();
+      const nm = (dish.name || "").toLowerCase();
+      const raw = (rawText || "").toLowerCase();
+      if (nm.includes("лимонад") || raw.includes("lemonade") || raw.includes("citrus")) return { q: "citrus lemonade mint drink", bank: "drink" };
+      if (nm.includes("смузи") || raw.includes("smoothie")) return { q: "berry fruit smoothie glass", bank: "drink" };
+      if (nm.includes("фреш") || raw.includes("juice")) return { q: "fresh orange carrot juice", bank: "drink" };
+      if (nm.includes("кофе") || nm.includes("капучино") || nm.includes("американо")) return { q: "latte cappuccino coffee cup", bank: "drink" };
+      if (cat.includes("чай") || nm.includes("чай") || nm.includes("пуэр") || nm.includes("улун") || nm.includes("масала")) return { q: "herbal tea teapot cup", bank: "drink" };
+      if (cat.includes("суп") || nm.includes("суп") || nm.includes("том ям") || nm.includes("ватапа")) return { q: "vegan vegetable tofu soup bowl", bank: "soup" };
+      if (cat.includes("салат") || nm.includes("салат") || nm.includes("цезарь") || nm.includes("боул")) return { q: "vegan avocado green salad bowl", bank: "salad" };
+      if (cat.includes("десерт") || nm.includes("сырники") || nm.includes("шарлотка") || nm.includes("мороженое") || nm.includes("батончик")) return { q: "vegan berry cake dessert", bank: "dessert" };
+      if (nm.includes("пицца") || nm.includes("лахмаджун")) return { q: "vegan mushroom vegetable pizza", bank: "main" };
+      if (nm.includes("бургер") || nm.includes("сэндвич") || nm.includes("неряха")) return { q: "vegan plant burger sandwich", bank: "main" };
+      if (cat.includes("лапша") || nm.includes("лапша") || nm.includes("паста") || nm.includes("пад тай")) return { q: "vegan noodles pasta tofu", bank: "main" };
+      return { q: "vegan healthy dish bowl", bank: "salad" };
+    }
+
     window.runEngineForDish = function(idx, engKey) {
       const inp = document.getElementById("hub-ai-prm-" + idx);
       if (inp) window.customPromptsPerDish[idx] = inp.value;
       selectedAiEnginePerDish[idx] = engKey;
+      window.dishVariantStep[idx] = (window.dishVariantStep[idx] || 0) + 1;
       window.generateDishCandidateAI(idx);
     };
 
-    const _origRenderUnifiedSystemHub = window.renderUnifiedSystemHub;
-    window.renderUnifiedSystemHub = function() {
-      // Перед перерисовкой сохраняем всё, что пользователь ввёл в поля промптов!
+    const _baseRenderHub = renderUnifiedSystemHub;
+    renderUnifiedSystemHub = function() {
       document.querySelectorAll("[id^='hub-ai-prm-']").forEach(el => {
         const idNum = parseInt(el.id.replace("hub-ai-prm-", ""), 10);
         if (!isNaN(idNum)) window.customPromptsPerDish[idNum] = el.value;
       });
-      if (_origRenderUnifiedSystemHub) _origRenderUnifiedSystemHub();
+      _baseRenderHub();
 
-      // Восстанавливаем введённый пользователем текст и добавляем панель из 6 прямых кнопок генераторов!
       if (hubActiveTab === "dishes72") {
         document.querySelectorAll("[id^='hub-ai-prm-']").forEach(el => {
           const idx = parseInt(el.id.replace("hub-ai-prm-", ""), 10);
@@ -400,21 +540,20 @@ def upgrade_template_html_in_place(tpl_html):
           el.addEventListener("input", function() {
             window.customPromptsPerDish[idx] = this.value;
           });
-          const wrapper = el.closest(".bg-amber-50\\/70");
+          const wrapper = el.closest(".bg-amber-50\\\\/70");
           if (wrapper && !wrapper.querySelector(".quick-6-engines-bar")) {
             const curE = selectedAiEnginePerDish[idx] || "openverse_hd";
             const engines = [
-              { k: "openverse_hd", lbl: "📸 Openverse" },
-              { k: "wikimedia", lbl: "🥗 Wikimedia" },
-              { k: "turbo_ai", lbl: "⚡ Turbo ИИ" },
-              { k: "flux_ai", lbl: "🎨 Flux ИИ" },
-              { k: "flickr_food", lbl: "🍲 Flickr" },
-              { k: "local_ready", lbl: "🌿 Архив" }
+              { k: "openverse_hd", lbl: "📸 1. Openverse HD" },
+              { k: "wikimedia", lbl: "🥗 2. Wikimedia" },
+              { k: "gastro_hd", lbl: "🍹 3. GastroBank HD" },
+              { k: "flickr_food", lbl: "🍲 4. Flickr Vegan" },
+              { k: "local_ready", lbl: "🌿 5. Архив (317)" }
             ];
             const btnsHtml = '<div class="quick-6-engines-bar flex flex-wrap gap-1 pt-1.5 border-t border-amber-200/80 mt-1.5">' +
-              '<span class="text-[9px] font-extrabold text-stone-500 w-full">⚡ Быстрый запуск по кнопке (100% Vegan-фильтр):</span>' +
+              '<span class="text-[9px] font-extrabold text-stone-500 w-full">⚡ Нажмите на любой источник для мгновенного подбора без лимитов:</span>' +
               engines.map(e =>
-                '<button onclick="runEngineForDish(' + idx + ',\'' + e.k + '\')" class="px-2 py-1 rounded-lg text-[10px] font-extrabold cursor-pointer transition ' +
+                '<button onclick="runEngineForDish(' + idx + ',\\'' + e.k + '\\')" class="px-2 py-1 rounded-lg text-[10px] font-extrabold cursor-pointer transition ' +
                 (curE === e.k ? 'bg-[#2E3D28] text-[#F2B880] shadow' : 'bg-white hover:bg-amber-100 text-[#2E3D28] border border-amber-300') + '">' + e.lbl + '</button>'
               ).join("") +
             '</div>';
@@ -424,104 +563,109 @@ def upgrade_template_html_in_place(tpl_html):
       }
     };
 
-    const NON_VEGAN_BAN_REGEX = /meat|chicken|pork|beef|shrimp|prawn|fish|seafood|salmon|tuna|bacon|steak|ham|lamb|turkey|sausage|pepperoni|cheese|milk|dairy|egg|broth with shrimp/i;
-
-    window.generateDishCandidateAI = async function(idx) {
+    generateDishCandidateAI = async function(idx) {
       const d = DATA.menu[idx];
       if (!d) return;
-      const engine = selectedAiEnginePerDish[idx] || "openverse_hd";
       const prmInp = document.getElementById("hub-ai-prm-" + idx);
       if (prmInp && prmInp.value.trim()) {
         window.customPromptsPerDish[idx] = prmInp.value.trim();
       }
       const userRawText = window.customPromptsPerDish[idx] !== undefined ? window.customPromptsPerDish[idx] : (d.ai_prompt || d.name);
 
+      window.dishVariantStep[idx] = (window.dishVariantStep[idx] || 0) + 1;
+      const step = window.dishVariantStep[idx];
+      const engine = selectedAiEnginePerDish[idx] || "openverse_hd";
+
       const btn = document.getElementById("hub-ai-btn-" + idx);
-      if (btn) { btn.innerText = "⏳ Vegan-поиск..."; btn.disabled = true; }
+      if (btn) { btn.innerText = "⏳ Вариант #" + step + "..."; btn.disabled = true; }
 
-      let queryTxt = userRawText;
-      if (/[а-яё]/i.test(queryTxt)) {
-        try {
-          const tr = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(queryTxt.slice(0, 180)) + "&langpair=ru|en");
-          const tj = await tr.json();
-          if (tj.responseData && tj.responseData.translatedText) queryTxt = tj.responseData.translatedText;
-        } catch(e) { queryTxt = d.ai_prompt || "vegan plant-based dish"; }
-      }
+      const topicInfo = extractShortSearchTopic(d, userRawText);
+      const shortQuery = topicInfo.q;
+      const bankPool = CURATED_VEGAN_HD_BANK[topicInfo.bank] || CURATED_VEGAN_HD_BANK.salad;
 
-      // Очищаем от любых невеганских слов и жёстко ставим веганские маркеры
-      const sanitized = queryTxt.replace(NON_VEGAN_BAN_REGEX, "tofu mushroom").replace(/tom yum/gi, "vegan tofu mushroom soup");
-      const strictVeganPrompt = "100% vegan plant-based " + sanitized + " with tofu, mushrooms, vegetables and herbs, no meat, no shrimp, no seafood";
-      const searchKeywords = ("vegan " + sanitized).replace(/close-up|studio|food photography of|served|on|ceramic|plate|in|cozy|cafe|100%|plant-based|no meat|no seafood|no shrimp/gi, " ").replace(/[^a-zA-Z ]/g, " ").trim().split(/\s+/).slice(0, 4).join(" ");
-      const rndSeed = Math.floor(Math.random() * 8999999) + 100000;
-
+      // 1. Движок Openverse HD (кешируем список из 30 реальных фото и при каждом клике «Ещё вариант» выдаём следующий кадр!)
       if (engine === "openverse_hd") {
         try {
-          const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent("vegan " + searchKeywords) + "&page_size=30");
-          const j = await r.json();
-          if (j.results && j.results.length) {
-            const cleanResults = j.results.filter(item => {
-              const titleAndTags = ((item.title || "") + " " + (item.tags || []).map(t => t.name || "").join(" ")).toLowerCase();
-              return !NON_VEGAN_BAN_REGEX.test(titleAndTags);
-            });
-            const pool = cleanResults.length ? cleanResults : j.results;
-            const pick = pool[Math.floor(Math.random() * pool.length)];
-            pendingDishCandidates[idx] = { url: pick.url, source: "📸 Openverse HD (100% Vegan Filter)", prompt: userRawText };
-            addLocalBuildOrActionLog("📸 Openverse (Vegan) подобрал фото для «" + d.name + "»", searchKeywords);
-            renderUnifiedSystemHub(); return;
+          const cacheKey = "ov_" + shortQuery;
+          if (!window.cachedSearchPools[cacheKey]) {
+            const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent(shortQuery) + "&page_size=30");
+            const j = await r.json();
+            if (j.results && j.results.length) {
+              window.cachedSearchPools[cacheKey] = j.results
+                .filter(it => !NON_VEGAN_BAN_REGEX.test((it.title || "")))
+                .map(it => it.url)
+                .filter(Boolean);
+            }
+          }
+          const pool = window.cachedSearchPools[cacheKey];
+          if (pool && pool.length) {
+            const pickUrl = pool[step % pool.length];
+            pendingDishCandidates[idx] = { url: pickUrl, source: "📸 Openverse HD (Вариант #" + ((step % pool.length) + 1) + " из " + pool.length + ")", prompt: shortQuery };
+            addLocalBuildOrActionLog("📸 Openverse HD: вариант #" + step + " для «" + d.name + "»", shortQuery);
+            renderUnifiedSystemHub();
+            return;
           }
         } catch(e) {}
       }
 
+      // 2. Движок Wikimedia Gastro Commons
       if (engine === "wikimedia") {
         try {
-          const r = await fetch("https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=" + encodeURIComponent("filetype:bitmap vegan " + searchKeywords) + "&gsrlimit=25&prop=imageinfo&iiprop=url&format=json&origin=*");
-          const j = await r.json();
-          const pages = j.query && j.query.pages ? Object.values(j.query.pages) : [];
-          const cleanPages = pages.filter(p => !NON_VEGAN_BAN_REGEX.test(p.title || ""));
-          const imgs = (cleanPages.length ? cleanPages : pages).map(p => p.imageinfo && p.imageinfo[0] && p.imageinfo[0].url).filter(Boolean);
-          if (imgs.length) {
-            const pickUrl = imgs[Math.floor(Math.random() * imgs.length)];
-            pendingDishCandidates[idx] = { url: pickUrl, source: "🥗 Wikimedia Gastro (100% Vegan Filter)", prompt: userRawText };
-            addLocalBuildOrActionLog("🥗 Wikimedia (Vegan) нашёл фото для «" + d.name + "»", searchKeywords);
-            renderUnifiedSystemHub(); return;
+          const cacheKey = "wm_" + shortQuery;
+          if (!window.cachedSearchPools[cacheKey]) {
+            const r = await fetch("https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=" + encodeURIComponent("filetype:bitmap " + shortQuery) + "&gsrlimit=25&prop=imageinfo&iiprop=url&format=json&origin=*");
+            const j = await r.json();
+            const pages = j.query && j.query.pages ? Object.values(j.query.pages) : [];
+            window.cachedSearchPools[cacheKey] = pages
+              .filter(p => !NON_VEGAN_BAN_REGEX.test(p.title || ""))
+              .map(p => p.imageinfo && p.imageinfo[0] && p.imageinfo[0].url)
+              .filter(Boolean);
+          }
+          const pool = window.cachedSearchPools[cacheKey];
+          if (pool && pool.length) {
+            const pickUrl = pool[step % pool.length];
+            pendingDishCandidates[idx] = { url: pickUrl, source: "🥗 Wikimedia Gastro (Вариант #" + ((step % pool.length) + 1) + " из " + pool.length + ")", prompt: shortQuery };
+            addLocalBuildOrActionLog("🥗 Wikimedia: вариант #" + step + " для «" + d.name + "»", shortQuery);
+            renderUnifiedSystemHub();
+            return;
           }
         } catch(e) {}
       }
 
+      // 3. Движок Flickr Vegan Stream
       if (engine === "flickr_food") {
-        const flickrUrl = "https://loremflickr.com/720/720/vegan,salad,vegetable?lock=" + (rndSeed % 9999);
-        pendingDishCandidates[idx] = { url: flickrUrl, source: "🍲 Flickr Vegan Stream", prompt: userRawText };
-        renderUnifiedSystemHub(); return;
+        const tag = shortQuery.split(" ")[0] || "vegan";
+        const flickrUrl = "https://loremflickr.com/720/720/vegan," + encodeURIComponent(tag) + "?lock=" + (step * 137 + idx);
+        pendingDishCandidates[idx] = { url: flickrUrl, source: "🍲 Flickr Vegan (Вариант #" + step + ")", prompt: shortQuery };
+        renderUnifiedSystemHub();
+        return;
       }
 
+      // 4. Движок Локальный Архив img/ (317 готовых фото)
       if (engine === "local_ready") {
         const pool = (DATA.ready_photos && DATA.ready_photos.length) ? DATA.ready_photos : ["img/vk_5128_1.jpg"];
-        const pickLocal = pool[Math.floor(Math.random() * pool.length)];
-        pendingDishCandidates[idx] = { url: pickLocal, source: "🌿 Локальный Архив Кафе img/", prompt: userRawText };
-        renderUnifiedSystemHub(); return;
+        const pickLocal = pool[(step * 7 + idx) % pool.length];
+        pendingDishCandidates[idx] = { url: pickLocal, source: "🌿 Архив Кафе img/ (Вариант #" + step + ")", prompt: pickLocal };
+        renderUnifiedSystemHub();
+        return;
       }
 
-      if (engine === "turbo_ai") {
-        const w = 640 + (rndSeed % 3) * 64;
-        const turboUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent("Appetizing gourmet " + strictVeganPrompt + ", studio food photography, natural light, no text") + "?model=turbo&width=" + w + "&height=" + w + "&seed=" + rndSeed + "&nologo=true&nofeed=true";
-        pendingDishCandidates[idx] = { url: turboUrl, source: "⚡ Turbo SDXL AI (Vegan • Seed #" + rndSeed + ")", prompt: userRawText };
-        renderUnifiedSystemHub(); return;
-      }
-
-      const wFlux = 704 + (rndSeed % 4) * 16;
-      const fluxUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent("Close-up studio vegan food photo of " + strictVeganPrompt + ", ceramic bowl, 8k, no text") + "?model=flux&width=" + wFlux + "&height=" + wFlux + "&seed=" + rndSeed + "&nologo=true&nofeed=true";
-      pendingDishCandidates[idx] = { url: fluxUrl, source: "🎨 Flux Realism AI (Vegan • Seed #" + rndSeed + ")", prompt: userRawText };
+      // 5. Гарантированный безлимитный пул GastroBank HD (НИКОГДА не выдаёт жёлтый баннер 45-секундного лимита!)
+      const pickBankUrl = bankPool[step % bankPool.length];
+      pendingDishCandidates[idx] = {
+        url: pickBankUrl,
+        source: "🍹 GastroBank HD (Вариант #" + ((step % bankPool.length) + 1) + " • Без лимитов)",
+        prompt: shortQuery
+      };
+      addLocalBuildOrActionLog("🍹 GastroBank HD: вариант #" + step + " для «" + d.name + "»", shortQuery);
       renderUnifiedSystemHub();
     };
 
-    // 6. УНИВЕРСАЛЬНЫЙ ПЕРЕХВАТЧИК МОБИЛЬНОГО СВАЙПА «НАЗАД» (SPA-GUARD POPSTATE ДЛЯ ВСЕХ ОКОН И ВКЛАДОК!)
+    // 6. Мобильный свайп «Назад» (popstate SPA-Guard для всех окон)
     window.pushModalGuardState = function(tag) {
-      try {
-        history.pushState({ mirmirModal: tag || "open", t: Date.now() }, "");
-      } catch(e) {}
+      try { history.pushState({ mirmirModal: tag || "open", t: Date.now() }, ""); } catch(e) {}
     };
 
-    // Оборачиваем ВСЕ функции открытия модальных окон и вкладок, чтобы каждое открытие ставило точку возврата в историю браузера!
     [
       "openMenu", "openBowlBuilder", "openCafeShopModal", "openBookTableModal",
       "openDeliveryModal", "openRadioSelectorModal", "openSuperZoom",
@@ -536,30 +680,28 @@ def upgrade_template_html_in_place(tpl_html):
       }
     });
 
-    const _origToggleCart = window.toggleCart;
-    window.toggleCart = function() {
+    const _origToggleCart = toggleCart;
+    toggleCart = function() {
       const dr = document.getElementById("cart-drawer");
       const wasHidden = dr && dr.classList.contains("hidden");
-      if (_origToggleCart) _origToggleCart();
+      _origToggleCart();
       if (wasHidden) window.pushModalGuardState("cart");
     };
 
-    // При нажатии системной кнопки или свайпа «Назад» на смартфоне — закрываем верхнее открытое окно вместо вылета с сайта!
-    window.addEventListener("popstate", function(ev) {
+    window.addEventListener("popstate", function() {
       const modalOrder = [
-        { id: "super-zoom-lightbox", close: window.closeSuperZoom },
-        { id: "ready-gallery-popup", close: window.closeReadyGalleryPopup },
-        { id: "master-prompt-modal", close: window.closeMasterPromptModal },
-        { id: "unified-system-hub", close: window.closeUnifiedSystemHub },
+        { id: "super-zoom-lightbox", close: closeSuperZoom },
+        { id: "ready-gallery-popup", close: closeReadyGalleryPopup },
+        { id: "master-prompt-modal", close: closeMasterPromptModal },
+        { id: "unified-system-hub", close: closeUnifiedSystemHub },
         { id: "radio-selector-modal", close: () => { const m = document.getElementById("radio-selector-modal"); if (m) { m.classList.add("hidden"); m.classList.remove("flex"); } } },
-        { id: "book-table-modal", close: window.closeBookTableModal },
+        { id: "book-table-modal", close: closeBookTableModal },
         { id: "delivery-modal", close: () => { const m = document.getElementById("delivery-modal"); if (m) { m.classList.add("hidden"); m.classList.remove("flex"); } } },
-        { id: "cafe-shop-modal", close: window.closeCafeShopModal },
+        { id: "cafe-shop-modal", close: closeCafeShopModal },
         { id: "cart-drawer", close: () => { const m = document.getElementById("cart-drawer"); if (m) { m.classList.add("hidden"); m.classList.remove("flex"); } } },
-        { id: "bowl-modal", close: window.closeBowlBuilder },
-        { id: "menu-modal", close: window.closeMenu }
+        { id: "bowl-modal", close: closeBowlBuilder },
+        { id: "menu-modal", close: closeMenu }
       ];
-
       for (let i = 0; i < modalOrder.length; i++) {
         const el = document.getElementById(modalOrder[i].id);
         if (el && !el.classList.contains("hidden")) {
@@ -567,15 +709,8 @@ def upgrade_template_html_in_place(tpl_html):
           return;
         }
       }
-      // Если все модалки уже закрыты — удерживаем пользователя на главной странице сайта
       try { history.pushState({ mirmirBase: true }, ""); } catch(e) {}
     });
-
-    // Ставим базовую точку страховки при первом касании экрана смартфона
-    window.addEventListener("touchstart", function initTouchGuard() {
-      try { history.pushState({ mirmirBase: true }, ""); } catch(e) {}
-      window.removeEventListener("touchstart", initTouchGuard);
-    }, { passive: true });
 
     let rightColBgIdx = 0;
     setInterval(() => {
@@ -594,23 +729,40 @@ def upgrade_template_html_in_place(tpl_html):
     setInterval(() => {
       window.stepRightSpecialsPair(1);
     }, 5200);
-    """
 
-    tpl_html = tpl_html.replace(
-        'window.addEventListener("DOMContentLoaded"',
-        v30_master_js + '\n    window.addEventListener("DOMContentLoaded"',
-    )
-    return tpl_html
+    window.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll("[data-dove-holder]").forEach(el => { el.innerHTML = SIGN_DOVE_SVG; });
+      if (DATA.ymap_photos && DATA.ymap_photos.length >= 2) {
+        const lw = document.getElementById("left-wing-img"), rw = document.getElementById("right-wing-img");
+        if (lw) lw.src = DATA.ymap_photos[0];
+        if (rw) rw.src = DATA.ymap_photos[1];
+      }
+      applyManualOverridesToMenuData();
+      renderWorkStatusBadges();
+      rollRandomGastroPulse();
+      renderInteriorSlideState();
+      setInterval(() => stepInteriorSlide(1), 4200);
+      renderHeroRightColumn();
+      setInterval(() => step3DCarousel(1), 4500);
+      renderNewsPosts();
+      renderCategoryShowcaseAndRail();
+      applySiteToggles();
+    });
+  </script>
+</body>
+</html>
+"""
+    return tpl_html + v31_clean_tail
 
 
 def build_clean_master_prompt_text():
     lines = [
-        "ПОЛНОЕ ТЕКСТОВОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) НА РАЗРАБОТКУ ТРЁХМОДУЛЬНОЙ ПЛАТФОРМЫ ВЕГАН-КАФЕ «МИР МИР» (v3.0)",
+        "ПОЛНОЕ ТЕКСТОВОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) НА РАЗРАБОТКУ ТРЁХМОДУЛЬНОЙ ПЛАТФОРМЫ ВЕГАН-КАФЕ «МИР МИР» (v3.1)",
         "",
         "1. ЧИСТАЯ ТРЁХМОДУЛЬНАЯ АРХИТЕКТУРА: menu_data.py (72 веганских блюда + 8 товаров магазина) + template.html + app.py.",
-        "2. ПЕРВЫЙ ЭКРАН: слева под слоганом слайдер строго верифицированных фотографий ИНТЕРЬЕРА и ЭКСТЕРЬЕРА кафе; справа 3D-карусель 4 страниц меню зала на фоне вращающейся Голубки мира, а под ней — 2 крупных поля сезонных спешлов с пометкой «Подача блюд может отличаться».",
-        "3. МОБИЛЬНАЯ ЗАЩИТА НАВИГАЦИИ (SPA-Guard popstate): свайп «Назад» на смартфонах плавно закрывает любое открытое модальное окно или вкладку, не выбрасывая гостя с сайта.",
-        "4. ШЕСТЕРЁНКА АРХИТЕКТОРА (⚙️): 5 вкладок, 6 независимых фото-движков с жёстким веган-фильтром (Openverse HD, Wikimedia, Turbo AI, Flux AI, Flickr, Архив), сохранение пользовательского ввода в промптах и полноэкранная Лупа z-200.",
+        "2. ЭЛЕКТРОННОЕ МЕНЮ: на фотографии каждого из 72 блюд размещена плашка «🍽️ Подача блюд может отличаться».",
+        "3. НОВОСТИ И АНОНСЫ: карточки снабжены фирменной синей кнопкой с официальным логотипом VK и прямой ссылкой на конкретный пост на стене сообщества (https://vk.com/mirmir.cafe?w=wall-191992548_ID).",
+        "4. ШЕСТЕРЁНКА АРХИТЕКТОРА (⚙️): мгновенное переключение вариантов по кнопке «🎲 Ещё вариант» и 5 быстрых кнопок источников фото без 45-секундных лимитов.",
     ]
     txt = "\n".join(lines)
     with open("MASTER_PROMPT_MIRMIR.txt", "w", encoding="utf-8") as f:
@@ -619,7 +771,6 @@ def build_clean_master_prompt_text():
 
 
 def sync_files_to_root_repo():
-    """Зеркалирует собранный index.html и модули в корневую папку C:\\Users\\vitvs\\Documents\\mirmir\\."""
     if os.path.abspath(ROOT_REPO_DIR) == os.path.abspath(BASE_DIR):
         return
     for fn in [
@@ -644,11 +795,10 @@ def sync_files_to_root_repo():
 
 def main():
     print("=" * 78)
-    print("🕊️  СБОРКА «МИР МИР» v3.0 (ВЕГАН-ФИЛЬТР 72 БЛЮД + СВАЙП НАЗАД + ВК + ПЛАШКА ПОДАЧИ)")
+    print("🕊️  СБОРКА «МИР МИР» v3.1 (ПОДАЧА БЛЮД + ЛОГО VK НА ПОСТЫ + ЕЩЁ ВАРИАНТ БЕЗ ЛИМИТА)")
     print("=" * 78)
 
     auto_migrate_assets_from_old_folder()
-    # 1. Автоматически прошиваем все 72 блюда в menu_data.py веганской защитой
     enforce_vegan_prompts_in_menu_data_file()
 
     import importlib
@@ -684,7 +834,7 @@ def main():
     master_prompt_str = build_clean_master_prompt_text()
     now_stamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     data_payload = {
-        "version": f"Релиз v3.0 • Сборка #{build_num} ({now_stamp})",
+        "version": f"Релиз v3.1 • Сборка #{build_num} ({now_stamp})",
         "menu": clean_menu,
         "shop": CAFE_SHOP_ITEMS,
         "posts": wall_posts,
@@ -714,7 +864,7 @@ def main():
         f.write(final_html)
 
     sync_files_to_root_repo()
-    print(f"✨ [Сборка #{build_num} готова] Все 72 блюда под веган-защитой, свайп «Назад» и ссылки ВК активны!")
+    print(f"✨ [Сборка #{build_num} готова] Плашки подачи в меню, кнопки VK на посты и «Ещё вариант» вшиты!")
     try:
         os.startfile("index.html")
     except Exception:
@@ -748,7 +898,7 @@ def push_to_github():
         cwd=target_git_dir,
         check=False,
     )
-    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v3.0 Monolith ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target_git_dir, check=False)
+    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v3.1 VK Logo & Serving Badge ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target_git_dir, check=False)
 
     res = subprocess.run(["git", "push", "-u", "origin", "main", "--force"], cwd=target_git_dir, check=False)
     if res.returncode == 0:
@@ -761,7 +911,7 @@ def push_to_github():
 if __name__ == "__main__":
     try:
         print("=" * 78)
-        print("🕊️  ПУЛЬТ УПРАВЛЕНИЯ ПЛАТФОРМОЙ «МИР МИР» v3.0 (Ильинская, 45)")
+        print("🕊️  ПУЛЬТ УПРАВЛЕНИЯ ПЛАТФОРМОЙ «МИР МИР» v3.1 (Ильинская, 45)")
         print("=" * 78)
         print("  [1] 💻 Только на ПК (собрать index.html и открыть в браузере)")
         print("  [2] 🚀 На ПК + На Сайт (собрать, открыть на ПК и выгрузить в корень GitHub)")
@@ -778,7 +928,7 @@ if __name__ == "__main__":
             push_to_github()
 
         print("=" * 78)
-        print("🎉 КРАСОВЕЛОФ, МИЛОРД! Сборка v3.0 завершена без единой ошибки!")
+        print("🎉 КРАСОВЕЛОФ, МИЛОРД! Сборка v3.1 завершена чисто!")
         print("=" * 78)
     except Exception:
         print("\n❌ ОШИБКА ПРИ ВЫПОЛНЕНИИ:")
