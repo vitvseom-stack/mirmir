@@ -15,7 +15,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5128_1.jpg",
         "photo_type": "real",
         "desc": "Свежий тропический салат с ананасом, спелым авокадо, миксом зелени и цитрусовой заправкой.",
-        "ai_prompt": "Fresh tropical vegan salad with pineapple, avocado, cherry tomatoes, mixed greens and citrus dressing"
+        "ai_prompt": "Vegan plant-based fresh tropical vegan salad with pineapple, avocado, cherry tomatoes, mixed greens and citrus dressing, 100% vegan, no meat, no seafood"
     },
     {
         "id": "sp_2",
@@ -26,7 +26,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5122_1.jpg",
         "photo_type": "real",
         "desc": "Ароматный карибский жёлтый рис с овощами, нутом, специями и травами.",
-        "ai_prompt": "Aromatic Caribbean spiced yellow rice pilaf with vegetables, chickpeas and herbs"
+        "ai_prompt": "Vegan plant-based aromatic Caribbean spiced yellow rice pilaf with vegetables, chickpeas and herbs, 100% vegan, no meat, no seafood"
     },
     {
         "id": "sp_3",
@@ -37,7 +37,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5121_0.jpg",
         "photo_type": "real",
         "desc": "Золотистые запечённые ямайские пирожки с пряной растительной начинкой.",
-        "ai_prompt": "Golden baked Jamaican turnovers patties with savory spiced filling on wooden board"
+        "ai_prompt": "Vegan plant-based golden baked Jamaican turnovers patties with savory spiced filling on wooden board, 100% vegan, no meat, no seafood"
     },
     {
         "id": "sp_4",
@@ -48,7 +48,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5118_0.jpg",
         "photo_type": "real",
         "desc": "Ремесленная пицца на тонком тесте с запечёнными овощами и веганским сыром.",
-        "ai_prompt": "Artisan thin-crust vegan pizza with roasted vegetables, plant-based cheese and herbs"
+        "ai_prompt": "Vegan plant-based artisan thin-crust vegan pizza with roasted vegetables, plant-based cheese and herbs, 100% vegan, no meat, no seafood"
     },
     {
         "id": "sp_5",
@@ -59,7 +59,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5118_1.jpg",
         "photo_type": "real",
         "desc": "Объёмный поджаристый сэндвич с карамелизированными вешенками, луком и зеленью.",
-        "ai_prompt": "Toasted gourmet artisan sandwich with roasted oyster mushrooms, caramelized onions and greens"
+        "ai_prompt": "Vegan plant-based toasted gourmet artisan sandwich with roasted oyster mushrooms, caramelized onions and greens, 100% vegan, no meat, no seafood"
     },
     {
         "id": "sp_6",
@@ -70,7 +70,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5118_2.jpg",
         "photo_type": "real",
         "desc": "Яркая паста со сладким перцем, полосками пряного соевого джерки и кокосовым соусом.",
-        "ai_prompt": "Colorful Rasta pasta with bell peppers, jerk-spiced soy jerky strips and creamy coconut sauce"
+        "ai_prompt": "Vegan plant-based colorful Rasta pasta with bell peppers, jerk-spiced soy jerky strips and creamy coconut sauce, 100% vegan, no meat, no seafood"
     },
     {
         "id": "sp_7",
@@ -81,7 +81,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5085_1.jpg",
         "photo_type": "real",
         "desc": "Авторская пицца с соусом Том Ям, лисичками, соевыми бобами эдамаме и тофу.",
-        "ai_prompt": "Artisan whole-wheat pizza with chanterelle mushrooms, edamame beans, tofu and tom yum sauce"
+        "ai_prompt": "Vegan plant-based artisan whole-wheat pizza with chanterelle mushrooms, edamame beans, tofu and tom yum sauce, 100% vegan, no meat, no seafood"
     },
     {
         "id": "sp_8",
@@ -92,7 +92,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5094_1.jpg",
         "photo_type": "real",
         "desc": "Тёплый тайский пшеничный блинчик роти с пряным сейтаном и хрустящим битым огурцом.",
-        "ai_prompt": "Warm flaky Thai roti flatbread wrap filled with spiced seitan strips and smashed cucumbers"
+        "ai_prompt": "Vegan plant-based warm flaky Thai roti flatbread wrap filled with spiced seitan strips and smashed cucumbers, 100% vegan, no meat, no seafood"
     },
     {
         "id": "sp_9",
@@ -103,7 +103,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5094_0.jpg",
         "photo_type": "real",
         "desc": "Традиционная рисовая лапша во wok-соусе с золотистым тофу, сейтаном, арахисом и лаймом.",
-        "ai_prompt": "Authentic Pad Thai rice noodles stir-fried with golden tofu, seitan, peanuts, lime and bean sprouts"
+        "ai_prompt": "Vegan plant-based authentic Pad Thai rice noodles stir-fried with golden tofu, seitan, peanuts, lime and bean sprouts, 100% vegan, no meat, no seafood"
     },
 
     # --- СУПЫ (7 позиций) ---
@@ -116,7 +116,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5057_1.jpg",
         "photo_type": "real",
         "desc": "Сытный домашний овощной суп с ароматными специями и зеленью.",
-        "ai_prompt": "Hearty homemade vegetable soup with herbs and artisan bread in a ceramic bowl"
+        "ai_prompt": "Vegan plant-based hearty homemade vegetable soup with herbs and artisan bread in a ceramic bowl, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_2",
@@ -127,7 +127,7 @@ MENU_DATABASE = [
         "photo": "img/macro_mushrooms_raw.jpg",
         "photo_type": "ai_ingr",
         "desc": "Особый суп шеф-повара по секретному рецепту выходного дня.",
-        "ai_prompt": "Rich aromatic mushroom and vegetable soup with fresh herbs in a stoneware bowl"
+        "ai_prompt": "Vegan plant-based rich aromatic mushroom and vegetable soup with fresh herbs in a stoneware bowl, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_3",
@@ -138,7 +138,7 @@ MENU_DATABASE = [
         "photo": "img/macro_tomyum_bowl.jpg",
         "photo_type": "ai_ingr",
         "desc": "Пряный тайский суп на кокосовом молоке с лемонграссом, вешенками, тофу и томатами черри.",
-        "ai_prompt": "Spicy Thai Tom Yum soup in coconut broth with mushrooms, tofu, cherry tomatoes and lime"
+        "ai_prompt": "Vegan plant-based spicy Thai Tom Yum soup in coconut broth with mushrooms, tofu, cherry tomatoes and lime, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_4",
@@ -149,7 +149,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5057_1.jpg",
         "photo_type": "real",
         "desc": "Бархатный крем-суп из нежного зеленого горошка и спелого авокадо с тыквенными семечками.",
-        "ai_prompt": "Velvety emerald green pea and avocado cream soup topped with microgreens and pumpkin seeds"
+        "ai_prompt": "Vegan plant-based velvety emerald green pea and avocado cream soup topped with microgreens and pumpkin seeds, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_5",
@@ -160,7 +160,7 @@ MENU_DATABASE = [
         "photo": "img/macro_miso_tofu.jpg",
         "photo_type": "ai_ingr",
         "desc": "Классический японский мисо-суп с кубиками шелкового тофу, водорослями вакаме и кунжутом.",
-        "ai_prompt": "Traditional Japanese Miso soup with silken tofu cubes, wakame seaweed and sesame seeds"
+        "ai_prompt": "Vegan plant-based traditional Japanese Miso soup with silken tofu cubes, wakame seaweed and sesame seeds, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_6",
@@ -171,7 +171,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5053_0.jpg",
         "photo_type": "real",
         "desc": "Питательный бразильский суп на кокосовом молоке с нотками арахиса и водорослей нори.",
-        "ai_prompt": "Creamy Brazilian Vatapa soup with coconut milk, nori seaweed, peanuts and spices"
+        "ai_prompt": "Vegan plant-based creamy Brazilian Vatapa soup with coconut milk, nori seaweed, peanuts and spices, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_7",
@@ -182,7 +182,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5121_0.jpg",
         "photo_type": "real",
         "desc": "Порция свежего бездрожжевого хлеба на закваске или рассыпчатого риса к вашему супу.",
-        "ai_prompt": "Freshly baked artisan dark sourdough bread slices and a small ceramic bowl of fluffy steamed white rice"
+        "ai_prompt": "Vegan plant-based freshly baked artisan dark sourdough bread slices and a small ceramic bowl of fluffy steamed white rice, 100% vegan, no meat, no seafood"
     },
 
     # --- БОУЛЫ И ОМЛЕТЫ (5 позиций) ---
@@ -194,7 +194,7 @@ MENU_DATABASE = [
         "photo": "img/macro_avocado_greens.jpg",
         "photo_type": "ai_ingr",
         "desc": "Сытный конструктор: злаковая основа, запечённые овощи, протеин на выбор, салат и авторский соус.",
-        "ai_prompt": "Colorful nourishing vegan buddha bowl with quinoa, roasted vegetables, falafel, avocado and tahini dressing"
+        "ai_prompt": "Vegan plant-based colorful nourishing vegan buddha bowl with quinoa, roasted vegetables, falafel, avocado and tahini dressing, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_9",
@@ -205,7 +205,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5087_1.jpg",
         "photo_type": "real",
         "desc": "Нежный омлет из нутовой муки и тофу с овощами и зеленью. 3 вкуса на выбор.",
-        "ai_prompt": "Fluffy golden chickpea and tofu omelet with cherry tomatoes, spinach and melted vegan cheese"
+        "ai_prompt": "Vegan plant-based fluffy golden chickpea and tofu omelet with cherry tomatoes, spinach and melted vegan cheese, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_10",
@@ -216,7 +216,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5055_0.jpg",
         "photo_type: ": "real",
         "desc": "Пряная ближневосточная шакшука с тофу-скрэмблом в насыщенном томатном соусе с перцем.",
-        "ai_prompt": "Middle eastern Shakshuka with tofu scramble in rich spiced tomato and bell pepper sauce in cast iron skillet"
+        "ai_prompt": "Vegan plant-based middle eastern Shakshuka with tofu scramble in rich spiced tomato and bell pepper sauce in cast iron skillet, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_11",
@@ -227,7 +227,7 @@ MENU_DATABASE = [
         "photo": "img/macro_tomatoes_olives.jpg",
         "photo_type": "ai_ingr",
         "desc": "Средиземноморский омлет с маслинами, вялеными томатами, зелёным маслом и тостом.",
-        "ai_prompt": "Mediterranean chickpea omelet with olives, sun-dried tomatoes, green herb oil and crusty bread"
+        "ai_prompt": "Vegan plant-based mediterranean chickpea omelet with olives, sun-dried tomatoes, green herb oil and crusty bread, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_12",
@@ -238,7 +238,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5121_0.jpg",
         "photo_type": "real",
         "desc": "Любимые добавки к вашему завтраку или обеду.",
-        "ai_prompt": "Fresh avocado slices and artisan toast on a small ceramic plate"
+        "ai_prompt": "Vegan plant-based fresh avocado slices and artisan toast on a small ceramic plate, 100% vegan, no meat, no seafood"
     },
 
     # --- САЛАТЫ (5 позиций) ---
@@ -251,7 +251,7 @@ MENU_DATABASE = [
         "photo": "img/macro_caesar_romaine.jpg",
         "photo_type": "ai_ingr",
         "desc": "Хрустящий салат романо с золотистыми крутонами, томатами черри, нори и соусом Цезарь.",
-        "ai_prompt": "Classic vegan Caesar salad with crisp romaine lettuce, golden croutons, cherry tomatoes, nori and creamy dressing"
+        "ai_prompt": "Vegan plant-based classic vegan Caesar salad with crisp romaine lettuce, golden croutons, cherry tomatoes, nori and creamy dressing, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_14",
@@ -262,7 +262,7 @@ MENU_DATABASE = [
         "photo": "img/macro_greek_olives.jpg",
         "photo_type": "ai_ingr",
         "desc": "Свежие овощи, оливки каламата, тофу-фета, авокадо и хрустящие льняные чипсы.",
-        "ai_prompt": "Fresh Greek salad with tomatoes, cucumbers, kalamata olives, tofu feta, avocado and flaxseed crisps"
+        "ai_prompt": "Vegan plant-based fresh Greek salad with tomatoes, cucumbers, kalamata olives, tofu feta, avocado and flaxseed crisps, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_15",
@@ -273,7 +273,7 @@ MENU_DATABASE = [
         "photo": "img/macro_tuna_chickpea.jpg",
         "photo_type": "ai_ingr",
         "desc": "Сытный салат с нутовым «тунцом», нори, пикантным огурчиком и миксом зелени.",
-        "ai_prompt": "Hearty vegan Tuna salad with mashed chickpeas, nori seaweed, pickled cucumbers and mixed greens"
+        "ai_prompt": "Vegan plant-based hearty vegan Tuna salad with mashed chickpeas, nori seaweed, pickled cucumbers and mixed greens, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_16",
@@ -284,7 +284,7 @@ MENU_DATABASE = [
         "photo": "img/macro_cacao_nuts.jpg",
         "photo_type": "ai_ingr",
         "desc": "Лёгкий витаминный салат с кунжутной заправкой, орешками и сухофруктами.",
-        "ai_prompt": "Fresh vegetable salad with sun-dried apricots, pine nuts, sesame seeds and cold-pressed oil"
+        "ai_prompt": "Vegan plant-based fresh vegetable salad with sun-dried apricots, pine nuts, sesame seeds and cold-pressed oil, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_17",
@@ -295,7 +295,7 @@ MENU_DATABASE = [
         "photo": "img/macro_cucumbers_sesame.jpg",
         "photo_type": "ai_ingr",
         "desc": "Азиатские битые огурцы с чесноком, кунжутным маслом, соевым соусом и древесными грибами.",
-        "ai_prompt": "Chinese smashed cucumber salad with garlic, sesame oil, soy sauce, wood ear mushrooms and cilantro"
+        "ai_prompt": "Vegan plant-based chinese smashed cucumber salad with garlic, sesame oil, soy sauce, wood ear mushrooms and cilantro, 100% vegan, no meat, no seafood"
     },
 
     # --- ЛАПША (4 позиции) ---
@@ -307,7 +307,7 @@ MENU_DATABASE = [
         "photo": "img/macro_creamy_pasta.jpg",
         "photo_type": "ai_ingr",
         "desc": "Нежная паста феттуччине в сливочном соусе с растительными сосисками и зеленью.",
-        "ai_prompt": "Creamy vegan fettuccine pasta with roasted plant-based sausage slices and fresh herbs in a ceramic bowl"
+        "ai_prompt": "Vegan plant-based creamy vegan fettuccine pasta with roasted plant-based sausage slices and fresh herbs in a ceramic bowl, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_19",
@@ -317,7 +317,7 @@ MENU_DATABASE = [
         "photo": "img/macro_rice_noodles.jpg",
         "photo_type": "ai_ingr",
         "desc": "Пряная азиатская лапша во wok-соусе с обжаренным тофу и овощами.",
-        "ai_prompt": "Asian stir-fried noodles with crispy tofu, vegetables, sesame seeds and teriyaki glaze"
+        "ai_prompt": "Vegan plant-based asian stir-fried noodles with crispy tofu, vegetables, sesame seeds and teriyaki glaze, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_20",
@@ -327,7 +327,7 @@ MENU_DATABASE = [
         "photo": "img/macro_tomatoes_olives.jpg",
         "photo_type": "ai_ingr",
         "desc": "Паста с соусом на основе нутового тунца, каперсов и пряных трав.",
-        "ai_prompt": "Savory pasta noodles with chickpea-nori vegan tuna sauce, capers and herbs"
+        "ai_prompt": "Vegan plant-based savory pasta noodles with chickpea-nori vegan tuna sauce, capers and herbs, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_21",
@@ -337,7 +337,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5057_0.jpg",
         "photo_type": "real",
         "desc": "Острая рисовая лапша в соусе Том Ям с вешенками, тофу и кинзой.",
-        "ai_prompt": "Spicy Thai Tom Yum noodle soup with mushrooms, tofu, cherry tomatoes, lime and cilantro"
+        "ai_prompt": "Vegan plant-based spicy Thai Tom Yum noodle soup with mushrooms, tofu, cherry tomatoes, lime and cilantro, 100% vegan, no meat, no seafood"
     },
 
     # --- БУРГЕРЫ И ИЗ ПЕЧИ (9 позиций) ---
@@ -350,7 +350,7 @@ MENU_DATABASE = [
         "photo": "img/macro_vegan_burger.jpg",
         "photo_type": "ai_ingr",
         "desc": "Фирменный бургер в мягкой булочке с сочной коттой, вяленой курагой, свежими овощами и соусом.",
-        "ai_prompt": "Signature gourmet vegan burger in artisan bun with plant patty, caramelized dried apricots, pickles and sauces"
+        "ai_prompt": "Vegan plant-based signature gourmet vegan burger in artisan bun with plant patty, caramelized dried apricots, pickles and sauces, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_23",
@@ -361,7 +361,7 @@ MENU_DATABASE = [
         "photo": "img/macro_avocado_burger.jpg",
         "photo_type": "ai_ingr",
         "desc": "Бургер с хрустящим тофу в нори-кляре, спелым авокадо и тартаром.",
-        "ai_prompt": "Crispy nori-battered tofu fillet burger with fresh avocado slices, lettuce and tartar sauce"
+        "ai_prompt": "Vegan plant-based crispy nori-battered tofu fillet burger with fresh avocado slices, lettuce and tartar sauce, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_24",
@@ -372,7 +372,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5118_1.jpg",
         "photo_type": "real",
         "desc": "Сытный бургер с рубленым соевым рагу в богатом томатном соусе и маринованным луком.",
-        "ai_prompt": "Hearty Sloppy Joe burger with rich minced soy ragu in tomato sauce, pickled onions and greens"
+        "ai_prompt": "Vegan plant-based hearty Sloppy Joe burger with rich minced soy ragu in tomato sauce, pickled onions and greens, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_25",
@@ -383,7 +383,7 @@ MENU_DATABASE = [
         "photo": "img/macro_spicy_burger.jpg",
         "photo_type": "ai_ingr",
         "desc": "Острый бургер с омлетом тамаго, веганским сыром чеддер и соусом кимчи-майо.",
-        "ai_prompt": "Japanese-style spicy burger with tamago tofu omelet, melted vegan cheese, kimchi mayo and greens"
+        "ai_prompt": "Vegan plant-based japanese-style spicy burger with tamago tofu omelet, melted vegan cheese, kimchi mayo and greens, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_26",
@@ -393,7 +393,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5085_1.jpg",
         "photo_type": "real",
         "desc": "Пицца из печи на цельнозерновом тесте с грибами, карамелизированным луком и моцареллой.",
-        "ai_prompt": "Artisan whole-grain crust pizza with roasted mushrooms, caramelized onions, vegan mozzarella and thyme"
+        "ai_prompt": "Vegan plant-based artisan whole-grain crust pizza with roasted mushrooms, caramelized onions, vegan mozzarella and thyme, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_27",
@@ -403,7 +403,7 @@ MENU_DATABASE = [
         "photo": "img/macro_pepperoni_pizza.jpg",
         "photo_type": "ai_ingr",
         "desc": "Пицца с растительными колбасками пепперони, томатным соусом и пряными травами.",
-        "ai_prompt": "Artisan whole-grain pizza with smoky vegan wheat pepperoni slices, tomato sauce and melted plant cheese"
+        "ai_prompt": "Vegan plant-based artisan whole-grain pizza with smoky vegan wheat pepperoni slices, tomato sauce and melted plant cheese, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_28",
@@ -414,7 +414,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5062_1.jpg",
         "photo_type": "real",
         "desc": "Армянская тонкая лепешка из печи с пряным растительным фаршем, зеленью и гранатовым соусом.",
-        "ai_prompt": "Crispy Turkish Lahmacun flatbread topped with spiced plant-based minced ragu, fresh parsley, lemon and pomegranate sauce"
+        "ai_prompt": "Vegan plant-based crispy Turkish Lahmacun flatbread topped with spiced plant-based minced ragu, fresh parsley, lemon and pomegranate sauce, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_29",
@@ -425,7 +425,7 @@ MENU_DATABASE = [
         "photo": "img/vk_4783_0.jpg",
         "photo_type": "real",
         "desc": "Золотистый хрустящий чебурек с сочной растительной начинкой и зеленью.",
-        "ai_prompt": "Golden crispy baked turnover cheburek filled with juicy plant meat and herbs, served with tomato salsa"
+        "ai_prompt": "Vegan plant-based golden crispy baked turnover cheburek filled with juicy plant meat and herbs, served with tomato salsa, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_30",
@@ -436,7 +436,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5017_0.jpg",
         "photo_type": "real",
         "desc": "Тонкий пирожок-кутаб с обильной начинкой из горных трав, шпината и тофу-феты.",
-        "ai_prompt": "Traditional thin flatbread Qutab stuffed with abundant fresh mountain herbs, spinach, cilantro and tofu"
+        "ai_prompt": "Vegan plant-based traditional thin flatbread Qutab stuffed with abundant fresh mountain herbs, spinach, cilantro and tofu, 100% vegan, no meat, no seafood"
     },
 
     # --- ДЕСЕРТЫ БЕЗ САХАРА (6 позиций) ---
@@ -448,7 +448,7 @@ MENU_DATABASE = [
         "photo": "img/macro_syrniki_berries.jpg",
         "photo_type": "ai_ingr",
         "desc": "Нежные сырники из домашнего тофу без белого сахара, подаются с ягодным соусом.",
-        "ai_prompt": "Golden pan-seared vegan tofu syrniki pancakes served with berry coulis and coconut cream"
+        "ai_prompt": "Vegan plant-based golden pan-seared vegan tofu syrniki pancakes served with berry coulis and coconut cream, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_32",
@@ -459,7 +459,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5005_0.jpg",
         "photo_type": "real",
         "desc": "Ароматная воздушная шарлотка с яблоками и корицей без глютена и сахара.",
-        "ai_prompt": "Warm gluten-free apple charlotte cake with caramelized country apples and cinnamon"
+        "ai_prompt": "Vegan plant-based warm gluten-free apple charlotte cake with caramelized country apples and cinnamon, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_33",
@@ -470,7 +470,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5069_0.jpg",
         "photo_type": "real",
         "desc": "Изысканный шоколадный десерт с печёным пеканом, финиковой карамелью и кэробом.",
-        "ai_prompt": "Decadent sugar-free chocolate pecan tart dessert with roasted pecans and date caramel"
+        "ai_prompt": "Vegan plant-based decadent sugar-free chocolate pecan tart dessert with roasted pecans and date caramel, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_34",
@@ -481,7 +481,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5103_1.jpg",
         "photo_type": "real",
         "desc": "Хрустящий жареный тайский блинчик с карамелизированным бананом и ананасом.",
-        "ai_prompt": "Warm crispy Thai roti pancake with caramelized banana, pineapple and chocolate drizzle"
+        "ai_prompt": "Vegan plant-based warm crispy Thai roti pancake with caramelized banana, pineapple and chocolate drizzle, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_35",
@@ -492,7 +492,7 @@ MENU_DATABASE = [
         "photo": "img/macro_vegan_icecream.jpg",
         "photo_type": "ai_ingr",
         "desc": "Домашнее кокосовое мороженое с ягодами и мятой без лактозы и сахара.",
-        "ai_prompt": "Artisan scoops of plant-based coconut ice cream with berries and mint leaf"
+        "ai_prompt": "Vegan plant-based artisan scoops of plant-based coconut ice cream with berries and mint leaf, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_36",
@@ -503,7 +503,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5069_0.jpg",
         "photo_type": "real",
         "desc": "Полезный сытный батончик ручной работы с орехами, финиками и тёмным шоколадом.",
-        "ai_prompt": "Handcrafted raw vegan chocolate bar filled with date caramel, hazelnuts and peanuts"
+        "ai_prompt": "Vegan plant-based handcrafted raw vegan chocolate bar filled with date caramel, hazelnuts and peanuts, 100% vegan, no meat, no seafood"
     },
 
     # --- БАРНОЕ МЕНЮ: СМУЗИ И КОФЕ (14 позиций) ---
@@ -516,7 +516,7 @@ MENU_DATABASE = [
         "photo": "img/macro_cacao_nuts.jpg",
         "photo_type": "ai_ingr",
         "desc": "Густой орехово-шоколадный смузи с арахисовой пастой, бананом и кэробом.",
-        "ai_prompt": "Thick chocolate peanut butter banana smoothie in a glass topped with crushed nuts"
+        "ai_prompt": "Vegan plant-based thick chocolate peanut butter banana smoothie in a glass topped with crushed nuts, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_38",
@@ -527,7 +527,7 @@ MENU_DATABASE = [
         "photo": "img/macro_strawberry_banana.jpg",
         "photo_type": "ai_ingr",
         "desc": "Нежный кокосово-клубничный смузи с бананом без добавления сахара.",
-        "ai_prompt": "Creamy pink strawberry banana coconut cream smoothie in a tall glass"
+        "ai_prompt": "Vegan plant-based creamy pink strawberry banana coconut cream smoothie in a tall glass, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_39",
@@ -538,7 +538,7 @@ MENU_DATABASE = [
         "photo": "img/macro_berry_smoothie.jpg",
         "photo_type": "ai_ingr",
         "desc": "Освежающий смузи со шпинатом, зелёным яблоком, бананом и семенами чиа.",
-        "ai_prompt": "Vibrant green spinach banana apple smoothie with chia seeds"
+        "ai_prompt": "Vegan plant-based vibrant green spinach banana apple smoothie with chia seeds, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_40",
@@ -549,7 +549,7 @@ MENU_DATABASE = [
         "photo": "img/macro_berry_smoothie.jpg",
         "photo_type": "ai_ingr",
         "desc": "Витаминный микс лесных ягод, смородины, черники и растительного молока.",
-        "ai_prompt": "Deep purple forest berry smoothie with blueberries, raspberries and chia seeds"
+        "ai_prompt": "Vegan plant-based deep purple forest berry smoothie with blueberries, raspberries and chia seeds, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_41",
@@ -560,7 +560,7 @@ MENU_DATABASE = [
         "photo": "img/macro_pineapple_mint.jpg",
         "photo_type": "ai_ingr",
         "desc": "Тропический коктейль с ананасом, бананом и освежающей мятой.",
-        "ai_prompt": "Tropical yellow pineapple banana mint smoothie in a glass"
+        "ai_prompt": "Vegan plant-based tropical yellow pineapple banana mint smoothie in a glass, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_42",
@@ -570,7 +570,7 @@ MENU_DATABASE = [
         "photo": "img/macro_carrots_apples.jpg",
         "photo_type": "ai_ingr",
         "desc": "Свежевыжатый витаминный сок из отборных морковок или яблок.",
-        "ai_prompt": "Freshly squeezed vibrant orange carrot apple juice in a glass"
+        "ai_prompt": "Vegan plant-based freshly squeezed vibrant orange carrot apple juice in a glass, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_43",
@@ -580,7 +580,7 @@ MENU_DATABASE = [
         "photo": "img/macro_oranges_fresh.jpg",
         "photo_type": "ai_ingr",
         "desc": "Яркий апельсиновый фреш, богатый витамином C.",
-        "ai_prompt": "Freshly squeezed sunny orange juice with orange slice"
+        "ai_prompt": "Vegan plant-based freshly squeezed sunny orange juice with orange slice, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_44",
@@ -590,7 +590,7 @@ MENU_DATABASE = [
         "photo": "img/macro_grapefruit_red.jpg",
         "photo_type": "ai_ingr",
         "desc": "Освежающий грейпфрутовый фреш с лёгкой благородной горчинкой.",
-        "ai_prompt": "Freshly squeezed ruby red grapefruit juice in a glass"
+        "ai_prompt": "Vegan plant-based freshly squeezed ruby red grapefruit juice in a glass, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_45",
@@ -600,7 +600,7 @@ MENU_DATABASE = [
         "photo": "img/macro_coffee_pine.jpg",
         "photo_type": "ai_ingr",
         "desc": "Классический кофе на зерне свежей обжарки с кокосовым, миндальным или овсяным молоком.",
-        "ai_prompt": "Velvety plant-milk cappuccino with latte art foam in a ceramic cup"
+        "ai_prompt": "Vegan plant-based velvety plant-milk cappuccino with latte art foam in a ceramic cup, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_46",
@@ -611,7 +611,7 @@ MENU_DATABASE = [
         "photo": "img/macro_coffee_pine.jpg",
         "photo_type": "ai_ingr",
         "desc": "Авторский капучино на кедровом молоке с нежной пенкой и ореховым ароматом.",
-        "ai_prompt": "Creamy cappuccino on pine nut milk topped with roasted pine nuts"
+        "ai_prompt": "Vegan plant-based creamy cappuccino on pine nut milk topped with roasted pine nuts, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_47",
@@ -622,7 +622,7 @@ MENU_DATABASE = [
         "photo": "img/macro_coffee_pine.jpg",
         "photo_type": "ai_ingr",
         "desc": "Полезный горячий напиток из обжаренных желудей или алтайского цикория.",
-        "ai_prompt": "Warm roasted acorn and chicory herbal coffee drink in a rustic mug"
+        "ai_prompt": "Vegan plant-based warm roasted acorn and chicory herbal coffee drink in a rustic mug, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_48",
@@ -633,7 +633,7 @@ MENU_DATABASE = [
         "photo": "img/macro_cacao_nuts.jpg",
         "photo_type": "ai_ingr",
         "desc": "Согревающий густой напиток из натурального какао или сладкого кэроба со специями.",
-        "ai_prompt": "Warm frothy carob and cacao drink with spices in a ceramic mug"
+        "ai_prompt": "Vegan plant-based warm frothy carob and cacao drink with spices in a ceramic mug, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_49",
@@ -644,7 +644,7 @@ MENU_DATABASE = [
         "photo": "img/macro_citrus_mint.jpg",
         "photo_type": "ai_ingr",
         "desc": "Крафтовая безалкогольная кола по рецепту кафе с травой Саган Дайля и пряными специями.",
-        "ai_prompt": "Craft botanical herbal cola drink with ice, lemon slice and rosemary sprig in a glass"
+        "ai_prompt": "Vegan plant-based craft botanical herbal cola drink with ice, lemon slice and rosemary sprig in a glass, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_50",
@@ -655,7 +655,7 @@ MENU_DATABASE = [
         "photo": "img/macro_citrus_mint.jpg",
         "photo_type": "ai_ingr",
         "desc": "Освежающий лимонад с цитрусами или малиной на основе тайваньского улуна.",
-        "ai_prompt": "Refreshing sparkling citrus raspberry oolong lemonade with mint and ice"
+        "ai_prompt": "Vegan plant-based refreshing sparkling citrus raspberry oolong lemonade with mint and ice, 100% vegan, no meat, no seafood"
     },
 
     # --- ЧАЙНАЯ КАРТА (13 позиций) ---
@@ -667,7 +667,7 @@ MENU_DATABASE = [
         "photo": "img/macro_berries_mix.jpg",
         "photo_type": "ai_ingr",
         "desc": "Согревающий чай с брусникой, смородиной, мёдом и травами.",
-        "ai_prompt": "Ruby red forest berry herbal tea in a transparent teapot with candle warmer"
+        "ai_prompt": "Vegan plant-based ruby red forest berry herbal tea in a transparent teapot with candle warmer, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_52",
@@ -677,7 +677,7 @@ MENU_DATABASE = [
         "photo": "img/macro_herbal_infusion.jpg",
         "photo_type": "ai_ingr",
         "desc": "Аюрведический пряный чай с имбирём, кардамоном и травами.",
-        "ai_prompt": "Spiced Ayurvedic Prana herbal tea with ginger, lemon and herbs in a teapot"
+        "ai_prompt": "Vegan plant-based spiced Ayurvedic Prana herbal tea with ginger, lemon and herbs in a teapot, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_53",
@@ -687,7 +687,7 @@ MENU_DATABASE = [
         "photo": "img/macro_oranges_fresh.jpg",
         "photo_type": "ai_ingr",
         "desc": "Безалкогольный согревающий глинтвейн на брусничном соке с гвоздикой, апельсином и корицей.",
-        "ai_prompt": "Hot ruby lingonberry non-alcoholic mulled wine with cinnamon sticks, cloves and orange slices"
+        "ai_prompt": "Vegan plant-based hot ruby lingonberry non-alcoholic mulled wine with cinnamon sticks, cloves and orange slices, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_54",
@@ -697,7 +697,7 @@ MENU_DATABASE = [
         "photo": "img/macro_herbs_tea.jpg",
         "photo_type": "ai_ingr",
         "desc": "Классический листовой чай на выбор: местный кипрейный иван-чай, индийский ассам или зелёная сенча.",
-        "ai_prompt": "Traditional fermented willowherb Ivan-tea in a ceramic teapot"
+        "ai_prompt": "Vegan plant-based traditional fermented willowherb Ivan-tea in a ceramic teapot, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_55",
@@ -707,7 +707,7 @@ MENU_DATABASE = [
         "photo": "img/macro_herbal_infusion.jpg",
         "photo_type": "ai_ingr",
         "desc": "Особый дымный иван-чай с глубоким костровым ароматом.",
-        "ai_prompt": "Smoky campfire-aroma fermented willowherb herbal tea in a ceramic teapot"
+        "ai_prompt": "Vegan plant-based smoky campfire-aroma fermented willowherb herbal tea in a ceramic teapot, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_56",
@@ -717,7 +717,7 @@ MENU_DATABASE = [
         "photo": "img/macro_herbal_infusion.jpg",
         "photo_type": "ai_ingr",
         "desc": "Мягкий южноафриканский ройбуш без кофеина или ароматный алтайский горный сбор.",
-        "ai_prompt": "Warm South African red Rooibos herbal infusion in a glass teapot"
+        "ai_prompt": "Vegan plant-based warm South African red Rooibos herbal infusion in a glass teapot, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_57",
@@ -727,7 +727,7 @@ MENU_DATABASE = [
         "photo": "img/macro_herbs_tea.jpg",
         "photo_type": "ai_ingr",
         "desc": "Полезный татарский гречишный чай с ароматом печенья или аргентинский мате в калабасе.",
-        "ai_prompt": "Traditional Yerba Mate in a calabash gourd with metal bombilla straw"
+        "ai_prompt": "Vegan plant-based traditional Yerba Mate in a calabash gourd with metal bombilla straw, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_58",
@@ -737,7 +737,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5122_0.jpg",
         "photo_type": "real",
         "desc": "Элитный китайский выдержанный пуэр или утёсный сильноферментированный Да Хун Пао.",
-        "ai_prompt": "Authentic Chinese Gongfu tea ceremony with dark Shu Puerh tea in a clay Yixing teapot and small cups"
+        "ai_prompt": "Vegan plant-based authentic Chinese Gongfu tea ceremony with dark Shu Puerh tea in a clay Yixing teapot and small cups, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_59",
@@ -747,7 +747,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5122_0.jpg",
         "photo_type": "real",
         "desc": "Тайваньский улун с высоким содержанием гамма-аминомасляной кислоты, нотками мёда и фруктов.",
-        "ai_prompt": "Taiwanese amber GABA Oolong tea in a glass gongfu teapot on a wooden tea tray"
+        "ai_prompt": "Vegan plant-based taiwanese amber GABA Oolong tea in a glass gongfu teapot on a wooden tea tray, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_60",
@@ -757,7 +757,7 @@ MENU_DATABASE = [
         "photo": "img/macro_herbs_tea.jpg",
         "photo_type": "ai_ingr",
         "desc": "Ароматный зелёный улун Те Гуань Инь с цветочными нотами или красный чай Цзинь Цзюнь Мэй.",
-        "ai_prompt": "Fragrant jade-green Tie Guan Yin Oolong tea in a porcelain gaiwan"
+        "ai_prompt": "Vegan plant-based fragrant jade-green Tie Guan Yin Oolong tea in a porcelain gaiwan, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_61",
@@ -767,7 +767,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5122_0.jpg",
         "photo_type": "real",
         "desc": "Пряный индийский чай на растительном молоке с кардамоном, имбирём и гвоздикой.",
-        "ai_prompt": "Traditional Indian Masala chai tea brewed on plant milk with cardamom, cinnamon and star anise"
+        "ai_prompt": "Vegan plant-based traditional Indian Masala chai tea brewed on plant milk with cardamom, cinnamon and star anise, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_62",
@@ -777,7 +777,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5122_0.jpg",
         "photo_type": "real",
         "desc": "Яркий витаминный облепиховый чай с апельсином, имбирём и розмарином.",
-        "ai_prompt": "Bright golden sea buckthorn berry tea with ginger and orange slices in a glass teapot"
+        "ai_prompt": "Vegan plant-based bright golden sea buckthorn berry tea with ginger and orange slices in a glass teapot, 100% vegan, no meat, no seafood"
     },
     {
         "id": "m_63",
@@ -787,7 +787,7 @@ MENU_DATABASE = [
         "photo": "img/vk_5115_2.jpg",
         "photo_type": "real",
         "desc": "Насыщенный шу пуэр, сваренный на натуральном гранатовом соке со специями.",
-        "ai_prompt": "Deep ruby ripe Shu Puerh tea brewed on rich pomegranate juice with spices in a glass teapot"
+        "ai_prompt": "Vegan plant-based deep ruby ripe Shu Puerh tea brewed on rich pomegranate juice with spices in a glass teapot, 100% vegan, no meat, no seafood"
     }
 ]
 
