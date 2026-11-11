@@ -1285,6 +1285,13 @@
     function applyV36LayoutAndButtons() {
       injectV36GlobalStyles();
 
+      // Прячем дубли кнопок в верхней шапке по тексту (Бронь, Боул, Такси, Радио, Доставка)
+      document.querySelectorAll("header button, header a").forEach(el => {
+        const txt = (el.textContent || "").toLowerCase();
+        if (txt.includes("бронь") || txt.includes("боул") || txt.includes("такси") || txt.includes("радио") || txt.includes("доставка")) {
+          el.style.setProperty("display", "none", "important");
+        }
+      });
       // Убираем дубли кнопок внутри зелёной карточки с картой («Нижний Новгород, ул. Ильинская, 45»)
       const mapIframe = document.querySelector("iframe[src*='yandex']");
       if (mapIframe) {
@@ -1448,8 +1455,22 @@
       applyManualOverridesToMenuData();
       applyV36LayoutAndButtons();
 
-      const tabsBox = document.getElementById("unified-hub-tabs");
-      const body = document.getElementById("unified-hub-body");
+      const hubModal = document.getElementById("unified-system-hub");
+      const hubCard = hubModal ? hubModal.firstElementChild : null;
+      const hubHeader = hubCard ? hubCard.children[0] : null;
+      let body = document.getElementById("unified-hub-body") || (hubCard ? hubCard.children[1] : null);
+      if (body) body.id = "unified-hub-body";
+      let tabsBox = document.getElementById("unified-hub-tabs") || (hubHeader ? hubHeader.querySelector("[id*='tab']") : null);
+      if (!tabsBox && hubHeader) {
+        const rightDivs = Array.from(hubHeader.querySelectorAll("div")).filter(d => !d.querySelector("h3") && !d.hasAttribute("data-dove-holder") && d.parentElement === hubHeader);
+        tabsBox = rightDivs[0] || null;
+        if (!tabsBox) {
+          tabsBox = document.createElement("div");
+          tabsBox.className = "flex flex-wrap items-center gap-1.5 mt-2 pt-2 border-t border-white/15";
+          hubHeader.appendChild(tabsBox);
+        }
+        tabsBox.id = "unified-hub-tabs";
+      }
       if (!tabsBox || !body) return;
 
       document.querySelectorAll("[id^='hub-ai-prm-']").forEach(el => {
