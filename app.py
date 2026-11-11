@@ -1062,16 +1062,7 @@ def upgrade_template_html_in_place(tpl_html):
     };
 
     renderUnifiedSystemHub = function() {
-      window.hubActiveTab = window.hubActiveTab || "dishes72";
-      window.hubDishCategoryFilter = window.hubDishCategoryFilter || "Все";
-      window.hubDishSearchQuery = window.hubDishSearchQuery || "";
-      window.selectedAiEnginePerDish = window.selectedAiEnginePerDish || {};
-      window.pendingDishCandidates = window.pendingDishCandidates || {};
-      var hubActiveTab = window.hubActiveTab;
-      var hubDishCategoryFilter = window.hubDishCategoryFilter;
-      var hubDishSearchQuery = window.hubDishSearchQuery;
-      window.selectedAiEnginePerDish = typeof selectedAiEnginePerDish !== 'undefined' ? selectedAiEnginePerDish : (window.selectedAiEnginePerDish || {}); var selectedAiEnginePerDish = window.selectedAiEnginePerDish;
-      window.pendingDishCandidates = typeof pendingDishCandidates !== 'undefined' ? pendingDishCandidates : (window.pendingDishCandidates || {}); var pendingDishCandidates = window.pendingDishCandidates;
+      try { if (window.hubActiveTab) hubActiveTab = window.hubActiveTab; else window.hubActiveTab = hubActiveTab; } catch(e) {}
       injectCustomDishesIntoMenu();
       applyManualOverridesToMenuData();
       applyV36LayoutAndButtons();
@@ -1132,7 +1123,7 @@ def upgrade_template_html_in_place(tpl_html):
         body.innerHTML =
           '<div class="bg-white rounded-2xl p-3 border border-stone-200 shadow-xs space-y-2.5">' +
             '<div class="flex flex-wrap items-center justify-between gap-2">' +
-              '<input type="text" value="' + esc(hubDishSearchQuery) + '" oninput="window.hubDishSearchQuery=hubDishSearchQuery=this.value;renderUnifiedSystemHub()" placeholder="🔍 Быстрый поиск блюда по названию..." class="flex-1 min-w-[200px] px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold outline-none">' +
+              '<input type="text" value="' + esc(hubDishSearchQuery) + '" oninput="searchHubDishV38(this.value)" placeholder="🔍 Быстрый поиск блюда по названию..." class="flex-1 min-w-[200px] px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold outline-none">' +
               '<button onclick="window.dishAddPanelOpen=!window.dishAddPanelOpen;renderUnifiedSystemHub()" class="px-3.5 py-1.5 rounded-xl bg-[#2E3D28] hover:bg-[#D48238] text-[#F2B880] hover:text-white text-xs font-extrabold cursor-pointer transition shadow-sm">' +
                 (window.dishAddPanelOpen ? '▲ Скрыть форму добавления блюда' : '➕ Добавить новое блюдо вручную') +
               '</button>' +
@@ -2002,6 +1993,28 @@ def upgrade_template_html_in_place(tpl_html):
         }
       } catch(e) {}
       renderUnifiedSystemHub();
+    };
+
+    
+    // === ⚡ ПРЯМЫЕ ПЕРЕКЛЮЧАТЕЛИ ВКЛАДОК И ФИЛЬТРОВ ШЕСТЕРЁНКИ v3.8 (БЕЗ КОНФЛИКТА LET/VAR) ===
+    window.switchHubTabV38 = function(tabId) {
+      window.hubActiveTab = tabId;
+      try { hubActiveTab = tabId; } catch(e) {}
+      window.renderUnifiedSystemHub();
+    };
+    window.switchHubCatV38 = function(catName) {
+      window.hubDishCategoryFilter = catName;
+      try { hubDishCategoryFilter = catName; } catch(e) {}
+      window.renderUnifiedSystemHub();
+    };
+    window.searchHubDishV38 = function(qVal) {
+      window.hubDishSearchQuery = qVal;
+      try { hubDishSearchQuery = qVal; } catch(e) {}
+      window.renderUnifiedSystemHub();
+    };
+    window.closeUnifiedSystemHub = function() {
+      const m = document.getElementById("unified-system-hub");
+      if (m) { m.classList.add("hidden"); m.classList.remove("flex"); }
     };
 
     window.addEventListener("DOMContentLoaded", () => {
