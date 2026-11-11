@@ -1062,6 +1062,16 @@ def upgrade_template_html_in_place(tpl_html):
     };
 
     renderUnifiedSystemHub = function() {
+      window.hubActiveTab = window.hubActiveTab || "dishes72";
+      window.hubDishCategoryFilter = window.hubDishCategoryFilter || "Все";
+      window.hubDishSearchQuery = window.hubDishSearchQuery || "";
+      window.selectedAiEnginePerDish = window.selectedAiEnginePerDish || {};
+      window.pendingDishCandidates = window.pendingDishCandidates || {};
+      var hubActiveTab = window.hubActiveTab;
+      var hubDishCategoryFilter = window.hubDishCategoryFilter;
+      var hubDishSearchQuery = window.hubDishSearchQuery;
+      var selectedAiEnginePerDish = window.selectedAiEnginePerDish;
+      var pendingDishCandidates = window.pendingDishCandidates;
       injectCustomDishesIntoMenu();
       applyManualOverridesToMenuData();
       applyV36LayoutAndButtons();
@@ -1069,7 +1079,7 @@ def upgrade_template_html_in_place(tpl_html):
       const hubModal = document.getElementById("unified-system-hub");
       const hubCard = hubModal ? hubModal.firstElementChild : null;
       const hubHeader = hubCard ? hubCard.children[0] : null;
-      let body = document.getElementById("unified-hub-body") || (hubCard ? hubCard.children[1] : null);
+      let body = document.getElementById("unified-hub-body") || (hubCard ? (hubCard.querySelector(".overflow-y-auto") || hubCard.children[1]) : null);
       if (body) body.id = "unified-hub-body";
       let tabsBox = document.getElementById("unified-hub-tabs") || (hubHeader ? hubHeader.querySelector("[id*='tab']") : null);
       if (!tabsBox && hubHeader) {
@@ -1122,7 +1132,7 @@ def upgrade_template_html_in_place(tpl_html):
         body.innerHTML =
           '<div class="bg-white rounded-2xl p-3 border border-stone-200 shadow-xs space-y-2.5">' +
             '<div class="flex flex-wrap items-center justify-between gap-2">' +
-              '<input type="text" value="' + esc(hubDishSearchQuery) + '" oninput="hubDishSearchQuery=this.value;renderUnifiedSystemHub()" placeholder="🔍 Быстрый поиск блюда по названию..." class="flex-1 min-w-[200px] px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold outline-none">' +
+              '<input type="text" value="' + esc(hubDishSearchQuery) + '" oninput="window.hubDishSearchQuery=hubDishSearchQuery=this.value;renderUnifiedSystemHub()" placeholder="🔍 Быстрый поиск блюда по названию..." class="flex-1 min-w-[200px] px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold outline-none">' +
               '<button onclick="window.dishAddPanelOpen=!window.dishAddPanelOpen;renderUnifiedSystemHub()" class="px-3.5 py-1.5 rounded-xl bg-[#2E3D28] hover:bg-[#D48238] text-[#F2B880] hover:text-white text-xs font-extrabold cursor-pointer transition shadow-sm">' +
                 (window.dishAddPanelOpen ? '▲ Скрыть форму добавления блюда' : '➕ Добавить новое блюдо вручную') +
               '</button>' +
