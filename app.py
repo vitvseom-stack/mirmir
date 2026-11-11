@@ -1062,7 +1062,7 @@ def upgrade_template_html_in_place(tpl_html):
     };
 
     renderUnifiedSystemHub = function() {
-      try { if (window.hubActiveTab) hubActiveTab = window.hubActiveTab; else window.hubActiveTab = hubActiveTab; } catch(e) {}
+      var hubActiveTab = window.hubActiveTab || "dishes72"; var hubDishCategoryFilter = window.hubDishCategoryFilter || "Все"; var hubDishSearchQuery = window.hubDishSearchQuery || ""; var selectedAiEnginePerDish = window.selectedAiEnginePerDish || {}; var pendingDishCandidates = window.pendingDishCandidates || {};
       injectCustomDishesIntoMenu();
       applyManualOverridesToMenuData();
       applyV36LayoutAndButtons();
@@ -1123,7 +1123,7 @@ def upgrade_template_html_in_place(tpl_html):
         body.innerHTML =
           '<div class="bg-white rounded-2xl p-3 border border-stone-200 shadow-xs space-y-2.5">' +
             '<div class="flex flex-wrap items-center justify-between gap-2">' +
-              '<input type="text" value="' + esc(hubDishSearchQuery) + '" oninput="searchHubDishV38(this.value)" placeholder="🔍 Быстрый поиск блюда по названию..." class="flex-1 min-w-[200px] px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold outline-none">' +
+              '<input type="text" value="' + esc(hubDishSearchQuery) + '" oninput="searchHubDishV39(this.value)" placeholder="🔍 Быстрый поиск блюда по названию..." class="flex-1 min-w-[200px] px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold outline-none">' +
               '<button onclick="window.dishAddPanelOpen=!window.dishAddPanelOpen;renderUnifiedSystemHub()" class="px-3.5 py-1.5 rounded-xl bg-[#2E3D28] hover:bg-[#D48238] text-[#F2B880] hover:text-white text-xs font-extrabold cursor-pointer transition shadow-sm">' +
                 (window.dishAddPanelOpen ? '▲ Скрыть форму добавления блюда' : '➕ Добавить новое блюдо вручную') +
               '</button>' +
@@ -1486,13 +1486,13 @@ def upgrade_template_html_in_place(tpl_html):
         const check = await verifyImageLoadsWithDiag(aiUrl, 4800);
         if (check.ok) {
           pushDiagLog(idx, "✅", labelStr, "Успешно сгенерировано (" + check.w + "×" + check.h + "px)");
-          pendingDishCandidates[idx] = { url: aiUrl, source: "🎨 " + labelStr + " (Seed #" + rndSeed + ")", prompt: cleanPrompt, diag: "✅ Сгенерировано нейросетью (" + check.w + "×" + check.h + "px)" };
+          window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: aiUrl, source: "🎨 " + labelStr + " (Seed #" + rndSeed + ")", prompt: cleanPrompt, diag: "✅ Сгенерировано нейросетью (" + check.w + "×" + check.h + "px)" };
           renderUnifiedSystemHub();
           return;
         } else {
           const fallbackLocal = bankPool[(step - 1) % bankPool.length];
           pushDiagLog(idx, "❌", labelStr, check.reason + " ➔ Включён локальный резерв (" + fallbackLocal + ")");
-          pendingDishCandidates[idx] = { url: fallbackLocal, source: "🍔 Резерв GastroBank (т.к. " + labelStr + " вернул: " + check.reason + ")", prompt: shortQuery, diag: "⚠️ Причина: " + labelStr + " — " + check.reason + ". Показан проверенный локальный кадр." };
+          window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: fallbackLocal, source: "🍔 Резерв GastroBank (т.к. " + labelStr + " вернул: " + check.reason + ")", prompt: shortQuery, diag: "⚠️ Причина: " + labelStr + " — " + check.reason + ". Показан проверенный локальный кадр." };
           renderUnifiedSystemHub();
           return;
         }
@@ -1503,7 +1503,7 @@ def upgrade_template_html_in_place(tpl_html):
         const combinedPool = [...bankPool, ...vkFoodPool.slice(0, 12)];
         const pickLocal = combinedPool[(step - 1) % combinedPool.length];
         pushDiagLog(idx, "✅", "GastroBank HD", "Выбран проверенный веган-кадр #" + step + " (" + pickLocal + ")");
-        pendingDishCandidates[idx] = { url: pickLocal, source: "🍔 3. GastroBank HD (" + topicInfo.bank.toUpperCase() + " • Вариант #" + step + ")", prompt: shortQuery, diag: "✅ Мгновенный локальный пул без внешних лимитов (" + pickLocal + ")" };
+        window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: pickLocal, source: "🍔 3. GastroBank HD (" + topicInfo.bank.toUpperCase() + " • Вариант #" + step + ")", prompt: shortQuery, diag: "✅ Мгновенный локальный пул без внешних лимитов (" + pickLocal + ")" };
         renderUnifiedSystemHub();
         return;
       }
@@ -1528,13 +1528,13 @@ def upgrade_template_html_in_place(tpl_html):
           const candidateUrl = pool[(step - 1) % pool.length];
           const chk = await verifyImageLoadsWithDiag(candidateUrl, 3200);
           if (chk.ok) {
-            pendingDishCandidates[idx] = { url: candidateUrl, source: "📸 4. Openverse HD (Вариант #" + (((step - 1) % pool.length) + 1) + " из " + pool.length + ")", prompt: shortQuery, diag: "✅ Загружено из Openverse (" + chk.w + "×" + chk.h + "px)" };
+            window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: candidateUrl, source: "📸 4. Openverse HD (Вариант #" + (((step - 1) % pool.length) + 1) + " из " + pool.length + ")", prompt: shortQuery, diag: "✅ Загружено из Openverse (" + chk.w + "×" + chk.h + "px)" };
             renderUnifiedSystemHub();
             return;
           }
         }
         const fb = bankPool[(step - 1) % bankPool.length];
-        pendingDishCandidates[idx] = { url: fb, source: "🍔 Резерв (Openverse недоступен)", prompt: shortQuery, diag: "⚠️ Внешний сервер не отдал кадр — показан локальный резерв." };
+        window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: fb, source: "🍔 Резерв (Openverse недоступен)", prompt: shortQuery, diag: "⚠️ Внешний сервер не отдал кадр — показан локальный резерв." };
         renderUnifiedSystemHub();
         return;
       }
@@ -1558,13 +1558,13 @@ def upgrade_template_html_in_place(tpl_html):
           const candidateUrl = pool[(step - 1) % pool.length];
           const chk = await verifyImageLoadsWithDiag(candidateUrl, 3200);
           if (chk.ok) {
-            pendingDishCandidates[idx] = { url: candidateUrl, source: "🥗 5. Wikimedia Gastro (Вариант #" + (((step - 1) % pool.length) + 1) + " из " + pool.length + ")", prompt: shortQuery, diag: "✅ Загружено из Wikimedia (" + chk.w + "×" + chk.h + "px)" };
+            window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: candidateUrl, source: "🥗 5. Wikimedia Gastro (Вариант #" + (((step - 1) % pool.length) + 1) + " из " + pool.length + ")", prompt: shortQuery, diag: "✅ Загружено из Wikimedia (" + chk.w + "×" + chk.h + "px)" };
             renderUnifiedSystemHub();
             return;
           }
         }
         const fb = bankPool[(step - 1) % bankPool.length];
-        pendingDishCandidates[idx] = { url: fb, source: "🍔 Резерв (Wikimedia недоступен)", prompt: shortQuery, diag: "⚠️ Показан проверенный локальный кадр." };
+        window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: fb, source: "🍔 Резерв (Wikimedia недоступен)", prompt: shortQuery, diag: "⚠️ Показан проверенный локальный кадр." };
         renderUnifiedSystemHub();
         return;
       }
@@ -1573,7 +1573,7 @@ def upgrade_template_html_in_place(tpl_html):
       const poolVk = vkFoodPool.length ? vkFoodPool : bankPool;
       const pickVk = poolVk[(step - 1) % poolVk.length];
       pushDiagLog(idx, "✅", "Архив ВК кафе", "Загружен кадр #" + (((step - 1) % poolVk.length) + 1) + " из " + poolVk.length + " (" + pickVk + ")");
-      pendingDishCandidates[idx] = { url: pickVk, source: "🌿 6. Архив фото из ВК кафе (#" + (((step - 1) % poolVk.length) + 1) + " из " + poolVk.length + ")", prompt: pickVk, diag: "✅ Локальный файл из папки img/ (" + pickVk + ")" };
+      window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: pickVk, source: "🌿 6. Архив фото из ВК кафе (#" + (((step - 1) % poolVk.length) + 1) + " из " + poolVk.length + ")", prompt: pickVk, diag: "✅ Локальный файл из папки img/ (" + pickVk + ")" };
       renderUnifiedSystemHub();
     };
 
@@ -1871,61 +1871,99 @@ def upgrade_template_html_in_place(tpl_html):
     }, 5200);
 
     
-    // === 🔧 ФИКС v3.7: ЕДИНЫЙ КАРМАН ПРЕДПРОСМОТРА ИИ + ЧИСТАЯ ГАЛЕРЕЯ ВК БЕЗ AI_V23 + ЗАМЕНА HTTP 401 ===
-    try {
-      window.pendingDishCandidates = pendingDishCandidates;
-      window.selectedAiEnginePerDish = selectedAiEnginePerDish;
-    } catch(e) {
-      window.pendingDishCandidates = window.pendingDishCandidates || {};
-      window.selectedAiEnginePerDish = window.selectedAiEnginePerDish || {};
+    
+    // === 🚀 СТАБИЛЬНОЕ ЯДРО v3.9 (ЕДИНЫЕ ПЕРЕМЕННЫЕ WINDOW.* БЕЗ ТЕНЕВЫХ КОНФЛИКТОВ И ОБРЫВОВ) ===
+    window.hubActiveTab = window.hubActiveTab || "dishes72";
+    window.hubDishCategoryFilter = window.hubDishCategoryFilter || "Все";
+    window.hubDishSearchQuery = window.hubDishSearchQuery || "";
+    window.selectedAiEnginePerDish = window.selectedAiEnginePerDish || {};
+    window.pendingDishCandidates = window.pendingDishCandidates || {};
+    window.customPromptsPerDish = window.customPromptsPerDish || {};
+    window.dishVariantStep = window.dishVariantStep || {};
+    window.dishDiagLogs = window.dishDiagLogs || {};
+    window.dishAddPanelOpen = Boolean(window.dishAddPanelOpen);
+
+    // Очищаем готовые фото от старых ИИ-заглушек (ai_v*, ingr_*), ставя реальные фото ВК (vk_*) первыми
+    if (typeof DATA !== "undefined" && Array.isArray(DATA.ready_photos)) {
+      const vkOnly = DATA.ready_photos.filter(p => p.includes("vk_") && !p.includes("5047_")).reverse();
+      const macroClean = DATA.ready_photos.filter(p => !p.includes("vk_") && !p.includes("ai_v") && !p.includes("ingr_") && !p.includes("5047_"));
+      DATA.ready_photos = [...vkOnly, ...macroClean];
     }
 
-    // Очищаем список готовых фото на клиенте от любых старых ai_v* и ingr_*, ставя реальные фото ВК (vk_*) строго наверх!
-    if (DATA && Array.isArray(DATA.ready_photos)) {
-      const onlyVk = DATA.ready_photos.filter(p => p.includes("vk_") && !p.includes("5047_")).reverse();
-      const onlyCleanMacro = DATA.ready_photos.filter(p => !p.includes("vk_") && !p.includes("ai_v") && !p.includes("ingr_") && !p.includes("5047_"));
-      DATA.ready_photos = [...onlyVk, ...onlyCleanMacro];
-    }
-
-    // Переопределяем открытие витрины «📸 Из готовых», чтобы она ВСЕГДА открывалась и сразу утверждала фото в 1 клик!
-    window.openReadyGalleryPopup = function(dishIdx) {
-      window.currentGalleryDishIdx = dishIdx;
-      const d = DATA.menu[dishIdx];
-      const modal = document.getElementById("ready-gallery-popup");
-      if (!modal || !d) return;
-
-      const photosPool = (DATA.ready_photos && DATA.ready_photos.length)
-        ? DATA.ready_photos.filter(p => !p.includes("ai_v") && !p.includes("ingr_"))
-        : (DATA.vk_food_photos || []);
-
-      const card = modal.firstElementChild;
-      if (card) {
-        card.innerHTML =
-          '<div class="bg-[#2E3D28] text-[#FFFDF9] px-5 py-3.5 flex items-center justify-between border-b border-[#F2B880]/30 relative">' +
-            '<div>' +
-              '<div class="text-[10px] font-extrabold uppercase tracking-wider text-[#F2B880]">НАСТОЯЩИЕ ФОТОГРАФИИ ИЗ ГРУППЫ ВК КАФЕ «МИР МИР» (' + photosPool.length + ' КАДРОВ)</div>' +
-              '<h3 class="font-serif text-xl font-bold">📸 Выберите реальное фото для: <span class="text-[#F2B880] underline">' + esc(d.name) + '</span></h3>' +
-            '</div>' +
-            '<button onclick="closeReadyGalleryPopup()" class="v36-top-right-close">✕</button>' +
-          '</div>' +
-          '<div class="p-4 overflow-y-auto max-h-[75vh] bg-[#FAF5EC] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">' +
-            photosPool.map(ph =>
-              '<div class="bg-white rounded-2xl p-2.5 border border-stone-200 hover:border-[#D48238] shadow-xs flex flex-col justify-between gap-2 transition">' +
-                '<div class="relative h-36 rounded-xl overflow-hidden bg-stone-100">' +
-                  '<img src="' + esc(ph) + '" loading="lazy" onclick="openSuperZoom(this.src, \'' + esc(ph) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
-                  '<button onclick="openSuperZoom(\'' + esc(ph) + '\', \'' + esc(ph) + '\')" class="absolute top-1.5 right-1.5 px-2 py-0.5 rounded bg-black/75 text-white text-[10px] font-extrabold cursor-pointer">🔍 Лупа</button>' +
-                '</div>' +
-                '<div class="text-[10px] font-mono text-stone-500 truncate">' + esc(ph) + '</div>' +
-                '<button onclick="selectReadyPhotoV37(' + dishIdx + ', \'' + esc(ph) + '\')" class="w-full py-1.5 rounded-xl bg-emerald-700 hover:bg-[#D48238] text-white text-xs font-extrabold cursor-pointer transition shadow-xs">✅ Утвердить это фото</button>' +
-              '</div>'
-            ).join("") +
-          '</div>';
-      }
-      modal.classList.remove("hidden");
-      modal.classList.add("flex");
+    window.switchHubTabV39 = function(tabId) {
+      window.hubActiveTab = tabId;
+      try { hubActiveTab = tabId; } catch(e) {}
+      window.renderUnifiedSystemHub();
     };
 
-    window.selectReadyPhotoV37 = function(dishIdx, photoPath) {
+    window.switchHubCatV39 = function(catName) {
+      window.hubDishCategoryFilter = catName;
+      try { hubDishCategoryFilter = catName; } catch(e) {}
+      window.renderUnifiedSystemHub();
+    };
+
+    window.searchHubDishV39 = function(qVal) {
+      window.hubDishSearchQuery = qVal;
+      try { hubDishSearchQuery = qVal; } catch(e) {}
+      window.renderUnifiedSystemHub();
+    };
+
+    window.closeUnifiedSystemHub = function() {
+      const m = document.getElementById("unified-system-hub");
+      if (m) { m.classList.add("hidden"); m.classList.remove("flex"); }
+    };
+
+    // Полная дописанная функция добавления нового блюда (без обрыва строки!)
+    window.addNewCustomDishFromHub = function() {
+      const name = (document.getElementById("new-dish-name")?.value || "").trim();
+      if (!name) { alert("Введите название нового блюда!"); return; }
+      const cat = (document.getElementById("new-dish-cat")?.value || "Сезонные спешлы от Шефа").trim();
+      const price = parseInt(document.getElementById("new-dish-price")?.value || "450", 10) || 450;
+      const weight = (document.getElementById("new-dish-weight")?.value || "260 г").trim();
+      const desc = (document.getElementById("new-dish-desc")?.value || "Авторское 100% растительное блюдо кафе «Мир Мир».").trim();
+      const photo = (document.getElementById("new-dish-photo")?.value || "img/vk_5128_1.jpg").trim();
+
+      const newDishObj = {
+        id: "custom_" + Date.now(),
+        category: cat,
+        name: name,
+        weight: weight,
+        price: price,
+        photo: photo,
+        photo_type: "real",
+        desc: desc,
+        ai_prompt: "Vegan plant-based " + name + ", 100% vegan, no meat, no seafood",
+        is_custom_added: true
+      };
+
+      const savedList = loadCustomAddedDishes().filter(d => d.name !== name);
+      savedList.unshift(newDishObj);
+      try { localStorage.setItem("mirmir_custom_dishes_v1", JSON.stringify(savedList)); } catch(e) {}
+      DATA.menu.unshift(newDishObj);
+      window.renderUnifiedSystemHub();
+      window.renderHeroRightColumn();
+      alert("✅ Блюдо «" + name + "» добавлено в меню!");
+    };
+
+    // Гарантированный вывод предпросмотра для всех 6 кнопок ИИ и фотобанков
+    window.runEngineForDish = function(idx, engKey) {
+      const inp = document.getElementById("hub-ai-prm-" + idx);
+      if (inp) window.customPromptsPerDish[idx] = inp.value;
+      window.selectedAiEnginePerDish[idx] = engKey;
+      try { selectedAiEnginePerDish[idx] = engKey; } catch(e) {}
+      window.generateDishCandidateAI(idx);
+    };
+
+    window.previewManualUrlCandidate = function(idx) {
+      const val = (document.getElementById("hub-url-inp-" + idx)?.value || "").trim();
+      if (!val) { alert("Вставьте прямую ссылку https://... или путь img/..."); return; }
+      const cObj = { url: val, source: "🔗 Прямой URL", prompt: val, diag: "✅ Загружено по прямой ссылке" };
+      window.pendingDishCandidates[idx] = cObj;
+      try { pendingDishCandidates[idx] = cObj; } catch(e) {}
+      window.renderUnifiedSystemHub();
+    };
+
+    window.selectReadyPhotoV39 = function(dishIdx, photoPath) {
       const d = DATA.menu[dishIdx];
       if (!d) return;
       d.photo = photoPath;
@@ -1941,80 +1979,50 @@ def upgrade_template_html_in_place(tpl_html):
         DATA.tz_synced.dishes = DATA.tz_synced.dishes || {};
         DATA.tz_synced.dishes[d.name] = { photo: photoPath };
       }
-      fetch(NTFY_SYNC_URL, {
+      fetch("https://ntfy.sh/mirmir_tz_sync_nn45_v30", {
         method: "POST",
         body: JSON.stringify({ type: "dish_photo_override", dish_name: d.name, photo: photoPath, ts: Date.now() })
       }).catch(() => {});
-      pushDiagLog(dishIdx, "✅", "Из готовых ВК", "Установлено реальное фото кафе: " + photoPath);
+      delete window.pendingDishCandidates[dishIdx];
+      try { delete pendingDishCandidates[dishIdx]; } catch(e) {}
       closeReadyGalleryPopup();
-      renderUnifiedSystemHub();
-      renderDishes();
-      renderHeroRightColumn();
-    };
-
-    // Гарантируем, что approveDishCandidate и previewManualUrlCandidate работают с единым объектом превью
-    window.previewManualUrlCandidate = function(idx) {
-      const inp = document.getElementById("hub-url-inp-" + idx);
-      const val = (inp?.value || "").trim();
-      if (!val) { alert("Вставьте прямую ссылку https://... или путь img/..."); return; }
-      const candObj = { url: val, source: "🔗 Прямая ссылка пользователя", prompt: val, diag: "✅ Загружено по прямому URL" };
-      window.pendingDishCandidates[idx] = candObj;
-      try { pendingDishCandidates[idx] = candObj; } catch(e) {}
-      pushDiagLog(idx, "✅", "Прямой URL", "Открыт предпросмотр: " + val);
-      renderUnifiedSystemHub();
+      window.renderUnifiedSystemHub();
+      window.renderDishes();
+      window.renderHeroRightColumn();
     };
 
     window.approveDishCandidate = function(idx) {
       const cand = window.pendingDishCandidates[idx] || (typeof pendingDishCandidates !== "undefined" ? pendingDishCandidates[idx] : null);
       if (!cand || !cand.url) return;
-      window.selectReadyPhotoV37(idx, cand.url);
-      delete window.pendingDishCandidates[idx];
-      try { delete pendingDishCandidates[idx]; } catch(e) {}
-      renderUnifiedSystemHub();
+      window.selectReadyPhotoV39(idx, cand.url);
     };
 
-    // Патчим generateDishCandidateAI, чтобы результат ВСЕГДА записывался и в window.pendingDishCandidates, и в pendingDishCandidates,
-    // а вместо закрытого на HTTP 401 Openverse использовался открытый фото-поиск Wikimedia + ИИ-генератор!
-    const _origGenV36 = generateDishCandidateAI;
-    generateDishCandidateAI = async function(idx) {
-      const curE = window.selectedAiEnginePerDish[idx] || (typeof selectedAiEnginePerDish !== "undefined" ? selectedAiEnginePerDish[idx] : "gastro_hd");
-      // Если нажали Openverse (который теперь требует OAuth и отдаёт HTTP 401), прозрачно переключаем на открытый поиск Wikimedia Commons HD!
-      if (curE === "openverse_hd") {
-        window.selectedAiEnginePerDish[idx] = "wikimedia";
-        try { selectedAiEnginePerDish[idx] = "wikimedia"; } catch(e) {}
-        pushDiagLog(idx, "🔄", "Openverse (HTTP 401)", "API Openverse закрыт ключом ➔ Авто-переход на открытый поиск Wikimedia HD");
+    window.openReadyGalleryPopup = function(dishIdx) {
+      const d = DATA.menu[dishIdx];
+      const modal = document.getElementById("ready-gallery-popup");
+      if (!modal || !d) return;
+      const pool = (DATA.ready_photos || []).filter(p => !p.includes("ai_v") && !p.includes("ingr_") && !p.includes("5047_"));
+      const card = modal.firstElementChild;
+      if (card) {
+        card.innerHTML =
+          '<div class="bg-[#2E3D28] text-[#FFFDF9] px-5 py-3 flex items-center justify-between relative">' +
+            '<h3 class="font-serif text-lg font-bold">📸 Выберите реальное фото из ВК для: <span class="text-[#F2B880]">' + esc(d.name) + '</span> (' + pool.length + ' шт.)</h3>' +
+            '<button onclick="closeReadyGalleryPopup()" class="v36-top-right-close">✕</button>' +
+          '</div>' +
+          '<div class="p-4 overflow-y-auto max-h-[75vh] bg-[#FAF5EC] grid grid-cols-2 sm:grid-cols-4 gap-3">' +
+            pool.map(ph =>
+              '<div class="bg-white rounded-2xl p-2 border border-stone-200 flex flex-col justify-between gap-1.5">' +
+                '<div class="relative h-32 rounded-xl overflow-hidden bg-stone-100">' +
+                  '<img src="' + esc(ph) + '" loading="lazy" onclick="openSuperZoom(this.src, \'' + esc(ph) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
+                '</div>' +
+                '<div class="text-[10px] font-mono text-stone-500 truncate">' + esc(ph) + '</div>' +
+                '<button onclick="selectReadyPhotoV39(' + dishIdx + ', \'' + esc(ph) + '\')" class="w-full py-1.5 rounded-xl bg-emerald-700 hover:bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">✅ Утвердить это фото</button>' +
+              '</div>'
+            ).join("") +
+          '</div>';
       }
-      await _origGenV36(idx);
-      try {
-        if (typeof pendingDishCandidates !== "undefined" && pendingDishCandidates[idx]) {
-          window.pendingDishCandidates[idx] = pendingDishCandidates[idx];
-        } else if (window.pendingDishCandidates[idx] && typeof pendingDishCandidates !== "undefined") {
-          pendingDishCandidates[idx] = window.pendingDishCandidates[idx];
-        }
-      } catch(e) {}
-      renderUnifiedSystemHub();
-    };
-
-    
-    // === ⚡ ПРЯМЫЕ ПЕРЕКЛЮЧАТЕЛИ ВКЛАДОК И ФИЛЬТРОВ ШЕСТЕРЁНКИ v3.8 (БЕЗ КОНФЛИКТА LET/VAR) ===
-    window.switchHubTabV38 = function(tabId) {
-      window.hubActiveTab = tabId;
-      try { hubActiveTab = tabId; } catch(e) {}
-      window.renderUnifiedSystemHub();
-    };
-    window.switchHubCatV38 = function(catName) {
-      window.hubDishCategoryFilter = catName;
-      try { hubDishCategoryFilter = catName; } catch(e) {}
-      window.renderUnifiedSystemHub();
-    };
-    window.searchHubDishV38 = function(qVal) {
-      window.hubDishSearchQuery = qVal;
-      try { hubDishSearchQuery = qVal; } catch(e) {}
-      window.renderUnifiedSystemHub();
-    };
-    window.closeUnifiedSystemHub = function() {
-      const m = document.getElementById("unified-system-hub");
-      if (m) { m.classList.add("hidden"); m.classList.remove("flex"); }
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
     };
 
     window.addEventListener("DOMContentLoaded", () => {
