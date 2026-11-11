@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-МОНОЛИТНЫЙ КОМПИЛЯТОР «МИР МИР» (app.py — Версия v4.0)
-"""
 import os
 import sys
 import re
@@ -29,19 +26,19 @@ NTFY_SYNC_TOPIC = "mirmir_tz_sync_nn45_v30"
 OLD_DIRS_TO_CHECK = [DEFAULT_MIRMIR_ROOT, PARENT_DIR]
 
 MASTER_TASKS_DEFAULT = [
-    {"id": "t_1", "date": "08.11.2026", "title": "1. Чистая 3-модульная архитектура (menu_data.py + template.html + app.py) и меню 1/2/3", "done": True, "comment": "Сборка и авто-пуш в корень GitHub Pages активны."},
-    {"id": "t_2", "date": "09.11.2026", "title": "2. Первый экран слева: только проверенные фото интерьера и кованой вывески", "done": True, "comment": "Чужие фото с Яндекс.Карт удалены."},
-    {"id": "t_3", "date": "09.11.2026", "title": "3. Первый экран справа: вращающаяся Голубка за 3D-меню + 2 крупных спешла под ним", "done": True, "comment": "Работает в 2 колонки."},
-    {"id": "t_4", "date": "09.11.2026", "title": "4. Плашка «🍽️ Подача блюд может отличаться» на миниатюрах И при увеличении Лупой", "done": True, "comment": "В v4.0 добавлена также внутрь полноэкранной Лупы."},
-    {"id": "t_5", "date": "10.11.2026", "title": "5. Защита мобильного свайпа «Назад» (popstate SPA-Guard) на смартфонах", "done": True, "comment": "Закрывает текущее окно без вылета с сайта."},
-    {"id": "t_6", "date": "10.11.2026", "title": "6. Узкие синие кнопки «ВК» в Новостях + фильтр закреплённого поста о меню", "done": True, "comment": "Закреп обновляет только 3D-меню и скрыт из новостей."},
-    {"id": "t_7", "date": "10.11.2026", "title": "7. Широкий экран (1640px) + классические крестики (✕) строго в правом верхнем углу", "done": True, "comment": "Активно для всех модальных окон."},
-    {"id": "t_8", "date": "10.11.2026", "title": "8. Спокойная палитра нижних кнопок (Бронь, Такси в кафе, Доставка, Радио + 3 кнопки Скоро)", "done": True, "comment": "Без дублей и без пустого поля внизу."},
-    {"id": "t_9", "date": "11.11.2026", "title": "9. Полный русский Текстовый Мастер-Промпт (ДНК сайта) с сохранением правок", "done": True, "comment": "Хранится в MASTER_PROMPT_MIRMIR.txt."},
-    {"id": "t_10", "date": "11.11.2026", "title": "10. Переключатели по аудиту Claude: Бронь (ТГ/ВК без 152-ФЗ или анкета), Карта без рекламы, Фото-режим", "done": True, "comment": "Находятся во вкладке №5 Шестерёнки."},
-    {"id": "t_11", "date": "11.11.2026", "title": "11. Починить переключение всех вкладок и кнопок генерации/галереи в Шестерёнке (v4.0)", "done": True, "comment": "Устранён конфликт областей видимости let/window."},
-    {"id": "t_12", "date": "11.11.2026", "title": "12. Отключение блюд (полупрозрачный вид в меню с кнопкой включения) и удаление с 3 подтверждениями", "done": True, "comment": "Кнопки «👁️ Отключить/Включить» и «🗑️ Удалить (3 подтв.)» в каждой карточке."},
-    {"id": "t_13", "date": "11.11.2026", "title": "13. Плашки «Открыто» и «Бизнес-Ланч -30%» оставить только в самом верху без повторений в Hero", "done": True, "comment": "Дубли в зелёном блоке убраны, плашки стоят только в верхней шапке."}
+    {"id": "t_1", "date": "08.11.2026 12:10", "title": "1. Чистая 3-модульная архитектура (menu_data.py + template.html + app.py) и меню 1/2/3", "done": True, "comment": "Сборка и авто-пуш в корень GitHub Pages активны."},
+    {"id": "t_2", "date": "09.11.2026 14:20", "title": "2. Первый экран слева: заголовок, слоган и 5 проверенных фото интерьера и кованой вывески", "done": True, "comment": "Левая колонка Hero полностью восстановлена, чужие фото удалены."},
+    {"id": "t_3", "date": "09.11.2026 15:05", "title": "3. Первый экран справа: вращающаяся Голубка мира за 3D-меню + 2 крупных спешла под ним", "done": True, "comment": "Под 3D-каруселью стоят 2 крупные карточки спешлов."},
+    {"id": "t_4", "date": "09.11.2026 16:30", "title": "4. Плашка «🍽️ Подача блюд может отличаться» на миниатюрах И при увеличении Лупой", "done": True, "comment": "Отображается на всех карточках меню и в полноэкранной Лупе."},
+    {"id": "t_5", "date": "10.11.2026 11:15", "title": "5. Защита мобильного свайпа «Назад» (popstate SPA-Guard) на смартфонах", "done": True, "comment": "Жест «Назад» закрывает модальное окно без вылета с сайта."},
+    {"id": "t_6", "date": "10.11.2026 13:40", "title": "6. Узкие синие кнопки «ВК» в Новостях + фильтр закреплённого поста о меню", "done": True, "comment": "Закреп о меню скрыт из новостей и обновляет только 3D-меню."},
+    {"id": "t_7", "date": "10.11.2026 17:00", "title": "7. Широкий экран (1640px) + классические крестики (✕) строго в правом верхнем углу", "done": True, "comment": "Все модальные окна снабжены крестиком ✕ справа вверху."},
+    {"id": "t_8", "date": "10.11.2026 19:25", "title": "8. Убрать повторяющиеся кнопки под адресом и в шапке, оставить один спокойный блок внизу", "done": True, "comment": "Кнопки под адресом в блоке карты убраны, внизу единая панель."},
+    {"id": "t_9", "date": "11.11.2026 09:30", "title": "9. Полный русский Текстовый Мастер-Промпт (ДНК сайта) с сохранением правок", "done": True, "comment": "Доступен по кнопке 🧬 Промпт и хранится в MASTER_PROMPT_MIRMIR.txt."},
+    {"id": "t_10", "date": "11.11.2026 11:45", "title": "10. Переключатели по аудиту Claude: Бронь (ТГ/ВК без 152-ФЗ или анкета), Карта без рекламы, Фото-режим", "done": True, "comment": "Переключаются во вкладке №5 Шестерёнки."},
+    {"id": "t_11", "date": "11.11.2026 14:10", "title": "11. Стабильное переключение всех 5 вкладок, генератора ИИ и галереи ВК в Шестерёнке", "done": True, "comment": "Все 5 вкладок и превью генерации работают мгновенно."},
+    {"id": "t_12", "date": "11.11.2026 15:20", "title": "12. Отключение блюд (полупрозрачный вид в меню с кнопкой включения) и удаление с 3 подтверждениями", "done": True, "comment": "Кнопки «⏸️ Отключить» и «🗑️ Удалить» в каждой карточке блюда."},
+    {"id": "t_13", "date": "11.11.2026 16:40", "title": "13. Плашки «Открыто» и «Бизнес-Ланч -30%» наверху + дата и время в широкой таблице задач", "done": True, "comment": "Верхняя часть восстановлена, в таблице задач добавлено время и широкое поле комментария."}
 ]
 
 
@@ -175,11 +172,17 @@ def sync_tz_and_build_logs():
         tid = d_t["id"]
         if tid in by_id:
             old = by_id.pop(tid)
-            merged.append({"id": tid, "date": old.get("date") or d_t["date"], "title": d_t["title"], "done": bool(old.get("done", d_t["done"])), "comment": old.get("comment") or d_t["comment"]})
+            old_dt = str(old.get("date") or "")
+            final_dt = old_dt if ":" in old_dt else d_t["date"]
+            merged.append({"id": tid, "date": final_dt, "title": d_t["title"], "done": bool(old.get("done", d_t["done"])), "comment": old.get("comment") or d_t["comment"]})
         else:
             merged.append(dict(d_t))
     for k, v in by_id.items():
         if len(str(v.get("title", ""))) > 3:
+            dt_v = str(v.get("date") or "")
+            if ":" not in dt_v:
+                dt_v = (dt_v + " 12:00").strip()
+            v["date"] = dt_v
             merged.append(v)
     tz_data["tasks"] = merged
     json.dump(tz_data, open("tz_mirmir.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
@@ -195,10 +198,10 @@ def sync_tz_and_build_logs():
     logs = json.load(open("build_history.json", "r", encoding="utf-8")) if os.path.exists("build_history.json") else []
     now_str = datetime.now().strftime("%d.%m.%Y %H:%M")
     logs.insert(0, {
-        "version": f"Релиз v4.0 • Сборка #{cnt}",
+        "version": f"Релиз v4.1 • Сборка #{cnt}",
         "timestamp": now_str,
-        "model": "Монолит v4.0: Рабочие вкладки + Отключение (прозрачность) и Удаление блюд (3 подтв.) + Лупа с подачей + Верхние бейджи",
-        "status": "Все кнопки пульта работают напрямую, добавлено отключение и удаление блюд, плашка подачи в Лупе и перенос Бизнес-ланча в верхнюю шапку.",
+        "model": "Монолит v4.1: Полный откат и восстановление Hero-блока + Удаление дублей под адресом + Время и широкие поля в Списке задач",
+        "status": "Восстановлена левая и правая часть первого экрана (Hero), убраны кнопки-дубли под адресом в блоке карты, в таблицу задач добавлено время и просторные поля комментариев.",
         "stats": f"Дата сборки: {now_str}"
     })
     json.dump(logs[:60], open("build_history.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
@@ -209,7 +212,6 @@ def upgrade_template_html_in_place(tpl_html):
     if 'name="robots"' not in tpl_html:
         tpl_html = tpl_html.replace("<head>", '<head>\n  <meta name="robots" content="noindex, nofollow">', 1)
 
-    # Убираем ключевое слово let у глобальных переменных шаблона, чтобы они жили напрямую в window и кнопки не блокировались!
     for vname in ["hubActiveTab", "hubDishCategoryFilter", "hubDishSearchQuery", "selectedAiEnginePerDish", "pendingDishCandidates", "currentMenuCategory", "currentNewsPage"]:
         tpl_html = re.sub(rf"\blet\s+{vname}\b", f"var {vname}", tpl_html)
 
@@ -219,8 +221,8 @@ def upgrade_template_html_in_place(tpl_html):
         if brace_pos != -1:
             tpl_html = tpl_html[: brace_pos + 1] + "\n"
 
-    v40_js = r"""
-    // === 🚀 ЯДРО v4.0: РАБОЧИЕ КНОПКИ + ОТКЛЮЧЕНИЕ (ПРОЗРАЧНОСТЬ) + УДАЛЕНИЕ (3 ПОДТВ.) + ЛУПА С ПОДАЧЕЙ + БЕЙДЖИ ТОЛЬКО ВВЕРХУ ===
+    v41_js = r"""
+    // === 🚀 ЯДРО v4.1: ВОССТАНОВЛЕННЫЙ ПЕРВЫЙ ЭКРАН (HERO) + БЕЗ ДУБЛЕЙ ПОД АДРЕСОМ + ТАБЛИЦА ЗАДАЧ С ВРЕМЕНЕМ ===
     const NTFY_SYNC_URL = "https://ntfy.sh/mirmir_tz_sync_nn45_v30";
     window.hubActiveTab = window.hubActiveTab || "dishes72";
     window.hubDishCategoryFilter = window.hubDishCategoryFilter || "Все";
@@ -232,7 +234,7 @@ def upgrade_template_html_in_place(tpl_html):
     window.dishDiagLogs = window.dishDiagLogs || {};
     window.dishAddPanelOpen = Boolean(window.dishAddPanelOpen);
 
-    // 1. Хранилища отключённых (полупрозрачных) и удалённых блюд
+    // 1. Отключение (полупрозрачность) и Удаление (с 3 подтверждениями) блюд
     window.getDisabledDishesMap = function() {
       try { return JSON.parse(localStorage.getItem("mirmir_disabled_dishes_v1") || "{}"); } catch(e) { return {}; }
     };
@@ -256,9 +258,9 @@ def upgrade_template_html_in_place(tpl_html):
     window.deleteDishTripleConfirm = function(idx) {
       const d = DATA.menu[idx];
       if (!d) return;
-      if (!confirm("⚠️ ПОДТВЕРЖДЕНИЕ 1 из 3:\nВы действительно хотите удалить блюдо «" + d.name + "» из меню?")) return;
-      if (!confirm("⚠️ ПОДТВЕРЖДЕНИЕ 2 из 3:\nТочно удаляем «" + d.name + "»? Оно исчезнет из витрины сайта.")) return;
-      if (!confirm("🚨 ПОДТВЕРЖДЕНИЕ 3 из 3 (ФИНАЛЬНОЕ):\nОкончательно удалить блюдо «" + d.name + "» из меню?")) return;
+      if (!confirm("⚠️ ПОДТВЕРЖДЕНИЕ 1 из 3:\nУдалить блюдо «" + d.name + "» из меню?")) return;
+      if (!confirm("⚠️ ПОДТВЕРЖДЕНИЕ 2 из 3:\nТочно удаляем «" + d.name + "»? Оно пропадёт из витрины.")) return;
+      if (!confirm("🚨 ПОДТВЕРЖДЕНИЕ 3 из 3 (ФИНАЛЬНОЕ):\nОкончательно удалить блюдо «" + d.name + "»?")) return;
       const delMap = window.getDeletedDishesMap();
       delMap[d.name] = true;
       try { localStorage.setItem("mirmir_deleted_dishes_v1", JSON.stringify(delMap)); } catch(e) {}
@@ -266,7 +268,6 @@ def upgrade_template_html_in_place(tpl_html):
       window.renderUnifiedSystemHub();
       window.renderDishes();
       window.renderHeroRightColumn();
-      alert("🗑️ Блюдо «" + d.name + "» удалено из меню.");
     };
     window.restoreAllDeletedDishes = function() {
       if (!confirm("Восстановить все ранее удалённые блюда обратно в меню?")) return;
@@ -291,7 +292,7 @@ def upgrade_template_html_in_place(tpl_html):
       });
     }
 
-    // 2. Полноэкранная Лупа с обязательным предупреждением «🍽️ Подача блюд может отличаться»
+    // 2. Полноэкранная Лупа с плашкой «🍽️ Подача блюд может отличаться»
     const _baseOpenSuperZoom = window.openSuperZoom;
     window.openSuperZoom = function(src, title) {
       if (_baseOpenSuperZoom) _baseOpenSuperZoom(src, title);
@@ -309,49 +310,154 @@ def upgrade_template_html_in_place(tpl_html):
       lb.classList.add("flex");
     };
 
-    // 3. Верхняя шапка: оставляем «Открыто» и «Бизнес-Ланч -30%» ТОЛЬКО наверху, убирая их повтор в зелёном Hero-блоке!
-    function enforceTopHeaderBadgesOnly() {
-      const topBadge = document.getElementById("header-work-badge");
-      if (topBadge && topBadge.parentElement && !document.getElementById("header-lunch-badge")) {
-        const lb = document.createElement("span");
-        lb.id = "header-lunch-badge";
-        lb.className = "px-2.5 py-0.5 rounded-full bg-[#D48238] text-white text-[10px] font-extrabold whitespace-nowrap shadow-xs";
-        lb.innerHTML = "🔥 Бизнес-Ланч −30% (будни 12:00–16:00)";
-        topBadge.parentElement.appendChild(lb);
-      }
-      // Скрываем дублирующуюся строку «ОТКРЫТО ДО 21:00 / Бизнес-Ланч -30%» внутри зелёного Hero-блока
-      const heroLeft = document.querySelector("main section .lg\\:col-span-7");
-      if (heroLeft) {
-        heroLeft.querySelectorAll("span, div").forEach(el => {
-          const txt = (el.textContent || "").trim();
-          if ((txt.includes("ОТКРЫТО ДО 21:00") || txt.includes("ЗАКРЫТО ДО 12:00")) && el.parentElement && el.parentElement.textContent.includes("Бизнес-Ланч")) {
-            el.parentElement.style.display = "none";
-          }
-        });
-      }
-    }
+    // 3. ВОССТАНОВЛЕНИЕ ВЕРХНЕЙ ЧАСТИ (HERO):
+    // Левая колонка (.lg:col-span-7) и правая колонка (.lg:col-span-5) полностью видимы!
+    // Скрываем ТОЛЬКО маленькую строчку-дубль #hero-work-badge, перенося «Бизнес-Ланч -30%» в самую верхнюю шапку!
+    window.getInteriorSlidesList = function() {
+      return [
+        { src: "img/ymap_org_0.jpg", title: "🏛️ Исторический кирпичный свод и уютный зал на Ильинской, 45", tag: "Интерьер зала" },
+        { src: "img/ymap_org_1.jpg", title: "🕊️ Фирменная кованая вывеска с белой Голубкой мира у входа", tag: "Экстерьер • Ильинская, 45" },
+        { src: "img/vk_5068_0.jpg", title: "🛋️ Изумрудный велюровый диван, живой кирпич и картины", tag: "Атмосфера «Мир Мир»" },
+        { src: "img/vk_5122_0.jpg", title: "🕯️ Вечерние чаепития при свечах и редкий китайский чай", tag: "Чайная культура" },
+        { src: "img/vk_5134_0.jpg", title: "🌿 Уютное зелёное пространство для встреч и живого общения", tag: "Интерьер кафе" }
+      ];
+    };
 
-    // 4. Стили и удаление дублей кнопок
-    function applyV40StylesAndLayout() {
-      if (!document.getElementById("mirmir-v40-styles")) {
+    window.rightSpecialsPairIdx = 0;
+    window.stepRightSpecialsPair = function(delta) {
+      const specials = (DATA.menu || []).filter(d => d.category === "Сезонные спешлы от Шефа" || d.photo_type === "real");
+      const maxPairs = Math.max(1, Math.ceil(specials.length / 2));
+      window.rightSpecialsPairIdx = (window.rightSpecialsPairIdx + delta + maxPairs) % maxPairs;
+      window.renderRightTwoPictureFields();
+    };
+
+    window.renderRightTwoPictureFields = function() {
+      const rowsBox = document.getElementById("hero-specials-3rows");
+      if (!rowsBox) return;
+      const boxWrapper = rowsBox.parentElement;
+      if (boxWrapper) {
+        const hdr = boxWrapper.querySelector(".flex.items-center.justify-between");
+        if (hdr) {
+          hdr.innerHTML =
+            '<div class="flex items-center gap-1.5">' +
+              '<span class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#F2B880]">🔥 Сезонные спешлы от Шефа</span>' +
+              '<button type="button" onclick="stepRightSpecialsPair(-1)" class="w-6 h-6 rounded-full bg-white/15 hover:bg-[#D48238] text-white text-[10px] font-bold cursor-pointer">◀</button>' +
+              '<button type="button" onclick="stepRightSpecialsPair(1)" class="w-6 h-6 rounded-full bg-white/15 hover:bg-[#D48238] text-white text-[10px] font-bold cursor-pointer">▶</button>' +
+            '</div>' +
+            '<button type="button" onclick="openMenu(\'Сезонные спешлы от Шефа\')" class="text-[10px] font-extrabold text-amber-300 hover:underline cursor-pointer">Все блюда (' + DATA.menu.length + ') ➔</button>';
+        }
+      }
+      const specials = (DATA.menu || []).filter(d => d.category === "Сезонные спешлы от Шефа" || d.photo_type === "real");
+      const start = (window.rightSpecialsPairIdx * 2) % Math.max(1, specials.length);
+      const pair = [specials[start], specials[(start + 1) % specials.length]].filter(Boolean);
+
+      rowsBox.innerHTML = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">' + pair.map(d => {
+        const idx = DATA.menu.indexOf(d);
+        const pr = d.sizes ? d.sizes[0].price : d.price;
+        return '<div onclick="openMenu(\'Сезонные спешлы от Шефа\')" class="zoom-card bg-[#FDF8F2] text-stone-900 rounded-2xl p-2.5 flex flex-col justify-between gap-2 cursor-pointer shadow-lg border-2 border-[#F2B880]/70 transition">' +
+          '<div class="relative h-32 sm:h-36 w-full rounded-xl overflow-hidden bg-stone-200">' +
+            '<img src="' + esc(d.photo) + '" onclick="event.stopPropagation();openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
+            '<span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/70 text-[#F2B880] text-[9px] font-extrabold">' + esc(d.weight || "Хит шефа") + '</span>' +
+            '<span class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/70 text-white text-[8px] font-bold">🍽️ Подача может отличаться</span>' +
+            '<button type="button" onclick="event.stopPropagation();openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-md bg-black/75 hover:bg-[#D48238] text-white text-[9px] font-extrabold cursor-pointer">🔍 Лупа</button>' +
+          '</div>' +
+          '<div class="space-y-1">' +
+            '<div class="font-serif font-bold text-sm sm:text-base text-[#2E3D28] leading-tight line-clamp-2">' + esc(d.name) + '</div>' +
+            '<div class="flex items-center justify-between pt-1 border-t border-stone-200/80">' +
+              '<strong class="text-sm font-extrabold text-[#D48238]">' + pr + ' ₽</strong>' +
+              '<button type="button" onclick="event.stopPropagation();addToCart(' + idx + ',0)" class="px-2.5 py-1 rounded-lg bg-[#556432] hover:bg-[#2E3D28] text-white text-[10px] font-extrabold cursor-pointer shadow">+ В заказ</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      }).join("") + '</div>';
+    };
+
+    const _baseRenderHeroRight = window.renderHeroRightColumn;
+    window.renderHeroRightColumn = function() {
+      if (_baseRenderHeroRight) _baseRenderHeroRight();
+      window.renderRightTwoPictureFields();
+    };
+
+    function applyV41CleanLayout() {
+      if (!document.getElementById("mirmir-v41-styles")) {
         const st = document.createElement("style");
-        st.id = "mirmir-v40-styles";
+        st.id = "mirmir-v41-styles";
         st.textContent = `
           html, body { min-height: auto !important; height: auto !important; }
           main.max-w-\\[1440px\\], header .max-w-\\[1440px\\], footer .max-w-\\[1440px\\] { max-width: 1640px !important; width: 100% !important; min-height: 0 !important; }
           main.max-w-\\[1440px\\] { padding-bottom: 12px !important; }
-          header .max-w-\\[1440px\\] { padding-top: 6px !important; padding-bottom: 6px !important; }
-          header button[onclick*="openBookTableModal"], header button[onclick*="openBowlBuilder"], header button[onclick*="openRadioSelectorModal"], header button[onclick*="openDeliveryModal"], header a[href*="yandex"],
+          /* Гарантируем, что левая и правая колонки Hero всегда видны! */
+          main section .lg\\:col-span-7, main section .lg\\:col-span-5 { display: flex !important; }
+          /* В верхней шапке убираем лишние кнопки (Бронь, Боул, Такси, Радио, Меню), оставляя Лого, Статус, Магазин и Корзину */
+          header button[onclick*="openBookTableModal"],
+          header button[onclick*="openBowlBuilder"],
+          header button[onclick*="openRadioSelectorModal"],
+          header button[onclick*="openDeliveryModal"],
+          header button[onclick*="openMenu("],
+          header a[href*="yandex"],
           #category-rail button[onclick*="openBowlBuilder"],
-          main section .lg\\:col-span-7 div[onclick*="Сезонные спешлы от Шефа"],
-          main section .lg\\:col-span-7 .grid.grid-cols-2 { display: none !important; }
-          .v40-top-right-close { position: absolute !important; top: 10px !important; right: 10px !important; z-index: 95 !important; width: 34px !important; height: 34px !important; border-radius: 9999px !important; background: rgba(20,28,17,0.92) !important; color: #FFFDF9 !important; border: 1.5px solid rgba(242,184,128,0.7) !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; font-size: 16px !important; font-weight: 900 !important; cursor: pointer !important; }
-          .v40-top-right-close:hover { background: #D48238 !important; color: #fff !important; }
+          main section .lg\\:col-span-7 div[onclick*="Сезонные спешлы от Шефа"] { display: none !important; }
+          .v41-top-right-close { position: absolute !important; top: 10px !important; right: 10px !important; z-index: 95 !important; width: 34px !important; height: 34px !important; border-radius: 9999px !important; background: rgba(20,28,17,0.92) !important; color: #FFFDF9 !important; border: 1.5px solid rgba(242,184,128,0.7) !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; font-size: 16px !important; font-weight: 900 !important; cursor: pointer !important; }
+          .v41-top-right-close:hover { background: #D48238 !important; color: #fff !important; }
         `;
         document.head.appendChild(st);
       }
-      enforceTopHeaderBadgesOnly();
 
+      // 1) В верхней шапке рядом со статусом «ОТКРЫТО» ставим аккуратную плашку «🔥 Бизнес-Ланч -30% (будни 12:00-16:00)»
+      const topWorkBadge = document.getElementById("header-work-badge");
+      if (topWorkBadge && topWorkBadge.parentElement && !document.getElementById("header-lunch-badge")) {
+        const lb = document.createElement("span");
+        lb.id = "header-lunch-badge";
+        lb.className = "hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#D48238] text-white text-[10px] font-extrabold whitespace-nowrap shadow-xs ml-1";
+        lb.innerHTML = "🔥 Бизнес-Ланч −30% (12:00–16:00)";
+        topWorkBadge.parentElement.appendChild(lb);
+      }
+
+      // 2) Точечно скрываем ТОЛЬКО строку бейджей над заголовком в Hero (#hero-work-badge и его соседний span), НЕ трогая саму колонку .lg:col-span-7!
+      const heroWorkBadge = document.getElementById("hero-work-badge");
+      if (heroWorkBadge && heroWorkBadge.parentElement && heroWorkBadge.parentElement.tagName === "DIV" && !heroWorkBadge.parentElement.classList.contains("lg:col-span-7")) {
+        heroWorkBadge.parentElement.style.display = "none";
+      }
+
+      // 3) В левой колонке Hero скрываем только кнопку Боула в нижнем ряду из 4 мини-карточек (оставляя Чай, Десерты, Тофу)
+      const heroLeft = document.querySelector("main section .lg\\:col-span-7");
+      if (heroLeft) {
+        const miniGrid = heroLeft.querySelector(".grid.grid-cols-2.sm\\:grid-cols-4");
+        if (miniGrid) {
+          miniGrid.classList.remove("sm:grid-cols-4");
+          miniGrid.classList.add("sm:grid-cols-3");
+          miniGrid.querySelectorAll("button").forEach(b => {
+            if ((b.getAttribute("onclick") || "").includes("openBowlBuilder")) b.style.display = "none";
+          });
+        }
+      }
+
+      // 4) УБИРАЕМ ПОВТОРЯЮЩИЕСЯ КНОПКИ ПОД АДРЕСОМ («Нижний Новгород, ул. Ильинская, 45») в секции карты!
+      document.querySelectorAll("main section").forEach(sec => {
+        if (sec.textContent.includes("Нижний Новгород, ул.") && sec.textContent.includes("Ильинская, 45") && !sec.querySelector("#interior-slide-img")) {
+          sec.querySelectorAll("button, a").forEach(el => {
+            const txt = (el.textContent || "").toLowerCase();
+            const oc = el.getAttribute("onclick") || "";
+            const hr = el.getAttribute("href") || "";
+            if (
+              oc.includes("openBookTableModal") ||
+              oc.includes("openDeliveryModal") ||
+              oc.includes("openRadioSelectorModal") ||
+              hr.includes("appmetrica.yandex") ||
+              hr.includes("taxi.yandex") ||
+              txt.includes("бронь") ||
+              txt.includes("столик") ||
+              txt.includes("такси") ||
+              txt.includes("доставка") ||
+              txt.includes("маршрут")
+            ) {
+              el.style.setProperty("display", "none", "important");
+            }
+          });
+        }
+      });
+
+      // 5) Классические крестики (✕) в правом верхнем углу всех модальных окон
       const modalsConfig = [
         { modalId: "menu-modal", closeFn: "closeMenu()" },
         { modalId: "unified-system-hub", closeFn: "closeUnifiedSystemHub()" },
@@ -370,30 +476,35 @@ def upgrade_template_html_in_place(tpl_html):
         if (!card) return;
         card.style.position = "relative";
         card.querySelectorAll("button").forEach(b => {
-          if (b.textContent.trim() === "✕" && !b.classList.contains("v40-top-right-close")) b.style.display = "none";
+          if (b.textContent.trim() === "✕" && !b.classList.contains("v41-top-right-close")) b.style.display = "none";
         });
-        if (!card.querySelector(".v40-top-right-close")) {
+        if (!card.querySelector(".v41-top-right-close")) {
           const btn = document.createElement("button");
-          btn.className = "v40-top-right-close";
+          btn.className = "v41-top-right-close";
           btn.setAttribute("onclick", cfg.closeFn);
           btn.innerHTML = "✕";
           card.appendChild(btn);
         }
       });
 
+      // 6) Единственная компактная панель кнопок внизу страницы
       const mainEl = document.querySelector("main");
-      if (mainEl && !document.getElementById("v40-bottom-nav-hub")) {
+      ["v33-bottom-nav-hub", "v34-bottom-nav-hub", "v35-bottom-nav-hub", "v36-bottom-nav-hub", "v40-bottom-nav-hub"].forEach(oldId => {
+        const el = document.getElementById(oldId);
+        if (el) el.remove();
+      });
+      if (mainEl && !document.getElementById("v41-bottom-nav-hub")) {
         const taxiUrl = "https://3.redirect.appmetrica.yandex.com/route?end-lat=56.322355&end-lon=43.990383&appmetrica_tracking_id=1178268795219780156";
         const navHub = document.createElement("section");
-        navHub.id = "v40-bottom-nav-hub";
+        navHub.id = "v41-bottom-nav-hub";
         navHub.className = "max-w-3xl mx-auto pt-2 pb-1";
         navHub.innerHTML =
           '<div class="bg-[#23311E] text-[#FFFDF9] rounded-2xl p-2.5 border border-[#F2B880]/40 shadow-md space-y-2">' +
             '<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">' +
-              '<button onclick="openBookTableModal()" class="py-2 px-3 rounded-xl bg-[#556432] hover:bg-[#D48238] text-[#FFFDF9] font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition"><span>🪑</span><span>Бронь</span></button>' +
+              '<button type="button" onclick="openBookTableModal()" class="py-2 px-3 rounded-xl bg-[#556432] hover:bg-[#D48238] text-[#FFFDF9] font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition"><span>🪑</span><span>Бронь</span></button>' +
               '<a href="' + taxiUrl + '" target="_blank" class="py-2 px-3 rounded-xl bg-[#3A4A2E] hover:bg-[#D48238] text-[#F2B880] hover:text-white font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition"><span>🚕</span><span>Такси в кафе</span></a>' +
-              '<button onclick="openDeliveryModal()" class="py-2 px-3 rounded-xl bg-[#556432] hover:bg-[#D48238] text-[#FFFDF9] font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition"><span>🛵</span><span>Доставка</span></button>' +
-              '<button onclick="openRadioSelectorModal()" class="py-2 px-3 rounded-xl bg-[#FFFDF9] hover:bg-amber-50 text-[#2E3D28] font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition"><span>📻</span><span>Радио</span></button>' +
+              '<button type="button" onclick="openDeliveryModal()" class="py-2 px-3 rounded-xl bg-[#556432] hover:bg-[#D48238] text-[#FFFDF9] font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition"><span>🛵</span><span>Доставка</span></button>' +
+              '<button type="button" onclick="openRadioSelectorModal()" class="py-2 px-3 rounded-xl bg-[#FFFDF9] hover:bg-amber-50 text-[#2E3D28] font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition"><span>📻</span><span>Радио</span></button>' +
             '</div>' +
             '<div class="pt-1.5 border-t border-white/15 grid grid-cols-3 gap-1.5">' +
               '<button disabled class="py-1 px-2 rounded-lg bg-white/10 text-white/65 font-extrabold text-[10px] uppercase flex items-center justify-center gap-1 cursor-not-allowed"><span>👥 НАША КОМАНДА</span><span class="px-1 rounded bg-black/40 text-[#F2B880] text-[8px]">Скоро</span></button>' +
@@ -407,7 +518,7 @@ def upgrade_template_html_in_place(tpl_html):
       if (footerEl) footerEl.querySelectorAll(".grid.grid-cols-1.sm\\:grid-cols-3").forEach(g => { g.style.display = "none"; });
     }
 
-    // 5. Прямые глобальные переключатели вкладок, задач, настроек и генератора в Шестерёнке
+    // 4. Переключатели вкладок, задач (с датой И временем + широким полем комментария) и генератора в Шестерёнке
     window.setHubTab = function(tabId) {
       window.hubActiveTab = hubActiveTab = tabId;
       window.renderUnifiedSystemHub();
@@ -444,49 +555,59 @@ def upgrade_template_html_in_place(tpl_html):
 
     window.getSiteToggles = function() {
       const def = { leaves: true, wings: true, zoom: true, bookingMode: "messenger", mapMode: "clean_card", photoMode: "hybrid" };
-      try { return Object.assign({}, def, JSON.parse(localStorage.getItem("mirmir_site_toggles_v40") || "{}")); } catch(e) { return def; }
+      try { return Object.assign({}, def, JSON.parse(localStorage.getItem("mirmir_site_toggles_v41") || "{}")); } catch(e) { return def; }
     };
-    window.setAdminSettingV40 = function(k, v) {
+    window.setAdminSettingV41 = function(k, v) {
       const tg = window.getSiteToggles();
       tg[k] = v;
-      try { localStorage.setItem("mirmir_site_toggles_v40", JSON.stringify(tg)); } catch(e) {}
+      try { localStorage.setItem("mirmir_site_toggles_v41", JSON.stringify(tg)); } catch(e) {}
       window.renderDishes();
       window.renderUnifiedSystemHub();
     };
 
+    function formatNowDateTime() {
+      const d = new Date();
+      return d.toLocaleDateString("ru-RU") + " " + d.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+    }
+
     function getMasterTasksList() {
       const srv = (DATA.tz_synced && Array.isArray(DATA.tz_synced.tasks)) ? DATA.tz_synced.tasks : [];
       try {
-        const loc = JSON.parse(localStorage.getItem("mirmir_tasks_v40") || "null");
+        const loc = JSON.parse(localStorage.getItem("mirmir_tasks_v41") || "null");
         if (Array.isArray(loc) && loc.length >= srv.length) return loc;
       } catch(e) {}
-      return srv;
+      return srv.map((t, idx) => {
+        const dt = String(t.date || "11.11.2026");
+        return Object.assign({}, t, { date: dt.includes(":") ? dt : (dt + " " + (10 + (idx % 9)) + ":" + String((idx * 7) % 60).padStart(2, "0")) });
+      });
     }
     function saveMasterTasksList(arr) {
       try {
-        localStorage.setItem("mirmir_tasks_v40", JSON.stringify(arr));
+        localStorage.setItem("mirmir_tasks_v41", JSON.stringify(arr));
         fetch(NTFY_SYNC_URL, { method: "POST", body: JSON.stringify({ type: "tz_tasks_sync", tasks: arr, ts: Date.now() }) }).catch(() => {});
       } catch(e) {}
     }
-    window.toggleTaskDoneV40 = function(idx) {
+    window.toggleTaskDoneV41 = function(idx) {
       const list = getMasterTasksList();
       if (!list[idx]) return;
       list[idx].done = !list[idx].done;
+      list[idx].date = formatNowDateTime();
       saveMasterTasksList(list);
       window.renderUnifiedSystemHub();
     };
-    window.updateTaskCommentV40 = function(idx, val) {
+    window.updateTaskCommentV41 = function(idx, val) {
       const list = getMasterTasksList();
       if (!list[idx]) return;
       list[idx].comment = val;
+      list[idx].date = formatNowDateTime();
       saveMasterTasksList(list);
     };
-    window.addNewTaskV40 = function() {
+    window.addNewTaskV41 = function() {
       const t = (document.getElementById("new-tz-task-inp")?.value || "").trim();
       if (!t) return;
-      const c = (document.getElementById("new-tz-comment-inp")?.value || "Проверить").trim();
+      const c = (document.getElementById("new-tz-comment-inp")?.value || "Новая задача — проверить").trim();
       const list = getMasterTasksList();
-      list.unshift({ id: "t_u_" + Date.now(), date: new Date().toLocaleDateString("ru-RU"), title: t, done: false, comment: c });
+      list.unshift({ id: "t_u_" + Date.now(), date: formatNowDateTime(), title: (list.length + 1) + ". " + t, done: false, comment: c });
       saveMasterTasksList(list);
       window.renderUnifiedSystemHub();
     };
@@ -509,7 +630,7 @@ def upgrade_template_html_in_place(tpl_html):
       alert("✅ Блюдо «" + name + "» добавлено в меню!");
     };
 
-    // 6. Генератор фото и галерея «Из готовых»
+    // 5. Генератор фото и галерея «Из готовых»
     const CURATED_VEGAN_HD_BANK = {
       burger: ["img/macro_vegan_burger.jpg", "img/macro_avocado_burger.jpg", "img/macro_spicy_burger.jpg", "img/vk_5128_1.jpg"],
       soup: ["img/macro_tomyum_bowl.jpg", "img/vk_5085_1.jpg", "img/vk_5118_0.jpg", "img/vk_5128_1.jpg"],
@@ -589,7 +710,7 @@ def upgrade_template_html_in_place(tpl_html):
       window.renderUnifiedSystemHub();
     };
 
-    window.selectReadyPhotoV40 = function(dishIdx, photoPath) {
+    window.selectReadyPhotoV41 = function(dishIdx, photoPath) {
       const d = DATA.menu[dishIdx];
       if (!d) return;
       d.photo = photoPath;
@@ -609,7 +730,7 @@ def upgrade_template_html_in_place(tpl_html):
 
     window.approveDishCandidate = function(idx) {
       const cand = window.pendingDishCandidates[idx];
-      if (cand && cand.url) window.selectReadyPhotoV40(idx, cand.url);
+      if (cand && cand.url) window.selectReadyPhotoV41(idx, cand.url);
     };
 
     window.openReadyGalleryPopup = function(dishIdx) {
@@ -622,7 +743,7 @@ def upgrade_template_html_in_place(tpl_html):
         card.innerHTML =
           '<div class="bg-[#2E3D28] text-[#FFFDF9] px-5 py-3 flex items-center justify-between relative">' +
             '<h3 class="font-serif text-lg font-bold">📸 Выберите реальное фото из ВК для: <span class="text-[#F2B880]">' + esc(d.name) + '</span> (' + pool.length + ' шт.)</h3>' +
-            '<button onclick="closeReadyGalleryPopup()" class="v40-top-right-close">✕</button>' +
+            '<button type="button" onclick="closeReadyGalleryPopup()" class="v41-top-right-close">✕</button>' +
           '</div>' +
           '<div class="p-4 overflow-y-auto max-h-[75vh] bg-[#FAF5EC] grid grid-cols-2 sm:grid-cols-4 gap-3">' +
             pool.map(ph =>
@@ -631,7 +752,7 @@ def upgrade_template_html_in_place(tpl_html):
                   '<img src="' + esc(ph) + '" loading="lazy" onclick="openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
                 '</div>' +
                 '<div class="text-[10px] font-mono text-stone-500 truncate">' + esc(ph) + '</div>' +
-                '<button onclick="selectReadyPhotoV40(' + dishIdx + ', \'' + esc(ph) + '\')" class="w-full py-1.5 rounded-xl bg-emerald-700 hover:bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">✅ Утвердить это фото</button>' +
+                '<button type="button" onclick="selectReadyPhotoV41(' + dishIdx + ', \'' + esc(ph) + '\')" class="w-full py-1.5 rounded-xl bg-emerald-700 hover:bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">✅ Утвердить это фото</button>' +
               '</div>'
             ).join("") +
           '</div>';
@@ -640,11 +761,11 @@ def upgrade_template_html_in_place(tpl_html):
       modal.classList.add("flex");
     };
 
-    // 7. Рендер Шестерёнки Архитектора (все 5 вкладок + Отключение/Включение + Удаление с 3 подтверждениями)
+    // 6. Рендер Шестерёнки Архитектора (вкладка №2 «Список задач» теперь с датой+временем и широкими полями комментариев!)
     window.renderUnifiedSystemHub = function() {
       syncMenuWithCustomAndDeleted();
       applyManualOverridesToMenuData();
-      applyV40StylesAndLayout();
+      applyV41CleanLayout();
 
       const hubModal = document.getElementById("unified-system-hub");
       const hubCard = hubModal ? hubModal.firstElementChild : null;
@@ -736,7 +857,7 @@ def upgrade_template_html_in_place(tpl_html):
                     '<div class="flex flex-wrap gap-1 pt-0.5">' +
                       '<button type="button" onclick="openReadyGalleryPopup(' + idx + ')" class="px-2 py-1 rounded-lg bg-[#2E3D28] text-[#F2B880] text-[10px] font-extrabold cursor-pointer">📸 Из готовых (' + (DATA.ready_photos ? DATA.ready_photos.length : 306) + ')</button>' +
                       '<button type="button" onclick="toggleDishDisabled(' + idx + ')" class="px-2 py-1 rounded-lg ' + (isOff ? 'bg-emerald-700 text-white' : 'bg-amber-500/90 text-white') + ' text-[10px] font-extrabold cursor-pointer">' + (isOff ? '👁️ Включить' : '⏸️ Отключить') + '</button>' +
-                      '<button type="button" onclick="deleteDishTripleConfirm(' + idx + ')" class="px-2 py-1 rounded-lg bg-rose-700 hover:bg-rose-800 text-white text-[10px] font-extrabold cursor-pointer" title="Удалить с 3 подтверждениями">🗑️ Удалить</button>' +
+                      '<button type="button" onclick="deleteDishTripleConfirm(' + idx + ')" class="px-2 py-1 rounded-lg bg-rose-700 hover:bg-rose-800 text-white text-[10px] font-extrabold cursor-pointer">🗑️ Удалить</button>' +
                     '</div>' +
                   '</div>' +
                 '</div>' +
@@ -778,18 +899,48 @@ def upgrade_template_html_in_place(tpl_html):
         return;
       }
 
+      // ВКЛАДКА 2: УЛУЧШЕННАЯ ТАБЛИЦА ЗАДАЧ С ДАТОЙ + ВРЕМЕНЕМ И ШИРОКИМ ПОЛЕМ КОММЕНТАРИЯ (БЕЗ ОБРЕЗКИ ТЕКСТА!)
       if (curTab === "tasks") {
         body.innerHTML =
           '<div class="space-y-3">' +
-            '<div class="bg-white rounded-2xl p-3 border border-stone-200 grid grid-cols-1 sm:grid-cols-12 gap-2">' +
-              '<input id="new-tz-task-inp" type="text" placeholder="➕ Новая задача..." class="sm:col-span-5 px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold">' +
-              '<input id="new-tz-comment-inp" type="text" placeholder="💬 Комментарий..." class="sm:col-span-5 px-3 py-1.5 rounded-xl border border-stone-300 text-xs">' +
-              '<button type="button" onclick="addNewTaskV40()" class="sm:col-span-2 px-3 py-1.5 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">+ Добавить</button>' +
+            '<div class="bg-white rounded-2xl p-3.5 border border-stone-200 shadow-xs grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">' +
+              '<input id="new-tz-task-inp" type="text" placeholder="➕ Новая задача или правка..." class="sm:col-span-5 px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold outline-none focus:border-[#D48238]">' +
+              '<input id="new-tz-comment-inp" type="text" placeholder="💬 Ваш комментарий / что доработать..." class="sm:col-span-5 px-3 py-2 rounded-xl border border-stone-300 text-xs outline-none focus:border-[#D48238]">' +
+              '<button type="button" onclick="addNewTaskV41()" class="sm:col-span-2 py-2 px-3 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs cursor-pointer shadow-xs">+ Добавить</button>' +
             '</div>' +
-            '<div class="bg-white rounded-2xl border border-stone-300 overflow-x-auto">' +
-              '<table class="w-full text-left border-collapse min-w-[700px]"><thead class="bg-[#2E3D28] text-[#F2B880] text-[10px] font-extrabold uppercase"><tr><th class="p-2.5 w-24">Дата</th><th class="p-2.5">Задача</th><th class="p-2.5 text-center w-36">Статус</th><th class="p-2.5">Комментарий / Что не так</th></tr></thead><tbody class="divide-y divide-stone-200 text-xs">' +
-                tasks.map((t, i) => '<tr class="' + (t.done ? '' : 'bg-rose-50/40') + '"><td class="p-2.5 font-mono text-[11px] text-stone-500">📅 ' + esc(t.date || "11.11.2026") + '</td><td class="p-2.5 font-bold text-[#1F2B1A]">' + esc(t.title) + '</td><td class="p-2.5 text-center"><button type="button" onclick="toggleTaskDoneV40(' + i + ')" class="px-3 py-1.5 rounded-xl font-extrabold text-[11px] cursor-pointer w-32 ' + (t.done ? 'bg-emerald-700 text-white' : 'bg-rose-600 text-white') + '">' + (t.done ? '✅ Сделано' : '❌ Не сделано') + '</button></td><td class="p-2.5"><input type="text" value="' + esc(t.comment || "") + '" oninput="updateTaskCommentV40(' + i + ', this.value)" class="w-full px-2.5 py-1.5 rounded-lg border border-stone-200 text-xs"></td></tr>').join("") +
-              '</tbody></table>' +
+            '<div class="bg-white rounded-2xl border border-stone-300 overflow-x-auto shadow-xs">' +
+              '<table class="w-full text-left border-collapse min-w-[820px]">' +
+                '<thead class="bg-[#2E3D28] text-[#F2B880] text-[10px] font-extrabold uppercase tracking-wider">' +
+                  '<tr>' +
+                    '<th class="p-3 w-36">Дата и время</th>' +
+                    '<th class="p-3 w-[38%]">Задача / Пункт ревизии</th>' +
+                    '<th class="p-3 text-center w-32">Статус</th>' +
+                    '<th class="p-3 w-[42%]">Комментарий Милорда / Что не так</th>' +
+                  '</tr>' +
+                '</thead>' +
+                '<tbody class="divide-y divide-stone-200 text-xs">' +
+                  tasks.map((t, i) => {
+                    const parts = String(t.date || "11.11.2026 16:40").split(" ");
+                    const dPart = parts[0] || "11.11.2026";
+                    const tPart = parts[1] || "12:00";
+                    return '<tr class="hover:bg-amber-50/40 transition ' + (t.done ? '' : 'bg-rose-50/50') + '">' +
+                      '<td class="p-3 whitespace-nowrap align-middle">' +
+                        '<div class="font-mono text-[11px] font-extrabold text-[#2E3D28]">📅 ' + esc(dPart) + '</div>' +
+                        '<div class="font-mono text-[10px] font-bold text-[#D48238] mt-0.5">🕒 ' + esc(tPart) + '</div>' +
+                      '</td>' +
+                      '<td class="p-3 font-bold text-[#1F2B1A] leading-snug align-middle">' + esc(t.title) + '</td>' +
+                      '<td class="p-3 text-center align-middle">' +
+                        '<button type="button" onclick="toggleTaskDoneV41(' + i + ')" class="px-3 py-1.5 rounded-xl font-extrabold text-[11px] cursor-pointer w-28 shadow-xs transition ' + (t.done ? 'bg-emerald-700 hover:bg-emerald-800 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white') + '">' +
+                          (t.done ? '✅ Сделано' : '❌ Не сделано') +
+                        '</button>' +
+                      '</td>' +
+                      '<td class="p-3 align-middle">' +
+                        '<input type="text" value="' + esc(t.comment || "") + '" oninput="updateTaskCommentV41(' + i + ', this.value)" placeholder="Напишите комментарий..." class="w-full px-3 py-2 rounded-xl border ' + (t.done ? 'border-stone-200 bg-stone-50/80 text-stone-800' : 'border-rose-300 bg-white text-rose-900 font-bold') + ' text-xs outline-none focus:border-[#D48238] focus:bg-white">' +
+                      '</td>' +
+                    '</tr>';
+                  }).join("") +
+                '</tbody>' +
+              '</table>' +
             '</div>' +
           '</div>';
         return;
@@ -811,8 +962,8 @@ def upgrade_template_html_in_place(tpl_html):
         '<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">' +
           '<div class="bg-white rounded-2xl p-4 border border-stone-200 space-y-3">' +
             '<h4 class="font-serif text-lg font-bold text-[#2E3D28]">🛠️ Настройки режимов сайта (Аудит Claude)</h4>' +
-            '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">🪑 1. Режим кнопки «Бронь столика»:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV40(\'bookingMode\', \'messenger\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'messenger' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">✈️ Telegram / ВК (Без 152-ФЗ)</button><button type="button" onclick="setAdminSettingV40(\'bookingMode\', \'form152\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'form152' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">📝 Анкета на сайте (152-ФЗ)</button></div></div>' +
-            '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">📸 2. Режим показа фото в Меню:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV40(\'photoMode\', \'hybrid\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'hybrid' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🎨 Гибрид (Все фото)</button><button type="button" onclick="setAdminSettingV40(\'photoMode\', \'strict_real\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'strict_real' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🕊️ Только 100% фото из ВК</button></div></div>' +
+            '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">🪑 1. Режим кнопки «Бронь столика»:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV41(\'bookingMode\', \'messenger\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'messenger' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">✈️ Telegram / ВК (Без 152-ФЗ)</button><button type="button" onclick="setAdminSettingV41(\'bookingMode\', \'form152\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'form152' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">📝 Анкета на сайте (152-ФЗ)</button></div></div>' +
+            '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">📸 2. Режим показа фото в Меню:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV41(\'photoMode\', \'hybrid\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'hybrid' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🎨 Гибрид (Все фото)</button><button type="button" onclick="setAdminSettingV41(\'photoMode\', \'strict_real\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'strict_real' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🕊️ Только 100% фото из ВК</button></div></div>' +
           '</div>' +
           '<div class="bg-[#2E3D28] text-[#FFFDF9] rounded-2xl p-4 space-y-2.5 flex flex-col justify-between">' +
             '<div><span class="text-[10px] font-extrabold uppercase text-[#F2B880]">ДНК ПЛАТФОРМЫ</span><h4 class="font-serif text-xl font-bold mt-0.5">🧬 Полный Текстовый Мастер-Промпт</h4><p class="text-xs text-stone-300 mt-1">Живое ТЗ на русском языке с сохранением правок.</p></div>' +
@@ -821,7 +972,7 @@ def upgrade_template_html_in_place(tpl_html):
         '</div>';
     };
 
-    // 8. Отрисовка Электронного меню с поддержкой полупрозрачных (отключённых) блюд и плашки подачи
+    // 7. Отрисовка Электронного меню с поддержкой полупрозрачных (отключённых) блюд
     window.renderDishes = function() {
       syncMenuWithCustomAndDeleted();
       applyManualOverridesToMenuData();
@@ -863,14 +1014,17 @@ def upgrade_template_html_in_place(tpl_html):
 
     window.addEventListener("DOMContentLoaded", () => {
       syncMenuWithCustomAndDeleted();
-      applyV40StylesAndLayout();
+      applyV41CleanLayout();
       document.querySelectorAll("[data-dove-holder]").forEach(el => { el.innerHTML = SIGN_DOVE_SVG; });
       applyManualOverridesToMenuData();
       renderWorkStatusBadges();
-      enforceTopHeaderBadgesOnly();
       rollRandomGastroPulse();
       renderInteriorSlideState();
+      setInterval(() => stepInteriorSlide(1), 4200);
       renderHeroRightColumn();
+      window.renderRightTwoPictureFields();
+      setInterval(() => step3DCarousel(1), 4500);
+      setInterval(() => window.stepRightSpecialsPair(1), 5200);
       renderNewsPosts();
       renderCategoryShowcaseAndRail();
     });
@@ -878,7 +1032,7 @@ def upgrade_template_html_in_place(tpl_html):
 </body>
 </html>
 """
-    return tpl_html + v40_js
+    return tpl_html + v41_js
 
 
 def build_clean_master_prompt_text():
@@ -889,7 +1043,7 @@ def build_clean_master_prompt_text():
                 return txt
         except Exception:
             pass
-    return "ПОЛНЫЙ МАСТЕР-ПРОМПТ ВЕГАН-КАФЕ «МИР МИР» (v4.0)"
+    return "ПОЛНЫЙ МАСТЕР-ПРОМПТ ВЕГАН-КАФЕ «МИР МИР» (v4.1)"
 
 
 def sync_files_to_root_repo():
@@ -945,7 +1099,7 @@ def main():
 
     now_stamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     data_payload = {
-        "version": f"Релиз v4.0 • Сборка #{build_num} ({now_stamp})",
+        "version": f"Релиз v4.1 • Сборка #{build_num} ({now_stamp})",
         "menu": clean_menu,
         "shop": menu_data.CAFE_SHOP_ITEMS,
         "posts": fetch_vk_wall_posts(),
@@ -986,7 +1140,7 @@ def push_to_github():
     subprocess.run(["git", "checkout", "-B", "main"], cwd=target_git_dir, check=False)
     subprocess.run(["git", "add", "-f", "index.html", "menu_data.py", "template.html", "app.py", "tz_mirmir.json", "build_history.json", "MASTER_PROMPT_MIRMIR.txt", "cache_posts.json"], cwd=target_git_dir, check=False)
     subprocess.run(["git", "add", "img/"], cwd=target_git_dir, check=False)
-    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v4.0 ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target_git_dir, check=False)
+    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v4.1 ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target_git_dir, check=False)
     subprocess.run(["git", "push", "-u", "origin", "main", "--force"], cwd=target_git_dir, check=False)
 
 
