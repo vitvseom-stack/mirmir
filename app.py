@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-КОМПИЛЯТОР ПЛАТФОРМЫ «МИР МИР» (app.py — Версия v4.4)
+КОМПИЛЯТОР ПЛАТФОРМЫ «МИР МИР» (app.py — Версия v4.5, Полная ревизия)
 """
 import os
 import sys
@@ -34,18 +34,18 @@ MASTER_TASKS_DEFAULT = [
     {"id": "t_3", "date": "09.11.2026 15:05", "title": "3. Первый экран справа: сбалансированная 3D-карусель бланков меню + 2 карточки спешлов", "done": True, "comment": "Страницы меню помещаются в рамку без выхода за границы."},
     {"id": "t_4", "date": "09.11.2026 16:30", "title": "4. Плашка «Подача блюд может отличаться» на карточках и при полноэкранном увеличении", "done": True, "comment": "Отображается на миниатюрах и внутри лайтбокса."},
     {"id": "t_5", "date": "10.11.2026 11:15", "title": "5. Обработка системной кнопки «Назад» (popstate) на мобильных устройствах", "done": True, "comment": "Закрывает текущее модальное окно без выхода с сайта."},
-    {"id": "t_6", "date": "10.11.2026 13:40", "title": "6. Плавный автоматический скролл влево в Новостях + управление стрелками ◀ ▶ + фильтр закрепа", "done": True, "comment": "Лента новостей плавно движется влево, останавливается при наведении и листается кнопками."},
+    {"id": "t_6", "date": "12.11.2026 10:15", "title": "6. Автоскролл новостей влево + рабочие кнопки ◀ ▶ + кнопка «⏮️ К последним постам»", "done": True, "comment": "Добавлена пауза автоскролла при клике на стрелки и кнопка возврата к началу ленты."},
     {"id": "t_7", "date": "10.11.2026 17:00", "title": "7. Расширенная сетка (1640px), кнопки закрытия (✕) в правом верхнем углу и значок 🔍 без текста", "done": True, "comment": "Во всех окнах и карточках оставлена только иконка лупы 🔍."},
-    {"id": "t_8", "date": "10.11.2026 19:25", "title": "8. Чистая вёрстка блока адреса и карты с единым блоком кнопок", "done": True, "comment": "Блок адреса оформлен в 2 колонки с кнопками на зелёном фоне."},
+    {"id": "t_8", "date": "10.11.2026 19:25", "title": "8. Чистая вёрстка блока адреса и карты с единым блоком кнопок и нижним отступом", "done": True, "comment": "Блок адреса оформлен в 2 колонки с кнопками на зелёном фоне."},
     {"id": "t_9", "date": "11.11.2026 09:30", "title": "9. Полное техническое задание (Мастер-Промпт архитектуры сайта) с сохранением изменений", "done": True, "comment": "Хранится в MASTER_PROMPT_MIRMIR.txt и редактируется в админ-панели."},
     {"id": "t_10", "date": "11.11.2026 11:45", "title": "10. Переключатели режимов: Бронь (Telegram/ВК или анкета 152-ФЗ), Карта, Режим фото меню", "done": True, "comment": "Доступны во вкладке настроек панели управления."},
-    {"id": "t_11", "date": "11.11.2026 14:10", "title": "11. Замена ИИ-галлюцинаций в карточках категорий на реальные фото кафе", "done": True, "comment": "Все 9 карточек разделов меню используют проверенные фотографии кафе."},
+    {"id": "t_11", "date": "12.11.2026 10:20", "title": "11. Витрина «Меню кафе по разделам» (9 карточек) с реальными фото и плавным зумом при наведении", "done": True, "comment": "Восстановлено отображение всех карточек разделов и масштабирование фото при наведении."},
     {"id": "t_12", "date": "11.11.2026 15:20", "title": "12. Временное отключение блюд (полупрозрачный режим) и удаление с 3 подтверждениями", "done": True, "comment": "Кнопки отключения и удаления встроены в каждую карточку блюда."},
-    {"id": "t_13", "date": "12.11.2026 09:30", "title": "13. Перенос кнопок «Открыть Меню (72)», «Магазин кафе» и «Корзина» в основную область <main>", "done": True, "comment": "Верхняя полоса <header> убрана, кнопки и статусы интегрированы в верхнюю панель <main>."}
+    {"id": "t_13", "date": "12.11.2026 10:25", "title": "13. Единая верхняя панель в <main> (Меню, Магазин кафе, Корзина) и ревизия кода от неиспользуемых функций", "done": True, "comment": "Удалены устаревшие патчи и неиспользуемые переменные."}
 ]
 
 
-def clean_slang_from_text(txt):
+def sanitize_text(txt):
     if not isinstance(txt, str):
         return txt
     replacements = [
@@ -66,7 +66,8 @@ def clean_slang_from_text(txt):
     return txt
 
 
-def auto_migrate_assets():
+def prepare_and_clean_assets():
+    """Мигрирует недостающие ассеты и удаляет неиспользуемые/невеганские изображения."""
     os.makedirs("img", exist_ok=True)
     for old_d in OLD_DIRS_TO_CHECK:
         if not os.path.exists(old_d) or os.path.abspath(old_d) == BASE_DIR:
@@ -91,8 +92,6 @@ def auto_migrate_assets():
                         except Exception:
                             pass
 
-
-def clean_non_vegan_and_junk_images():
     for t_dir in [BASE_DIR, ROOT_REPO_DIR]:
         img_d = os.path.join(t_dir, "img")
         if not os.path.exists(img_d):
@@ -172,10 +171,12 @@ def fetch_vk_wall_posts():
 
 
 def sync_tz_and_build_logs():
-    tz_data = {"tasks": [], "dishes": {}, "custom_dishes": [], "disabled_dishes": [], "deleted_dishes": []}
+    tz_data = {"tasks": [], "dishes": {}, "custom_dishes": []}
     if os.path.exists("tz_mirmir.json"):
         try:
-            tz_data.update(json.load(open("tz_mirmir.json", "r", encoding="utf-8")))
+            loaded = json.load(open("tz_mirmir.json", "r", encoding="utf-8"))
+            if isinstance(loaded, dict):
+                tz_data.update(loaded)
         except Exception:
             pass
     by_id = {str(t["id"]): t for t in tz_data.get("tasks", []) if isinstance(t, dict) and t.get("id")}
@@ -189,9 +190,9 @@ def sync_tz_and_build_logs():
             merged.append({
                 "id": tid,
                 "date": final_dt,
-                "title": clean_slang_from_text(d_t["title"]),
+                "title": sanitize_text(d_t["title"]),
                 "done": bool(old.get("done", d_t["done"])),
-                "comment": clean_slang_from_text(old.get("comment") or d_t["comment"])
+                "comment": sanitize_text(old.get("comment") or d_t["comment"])
             })
         else:
             merged.append(dict(d_t))
@@ -201,8 +202,8 @@ def sync_tz_and_build_logs():
             if ":" not in dt_v:
                 dt_v = (dt_v + " 12:00").strip()
             v["date"] = dt_v
-            v["title"] = clean_slang_from_text(v.get("title", ""))
-            v["comment"] = clean_slang_from_text(v.get("comment", ""))
+            v["title"] = sanitize_text(v.get("title", ""))
+            v["comment"] = sanitize_text(v.get("comment", ""))
             merged.append(v)
     tz_data["tasks"] = merged
     json.dump(tz_data, open("tz_mirmir.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
@@ -217,14 +218,14 @@ def sync_tz_and_build_logs():
 
     logs = json.load(open("build_history.json", "r", encoding="utf-8")) if os.path.exists("build_history.json") else []
     for l_item in logs:
-        l_item["model"] = clean_slang_from_text(l_item.get("model", ""))
-        l_item["status"] = clean_slang_from_text(l_item.get("status", ""))
+        l_item["model"] = sanitize_text(l_item.get("model", ""))
+        l_item["status"] = sanitize_text(l_item.get("status", ""))
     now_str = datetime.now().strftime("%d.%m.%Y %H:%M")
     logs.insert(0, {
-        "version": f"Релиз v4.4 • Сборка #{cnt}",
+        "version": f"Релиз v4.5 • Сборка #{cnt}",
         "timestamp": now_str,
-        "model": "Сборка v4.4: Единая верхняя панель в <main>, быстрый доступ к Меню/Магазину/Корзине, автоскролл новостей влево и точное кадрирование",
-        "status": "Убрана лишняя верхняя полоса <header>, кнопки Меню/Магазина/Корзины перенесены в <main>, добавлен плавный горизонтальный автоскролл новостей влево.",
+        "model": "Сборка v4.5: Ревизия кода, возврат витрины разделов меню, зум фото и кнопка «⏮️ К последним постам»",
+        "status": "Восстановлены 9 карточек разделов меню и нижние отступы, починены стрелки ◀ ▶ в новостях, добавлена кнопка возврата к началу ленты и плавный зум фото при наведении.",
         "stats": f"Дата сборки: {now_str}"
     })
     json.dump(logs[:60], open("build_history.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
@@ -232,7 +233,7 @@ def sync_tz_and_build_logs():
 
 
 def upgrade_template_html_in_place(tpl_html):
-    tpl_html = clean_slang_from_text(tpl_html)
+    tpl_html = sanitize_text(tpl_html)
     tpl_html = tpl_html.replace("🔍 Лупа", "🔍").replace("Лупа 🔍", "🔍")
 
     if 'name="robots"' not in tpl_html:
@@ -247,8 +248,8 @@ def upgrade_template_html_in_place(tpl_html):
         if brace_pos != -1:
             tpl_html = tpl_html[: brace_pos + 1] + "\n"
 
-    v44_js = r"""
-    // === ЯДРО ПЛАТФОРМЫ v4.4 ===
+    v45_js = r"""
+    // === ЯДРО ПЛАТФОРМЫ v4.5 (ПОЛНАЯ РЕВИЗИЯ) ===
     const NTFY_SYNC_URL = "https://ntfy.sh/mirmir_tz_sync_nn45_v30";
     window.hubActiveTab = window.hubActiveTab || "dishes72";
     window.hubDishCategoryFilter = window.hubDishCategoryFilter || "Все";
@@ -307,6 +308,7 @@ def upgrade_template_html_in_place(tpl_html):
       window.renderUnifiedSystemHub();
       window.renderDishes();
       window.renderHeroRightColumn();
+      window.renderCategoryShowcaseAndRail();
     };
     window.restoreAllDeletedDishes = function() {
       if (!confirm("Восстановить все ранее удалённые блюда в меню?")) return;
@@ -384,11 +386,16 @@ def upgrade_template_html_in_place(tpl_html):
       });
     };
 
-    // 4. Витрина категорий меню
+    // 4. ВОССТАНОВЛЕНИЕ ВИТРИНЫ «Меню кафе по разделам» (9 карточек) И ВЕРХНЕЙ ЛЕНТЫ КАТЕГОРИЙ
+    const _baseRenderCategoryShowcase = window.renderCategoryShowcaseAndRail;
     window.renderCategoryShowcaseAndRail = function() {
       syncMenuWithCustomAndDeleted();
+      if (typeof _baseRenderCategoryShowcase === "function") {
+        try { _baseRenderCategoryShowcase(); } catch(e) {}
+      }
+
       const cats = Array.from(new Set((DATA.menu || []).map(d => d.category)));
-      const rail = document.getElementById("v44-quick-cats-strip");
+      const rail = document.getElementById("v45-quick-cats-strip");
       if (rail) {
         rail.innerHTML =
           '<button type="button" onclick="openMenu(\'Все\')" class="px-3 py-1.5 rounded-full bg-[#2E3D28] text-[#F2B880] text-xs font-extrabold whitespace-nowrap cursor-pointer shadow-xs">📖 Все блюда (' + DATA.menu.length + ')</button>' +
@@ -397,17 +404,33 @@ def upgrade_template_html_in_place(tpl_html):
           ).join("");
       }
 
-      const grid = document.getElementById("categories-showcase-grid");
-      if (grid) {
-        grid.innerHTML = cats.filter(c => c !== "Дополнительно").slice(0, 9).map(c => {
+      // Находим секцию «Меню кафе по разделам» по заголовку или ID и гарантируем отрисовку 9 карточек с зумом и проверенными фото!
+      let showcaseGrid = document.getElementById("categories-showcase-grid") || document.getElementById("category-showcase-grid");
+      if (!showcaseGrid) {
+        document.querySelectorAll("main section").forEach(sec => {
+          if (sec.textContent.includes("Меню кафе по разделам")) {
+            let g = sec.querySelector(".grid");
+            if (!g) {
+              g = document.createElement("div");
+              g.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4";
+              sec.appendChild(g);
+            }
+            showcaseGrid = g;
+          }
+        });
+      }
+
+      if (showcaseGrid) {
+        showcaseGrid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-3";
+        showcaseGrid.innerHTML = cats.filter(c => c !== "Дополнительно").slice(0, 9).map(c => {
           const itemsInCat = DATA.menu.filter(d => d.category === c);
           const count = itemsInCat.length;
           const cleanPhoto = VERIFIED_CATEGORY_PHOTOS[c] || (itemsInCat[0] ? itemsInCat[0].photo : "img/vk_5085_1.jpg");
-          return '<div onclick="openMenu(\'' + esc(c) + '\')" class="zoom-card bg-[#FFFDF9] rounded-3xl p-3 border border-[#556432]/25 shadow-sm flex flex-col justify-between gap-2.5 cursor-pointer transition">' +
+          return '<div onclick="openMenu(\'' + esc(c) + '\')" class="zoom-card bg-[#FFFDF9] rounded-3xl p-3 border border-[#556432]/25 shadow-sm flex flex-col justify-between gap-2.5 cursor-pointer">' +
             '<div class="relative h-44 rounded-2xl overflow-hidden bg-stone-200">' +
               '<img src="' + esc(cleanPhoto) + '" alt="' + esc(c) + '" class="w-full h-full object-cover">' +
-              '<div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>' +
-              '<div class="absolute bottom-2.5 left-3 right-3 flex items-end justify-between gap-2">' +
+              '<div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent pointer-events-none"></div>' +
+              '<div class="absolute bottom-2.5 left-3 right-3 flex items-end justify-between gap-2 pointer-events-none">' +
                 '<h3 class="font-serif text-xl font-bold text-white leading-tight">' + esc(c) + '</h3>' +
                 '<span class="px-2 py-0.5 rounded-full bg-[#D48238] text-white text-[10px] font-extrabold whitespace-nowrap">' + count + ' поз.</span>' +
               '</div>' +
@@ -418,7 +441,7 @@ def upgrade_template_html_in_place(tpl_html):
       }
     };
 
-    // 5. Правая колонка Hero: сбалансированная 3D-карусель + 2 карточки спешлов
+    // 5. Правая колонка Hero: 3D-карусель + 2 карточки спешлов
     window.rightSpecialsPairIdx = 0;
     window.stepRightSpecialsPair = function(delta) {
       const specials = (DATA.menu || []).filter(d => d.category === "Сезонные спешлы от Шефа");
@@ -450,7 +473,7 @@ def upgrade_template_html_in_place(tpl_html):
       rowsBox.innerHTML = '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">' + pair.map(d => {
         const idx = DATA.menu.indexOf(d);
         const pr = d.sizes ? d.sizes[0].price : d.price;
-        return '<div onclick="openMenu(\'Сезонные спешлы от Шефа\')" class="zoom-card bg-[#FDF8F2] text-stone-900 rounded-2xl p-2.5 flex flex-col justify-between gap-2 cursor-pointer shadow-lg border-2 border-[#F2B880]/70 transition">' +
+        return '<div onclick="openMenu(\'Сезонные спешлы от Шефа\')" class="zoom-card bg-[#FDF8F2] text-stone-900 rounded-2xl p-2.5 flex flex-col justify-between gap-2 cursor-pointer shadow-lg border-2 border-[#F2B880]/70">' +
           '<div class="relative h-32 sm:h-36 w-full rounded-xl overflow-hidden bg-stone-200">' +
             '<img src="' + esc(d.photo) + '" onclick="event.stopPropagation();openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
             '<span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/70 text-[#F2B880] text-[9px] font-extrabold">' + esc(d.weight || "Хит шефа") + '</span>' +
@@ -485,13 +508,13 @@ def upgrade_template_html_in_place(tpl_html):
       }
     };
 
-    // 6. Единая верхняя панель в <main> (Меню, Магазин кафе, Корзина, статус работы) и очистка дублей
+    // 6. Единая верхняя панель в <main>, плавное масштабирование фото (.zoom-card) и чистая вёрстка блока адреса
     function syncMainCartBadge() {
       const origCountEl = document.getElementById("cart-count");
       const cnt = origCountEl ? origCountEl.textContent.trim() : "0";
-      const mainCnt = document.getElementById("v44-main-cart-count");
-      const floatBtn = document.getElementById("v44-floating-cart");
-      const floatCnt = document.getElementById("v44-float-cart-count");
+      const mainCnt = document.getElementById("v45-main-cart-count");
+      const floatBtn = document.getElementById("v45-floating-cart");
+      const floatCnt = document.getElementById("v45-float-cart-count");
       if (mainCnt) mainCnt.textContent = cnt;
       if (floatCnt) floatCnt.textContent = cnt;
       if (floatBtn) {
@@ -505,28 +528,42 @@ def upgrade_template_html_in_place(tpl_html):
       }
     }
 
-    function applyV44CleanLayout() {
-      if (!document.getElementById("mirmir-v44-styles")) {
+    function applyV45CleanLayout() {
+      if (!document.getElementById("mirmir-v45-styles")) {
         const st = document.createElement("style");
-        st.id = "mirmir-v44-styles";
+        st.id = "mirmir-v45-styles";
         st.textContent = `
           html, body { min-height: auto !important; height: auto !important; }
-          /* Убираем лишнее верхнее поле <header> */
           header { display: none !important; }
           main.max-w-\\[1440px\\], footer .max-w-\\[1440px\\] { max-width: 1640px !important; width: 100% !important; min-height: 0 !important; }
-          main.max-w-\\[1440px\\] { padding-top: 12px !important; padding-bottom: 12px !important; }
+          main.max-w-\\[1440px\\] { padding-top: 14px !important; padding-bottom: 28px !important; }
           main section .lg\\:col-span-7, main section .lg\\:col-span-5 { display: flex !important; }
-          /* Жёстко скрываем дублирующиеся бейджи статуса/бизнес-ланча внутри Hero и оранжевую плашку спешлов слева */
           #hero-work-badge,
           main section .lg\\:col-span-7 > div[onclick*="Сезонные спешлы от Шефа"] { display: none !important; }
-          .v44-top-right-close { position: absolute !important; top: 10px !important; right: 10px !important; z-index: 95 !important; width: 34px !important; height: 34px !important; border-radius: 9999px !important; background: rgba(20,28,17,0.92) !important; color: #FFFDF9 !important; border: 1.5px solid rgba(242,184,128,0.7) !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; font-size: 16px !important; font-weight: 900 !important; cursor: pointer !important; }
-          .v44-top-right-close:hover { background: #D48238 !important; color: #fff !important; }
+
+          /* Плавное масштабирование карточек и фотографий при наведении курсора */
+          body:not(.disable-card-zoom) .zoom-card {
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease !important;
+          }
+          body:not(.disable-card-zoom) .zoom-card:hover {
+            transform: translateY(-4px) scale(1.015) !important;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.13) !important;
+          }
+          body:not(.disable-card-zoom) .zoom-card img {
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
+          }
+          body:not(.disable-card-zoom) .zoom-card:hover img {
+            transform: scale(1.07) !important;
+          }
+
+          .v45-top-right-close { position: absolute !important; top: 10px !important; right: 10px !important; z-index: 95 !important; width: 34px !important; height: 34px !important; border-radius: 9999px !important; background: rgba(20,28,17,0.92) !important; color: #FFFDF9 !important; border: 1.5px solid rgba(242,184,128,0.7) !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; font-size: 16px !important; font-weight: 900 !important; cursor: pointer !important; }
+          .v45-top-right-close:hover { background: #D48238 !important; color: #fff !important; }
         `;
         document.head.appendChild(st);
       }
 
       const mainEl = document.querySelector("main");
-      if (mainEl && !document.getElementById("v44-main-topbar")) {
+      if (mainEl && !document.getElementById("v45-main-topbar")) {
         const hr = new Date().getHours();
         const isOpen = hr >= 12 && hr < 21;
         const statusHtml = isOpen
@@ -534,19 +571,17 @@ def upgrade_template_html_in_place(tpl_html):
           : '<span class="px-2.5 py-1 rounded-full bg-rose-700 text-white text-[11px] font-extrabold whitespace-nowrap">🔴 Закрыто до 12:00</span>';
 
         const topBar = document.createElement("section");
-        topBar.id = "v44-main-topbar";
+        topBar.id = "v45-main-topbar";
         topBar.className = "bg-[#FFFDF9] rounded-3xl p-3 sm:p-4 border border-[#556432]/25 shadow-sm space-y-2.5 mb-3";
         topBar.innerHTML =
           '<div class="flex flex-wrap items-center justify-between gap-3">' +
             '<div class="flex flex-wrap items-center gap-2.5">' +
               '<div class="w-10 h-10 rounded-full bg-[#2E3D28] border border-[#F2B880] flex items-center justify-center text-white font-serif font-bold text-sm shadow-xs">🕊️</div>' +
-              '<div>' +
-                '<div class="flex flex-wrap items-center gap-2">' +
-                  '<span class="font-serif text-xl sm:text-2xl font-bold text-[#1F2B1A] leading-none">Мир Мир</span>' +
-                  '<a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="text-xs font-bold text-[#556432] hover:underline">📍 Ильинская, 45</a>' +
-                  statusHtml +
-                  '<span class="px-2.5 py-1 rounded-full bg-[#D48238] text-white text-[11px] font-extrabold whitespace-nowrap">🔥 Бизнес-Ланч −30% (12:00–16:00)</span>' +
-                '</div>' +
+              '<div class="flex flex-wrap items-center gap-2">' +
+                '<span class="font-serif text-xl sm:text-2xl font-bold text-[#1F2B1A] leading-none">Мир Мир</span>' +
+                '<a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="text-xs font-bold text-[#556432] hover:underline">📍 Ильинская, 45</a>' +
+                statusHtml +
+                '<span class="px-2.5 py-1 rounded-full bg-[#D48238] text-white text-[11px] font-extrabold whitespace-nowrap">🔥 Бизнес-Ланч −30% (12:00–16:00)</span>' +
               '</div>' +
             '</div>' +
             '<div class="flex flex-wrap items-center gap-2">' +
@@ -557,27 +592,25 @@ def upgrade_template_html_in_place(tpl_html):
                 '<span>🛍️</span><span>Магазин кафе</span>' +
               '</button>' +
               '<button type="button" onclick="toggleCart()" class="py-2 px-3.5 rounded-xl bg-[#2E3D28] hover:bg-black text-[#F2B880] font-extrabold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer shadow-xs transition">' +
-                '<span>🛒</span><span>Корзина</span><span id="v44-main-cart-count" class="px-1.5 py-0.5 rounded-full bg-[#D48238] text-white text-[11px]">0</span>' +
+                '<span>🛒</span><span>Корзина</span><span id="v45-main-cart-count" class="px-1.5 py-0.5 rounded-full bg-[#D48238] text-white text-[11px]">0</span>' +
               '</button>' +
             '</div>' +
           '</div>' +
-          '<div id="v44-quick-cats-strip" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2 border-t border-stone-200/70"></div>';
+          '<div id="v45-quick-cats-strip" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2 border-t border-stone-200/70"></div>';
 
         mainEl.insertBefore(topBar, mainEl.firstChild);
       }
 
-      // Плавающая кнопка корзины при добавлении товаров
-      if (!document.getElementById("v44-floating-cart")) {
+      if (!document.getElementById("v45-floating-cart")) {
         const fl = document.createElement("button");
-        fl.id = "v44-floating-cart";
+        fl.id = "v45-floating-cart";
         fl.type = "button";
         fl.setAttribute("onclick", "toggleCart()");
         fl.className = "hidden fixed bottom-4 left-4 z-40 py-2.5 px-4 rounded-full bg-[#2E3D28] text-[#F2B880] border-2 border-[#F2B880]/60 font-extrabold text-xs items-center gap-2 shadow-2xl cursor-pointer";
-        fl.innerHTML = '<span>🛒 Корзина</span><span id="v44-float-cart-count" class="px-2 py-0.5 rounded-full bg-[#D48238] text-white">0</span>';
+        fl.innerHTML = '<span>🛒 Корзина</span><span id="v45-float-cart-count" class="px-2 py-0.5 rounded-full bg-[#D48238] text-white">0</span>';
         document.body.appendChild(fl);
       }
 
-      // Скрываем строку дублирующихся бейджей в зелёном Hero-блоке и оставляем 3 карточки внизу
       const heroLeft = document.querySelector("main section .lg\\:col-span-7");
       if (heroLeft) {
         const heroBadge = document.getElementById("hero-work-badge");
@@ -595,6 +628,7 @@ def upgrade_template_html_in_place(tpl_html):
           if (g.textContent.includes("Чай 300") && g.textContent.includes("Десерты без сахара")) {
             g.className = "grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1";
             Array.from(g.children).forEach(cardChild => {
+              cardChild.classList.add("zoom-card");
               const oc = cardChild.getAttribute("onclick") || "";
               const txt = cardChild.textContent || "";
               if (oc.includes("openBowlBuilder") || txt.includes("Собрать свой Боул")) {
@@ -605,13 +639,13 @@ def upgrade_template_html_in_place(tpl_html):
         });
       }
 
-      // Чистая вёрстка блока адреса и карты
+      // Чистая вёрстка блока адреса и карты с отступом снизу
       document.querySelectorAll("main section").forEach(sec => {
-        if (sec.id === "v44-main-topbar") return;
-        if (sec.textContent.includes("Ильинская, 45") && !sec.querySelector("#interior-slide-img") && !sec.dataset.v44Rebuilt) {
-          sec.dataset.v44Rebuilt = "1";
+        if (sec.id === "v45-main-topbar") return;
+        if (sec.textContent.includes("Ильинская, 45") && !sec.querySelector("#interior-slide-img") && !sec.dataset.v45Rebuilt) {
+          sec.dataset.v45Rebuilt = "1";
           const taxiUrl = "https://3.redirect.appmetrica.yandex.com/route?end-lat=56.322355&end-lon=43.990383&appmetrica_tracking_id=1178268795219780156";
-          sec.className = "bg-[#23311E] text-[#FFFDF9] rounded-[32px] p-5 sm:p-7 border-2 border-[#F2B880]/35 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch";
+          sec.className = "bg-[#23311E] text-[#FFFDF9] rounded-[32px] p-5 sm:p-7 border-2 border-[#F2B880]/35 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mt-4 mb-4";
           sec.innerHTML =
             '<div class="lg:col-span-5 flex flex-col justify-between space-y-4">' +
               '<div class="space-y-3">' +
@@ -667,11 +701,11 @@ def upgrade_template_html_in_place(tpl_html):
         if (!card) return;
         card.style.position = "relative";
         card.querySelectorAll("button").forEach(b => {
-          if (b.textContent.trim() === "✕" && !b.classList.contains("v44-top-right-close")) b.style.display = "none";
+          if (b.textContent.trim() === "✕" && !b.classList.contains("v45-top-right-close")) b.style.display = "none";
         });
-        if (!card.querySelector(".v44-top-right-close")) {
+        if (!card.querySelector(".v45-top-right-close")) {
           const btn = document.createElement("button");
-          btn.className = "v44-top-right-close";
+          btn.className = "v45-top-right-close";
           btn.setAttribute("onclick", cfg.closeFn);
           btn.innerHTML = "✕";
           card.appendChild(btn);
@@ -679,24 +713,38 @@ def upgrade_template_html_in_place(tpl_html):
       });
     }
 
-    // 7. НОВОСТИ ВК: плавный непрерывный автоскролл влево + управление стрелками ◀ ▶
+    // 7. НОВОСТИ ВК: плавный автоскролл влево + рабочие кнопки ◀ ▶ (с паузой автоскролла) + кнопка «⏮️ К последним постам»!
     const NEWS_FALLBACK_IMGS = ["img/vk_5122_0.jpg", "img/vk_5068_0.jpg", "img/vk_5128_1.jpg", "img/vk_5134_0.jpg"];
     window.newsAutoScrollPaused = false;
+    window.newsManualPauseUntil = 0;
     window.newsAutoScrollStarted = false;
 
-    window.changeNewsPage = function(delta) {
+    window.scrollNewsManual = function(delta) {
       const grid = document.getElementById("posts-grid");
       if (!grid) return;
-      grid.scrollBy({ left: delta * 360, behavior: "smooth" });
+      // Ставим автоскролл на паузу на 3 секунды, чтобы он не сбивал плавную анимацию scrollBy!
+      window.newsManualPauseUntil = Date.now() + 3000;
+      grid.scrollBy({ left: delta * 365, behavior: "smooth" });
     };
+
+    window.scrollToLatestNews = function() {
+      const grid = document.getElementById("posts-grid");
+      if (!grid) return;
+      window.newsManualPauseUntil = Date.now() + 3500;
+      grid.scrollTo({ left: 0, behavior: "smooth" });
+    };
+
+    // Связываем все возможные имена функций в шаблоне со скроллом новостей
+    window.stepNewsPage = window.scrollNewsManual;
+    window.changeNewsPage = window.scrollNewsManual;
 
     function startNewsSmoothTicker() {
       if (window.newsAutoScrollStarted) return;
       window.newsAutoScrollStarted = true;
       function stepTicker() {
         const grid = document.getElementById("posts-grid");
-        if (grid && !window.newsAutoScrollPaused) {
-          grid.scrollLeft += 0.45;
+        if (grid && !window.newsAutoScrollPaused && Date.now() > window.newsManualPauseUntil) {
+          grid.scrollLeft += 0.5;
           if (grid.scrollLeft >= grid.scrollWidth / 2) {
             grid.scrollLeft = 0;
           }
@@ -716,12 +764,32 @@ def upgrade_template_html_in_place(tpl_html):
       });
       if (!posts.length) return;
 
-      // Переводим контейнер новостей в горизонтальную ленту для плавного скролла влево
-      grid.className = "flex gap-4 overflow-x-auto no-scrollbar pb-2 select-none";
+      // Встраиваем в заголовок секции новостей кнопку «⏮️ К последним постам» и рабочие стрелки «◀» «▶»
+      const newsSec = grid.closest("section");
+      if (newsSec) {
+        const hdrRow = newsSec.querySelector(".flex.items-center.justify-between") || newsSec.firstElementChild;
+        if (hdrRow) {
+          let ctrlBox = document.getElementById("v45-news-controls");
+          if (!ctrlBox) {
+            const oldBtns = hdrRow.querySelectorAll("button");
+            oldBtns.forEach(b => { b.style.display = "none"; });
+            ctrlBox = document.createElement("div");
+            ctrlBox.id = "v45-news-controls";
+            ctrlBox.className = "flex items-center gap-2";
+            ctrlBox.innerHTML =
+              '<button type="button" onclick="scrollToLatestNews()" class="px-3 py-1.5 rounded-full bg-[#2E3D28] hover:bg-[#D48238] text-[#F2B880] hover:text-white text-xs font-extrabold cursor-pointer transition shadow-xs flex items-center gap-1"><span>⏮️</span><span>К последним постам</span></button>' +
+              '<button type="button" onclick="scrollNewsManual(-1)" title="Листать влево" class="w-9 h-9 rounded-full bg-[#2E3D28] hover:bg-[#D48238] text-white text-xs font-extrabold flex items-center justify-center cursor-pointer transition shadow-xs">◀</button>' +
+              '<button type="button" onclick="scrollNewsManual(1)" title="Листать вправо" class="w-9 h-9 rounded-full bg-[#D48238] hover:bg-[#2E3D28] text-white text-xs font-extrabold flex items-center justify-center cursor-pointer transition shadow-xs">▶</button>';
+            hdrRow.appendChild(ctrlBox);
+          }
+        }
+      }
+
+      grid.className = "flex gap-4 overflow-x-auto no-scrollbar py-2 px-1 select-none";
       grid.onmouseenter = () => { window.newsAutoScrollPaused = true; };
       grid.onmouseleave = () => { window.newsAutoScrollPaused = false; };
       grid.ontouchstart = () => { window.newsAutoScrollPaused = true; };
-      grid.ontouchend = () => { setTimeout(() => { window.newsAutoScrollPaused = false; }, 1500); };
+      grid.ontouchend = () => { setTimeout(() => { window.newsAutoScrollPaused = false; }, 1800); };
 
       const loopPosts = [...posts, ...posts];
       grid.innerHTML = loopPosts.map((p, idxP) => {
@@ -730,7 +798,7 @@ def upgrade_template_html_in_place(tpl_html):
         const fbImg = NEWS_FALLBACK_IMGS[idxP % NEWS_FALLBACK_IMGS.length];
         const photoSrc = p.photo || fbImg;
 
-        return '<article class="w-[300px] sm:w-[345px] flex-shrink-0 bg-[#FFFDF9] rounded-3xl p-4 border border-[#556432]/25 shadow-sm flex flex-col justify-between gap-3 transition">' +
+        return '<article class="zoom-card w-[300px] sm:w-[345px] flex-shrink-0 bg-[#FFFDF9] rounded-3xl p-4 border border-[#556432]/25 shadow-sm flex flex-col justify-between gap-3">' +
           '<div class="space-y-2.5">' +
             '<div class="flex items-center justify-between text-[11px] font-extrabold text-[#D48238]">' +
               '<span>📅 ' + esc(p.date || "Новость кафе") + '</span><span>❤️ ' + esc(p.likes || 25) + '</span>' +
@@ -795,12 +863,12 @@ def upgrade_template_html_in_place(tpl_html):
 
     window.getSiteToggles = function() {
       const def = { leaves: true, wings: true, zoom: true, bookingMode: "messenger", mapMode: "clean_card", photoMode: "hybrid" };
-      try { return Object.assign({}, def, JSON.parse(localStorage.getItem("mirmir_site_toggles_v44") || "{}")); } catch(e) { return def; }
+      try { return Object.assign({}, def, JSON.parse(localStorage.getItem("mirmir_site_toggles_v45") || "{}")); } catch(e) { return def; }
     };
-    window.setAdminSettingV44 = function(k, v) {
+    window.setAdminSettingV45 = function(k, v) {
       const tg = window.getSiteToggles();
       tg[k] = v;
-      try { localStorage.setItem("mirmir_site_toggles_v44", JSON.stringify(tg)); } catch(e) {}
+      try { localStorage.setItem("mirmir_site_toggles_v45", JSON.stringify(tg)); } catch(e) {}
       window.renderDishes();
       window.renderUnifiedSystemHub();
     };
@@ -813,18 +881,18 @@ def upgrade_template_html_in_place(tpl_html):
     function getMasterTasksList() {
       const srv = (DATA.tz_synced && Array.isArray(DATA.tz_synced.tasks)) ? DATA.tz_synced.tasks : [];
       try {
-        const loc = JSON.parse(localStorage.getItem("mirmir_tasks_v44") || "null");
+        const loc = JSON.parse(localStorage.getItem("mirmir_tasks_v45") || "null");
         if (Array.isArray(loc) && loc.length >= srv.length) return loc;
       } catch(e) {}
       return srv;
     }
     function saveMasterTasksList(arr) {
       try {
-        localStorage.setItem("mirmir_tasks_v44", JSON.stringify(arr));
+        localStorage.setItem("mirmir_tasks_v45", JSON.stringify(arr));
         fetch(NTFY_SYNC_URL, { method: "POST", body: JSON.stringify({ type: "tz_tasks_sync", tasks: arr, ts: Date.now() }) }).catch(() => {});
       } catch(e) {}
     }
-    window.toggleTaskDoneV44 = function(idx) {
+    window.toggleTaskDoneV45 = function(idx) {
       const list = getMasterTasksList();
       if (!list[idx]) return;
       list[idx].done = !list[idx].done;
@@ -832,14 +900,14 @@ def upgrade_template_html_in_place(tpl_html):
       saveMasterTasksList(list);
       window.renderUnifiedSystemHub();
     };
-    window.updateTaskCommentV44 = function(idx, val) {
+    window.updateTaskCommentV45 = function(idx, val) {
       const list = getMasterTasksList();
       if (!list[idx]) return;
       list[idx].comment = val;
       list[idx].date = formatNowDateTime();
       saveMasterTasksList(list);
     };
-    window.addNewTaskV44 = function() {
+    window.addNewTaskV45 = function() {
       const t = (document.getElementById("new-tz-task-inp")?.value || "").trim();
       if (!t) return;
       const c = (document.getElementById("new-tz-comment-inp")?.value || "Проверить").trim();
@@ -864,6 +932,7 @@ def upgrade_template_html_in_place(tpl_html):
       DATA.menu.unshift(obj);
       window.renderUnifiedSystemHub();
       window.renderDishes();
+      window.renderCategoryShowcaseAndRail();
       alert("✅ Блюдо «" + name + "» добавлено в меню.");
     };
 
@@ -946,7 +1015,7 @@ def upgrade_template_html_in_place(tpl_html):
       window.renderUnifiedSystemHub();
     };
 
-    window.selectReadyPhotoV44 = function(dishIdx, photoPath) {
+    window.selectReadyPhotoV45 = function(dishIdx, photoPath) {
       const d = DATA.menu[dishIdx];
       if (!d) return;
       d.photo = photoPath;
@@ -966,7 +1035,7 @@ def upgrade_template_html_in_place(tpl_html):
 
     window.approveDishCandidate = function(idx) {
       const cand = window.pendingDishCandidates[idx];
-      if (cand && cand.url) window.selectReadyPhotoV44(idx, cand.url);
+      if (cand && cand.url) window.selectReadyPhotoV45(idx, cand.url);
     };
 
     window.openReadyGalleryPopup = function(dishIdx) {
@@ -979,7 +1048,7 @@ def upgrade_template_html_in_place(tpl_html):
         card.innerHTML =
           '<div class="bg-[#2E3D28] text-[#FFFDF9] px-5 py-3 flex items-center justify-between relative">' +
             '<h3 class="font-serif text-lg font-bold">📸 Выберите реальное фото из ВК для: <span class="text-[#F2B880]">' + esc(d.name) + '</span> (' + pool.length + ' шт.)</h3>' +
-            '<button type="button" onclick="closeReadyGalleryPopup()" class="v44-top-right-close">✕</button>' +
+            '<button type="button" onclick="closeReadyGalleryPopup()" class="v45-top-right-close">✕</button>' +
           '</div>' +
           '<div class="p-4 overflow-y-auto max-h-[75vh] bg-[#FAF5EC] grid grid-cols-2 sm:grid-cols-4 gap-3">' +
             pool.map(ph =>
@@ -989,7 +1058,7 @@ def upgrade_template_html_in_place(tpl_html):
                   '<button type="button" title="Увеличить" onclick="openSuperZoom(\'' + esc(ph) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-1.5 right-1.5 w-7 h-7 rounded-full bg-black/75 text-white text-xs flex items-center justify-center cursor-pointer">🔍</button>' +
                 '</div>' +
                 '<div class="text-[10px] font-mono text-stone-500 truncate">' + esc(ph) + '</div>' +
-                '<button type="button" onclick="selectReadyPhotoV44(' + dishIdx + ', \'' + esc(ph) + '\')" class="w-full py-1.5 rounded-xl bg-emerald-700 hover:bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">✅ Утвердить это фото</button>' +
+                '<button type="button" onclick="selectReadyPhotoV45(' + dishIdx + ', \'' + esc(ph) + '\')" class="w-full py-1.5 rounded-xl bg-emerald-700 hover:bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">✅ Утвердить это фото</button>' +
               '</div>'
             ).join("") +
           '</div>';
@@ -1001,7 +1070,7 @@ def upgrade_template_html_in_place(tpl_html):
     window.renderUnifiedSystemHub = function() {
       syncMenuWithCustomAndDeleted();
       applyManualOverridesToMenuData();
-      applyV44CleanLayout();
+      applyV45CleanLayout();
 
       const hubModal = document.getElementById("unified-system-hub");
       const hubCard = hubModal ? hubModal.firstElementChild : null;
@@ -1141,7 +1210,7 @@ def upgrade_template_html_in_place(tpl_html):
             '<div class="bg-white rounded-2xl p-3.5 border border-stone-200 shadow-xs grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">' +
               '<input id="new-tz-task-inp" type="text" placeholder="➕ Новая задача или правка..." class="sm:col-span-5 px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold outline-none focus:border-[#D48238]">' +
               '<input id="new-tz-comment-inp" type="text" placeholder="💬 Комментарий / примечание..." class="sm:col-span-5 px-3 py-2 rounded-xl border border-stone-300 text-xs outline-none focus:border-[#D48238]">' +
-              '<button type="button" onclick="addNewTaskV44()" class="sm:col-span-2 py-2 px-3 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs cursor-pointer shadow-xs">+ Добавить</button>' +
+              '<button type="button" onclick="addNewTaskV45()" class="sm:col-span-2 py-2 px-3 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs cursor-pointer shadow-xs">+ Добавить</button>' +
             '</div>' +
             '<div class="bg-white rounded-2xl border border-stone-300 overflow-x-auto shadow-xs">' +
               '<table class="w-full text-left border-collapse min-w-[820px]">' +
@@ -1155,9 +1224,9 @@ def upgrade_template_html_in_place(tpl_html):
                 '</thead>' +
                 '<tbody class="divide-y divide-stone-200 text-xs">' +
                   tasks.map((t, i) => {
-                    const parts = String(t.date || "12.11.2026 09:30").split(" ");
+                    const parts = String(t.date || "12.11.2026 10:15").split(" ");
                     const dPart = parts[0] || "12.11.2026";
-                    const tPart = parts[1] || "09:30";
+                    const tPart = parts[1] || "10:15";
                     return '<tr class="hover:bg-amber-50/40 transition ' + (t.done ? '' : 'bg-rose-50/50') + '">' +
                       '<td class="p-3 whitespace-nowrap align-middle">' +
                         '<div class="font-mono text-[11px] font-extrabold text-[#2E3D28]">📅 ' + esc(dPart) + '</div>' +
@@ -1165,12 +1234,12 @@ def upgrade_template_html_in_place(tpl_html):
                       '</td>' +
                       '<td class="p-3 font-bold text-[#1F2B1A] leading-snug align-middle">' + esc(t.title) + '</td>' +
                       '<td class="p-3 text-center align-middle">' +
-                        '<button type="button" onclick="toggleTaskDoneV44(' + i + ')" class="px-3 py-1.5 rounded-xl font-extrabold text-[11px] cursor-pointer w-28 shadow-xs transition ' + (t.done ? 'bg-emerald-700 hover:bg-emerald-800 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white') + '">' +
+                        '<button type="button" onclick="toggleTaskDoneV45(' + i + ')" class="px-3 py-1.5 rounded-xl font-extrabold text-[11px] cursor-pointer w-28 shadow-xs transition ' + (t.done ? 'bg-emerald-700 hover:bg-emerald-800 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white') + '">' +
                           (t.done ? '✅ Сделано' : '❌ Не сделано') +
                         '</button>' +
                       '</td>' +
                       '<td class="p-3 align-middle">' +
-                        '<input type="text" value="' + esc(t.comment || "") + '" oninput="updateTaskCommentV44(' + i + ', this.value)" placeholder="Комментарий..." class="w-full px-3 py-2 rounded-xl border ' + (t.done ? 'border-stone-200 bg-stone-50/80 text-stone-800' : 'border-rose-300 bg-white text-rose-900 font-bold') + ' text-xs outline-none focus:border-[#D48238] focus:bg-white">' +
+                        '<input type="text" value="' + esc(t.comment || "") + '" oninput="updateTaskCommentV45(' + i + ', this.value)" placeholder="Комментарий..." class="w-full px-3 py-2 rounded-xl border ' + (t.done ? 'border-stone-200 bg-stone-50/80 text-stone-800' : 'border-rose-300 bg-white text-rose-900 font-bold') + ' text-xs outline-none focus:border-[#D48238] focus:bg-white">' +
                       '</td>' +
                     '</tr>';
                   }).join("") +
@@ -1197,8 +1266,8 @@ def upgrade_template_html_in_place(tpl_html):
         '<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">' +
           '<div class="bg-white rounded-2xl p-4 border border-stone-200 space-y-3">' +
             '<h4 class="font-serif text-lg font-bold text-[#2E3D28]">🛠️ Настройки режимов сайта</h4>' +
-            '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">🪑 1. Режим кнопки «Бронь столика»:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV44(\'bookingMode\', \'messenger\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'messenger' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">✈️ Telegram / ВК (Без 152-ФЗ)</button><button type="button" onclick="setAdminSettingV44(\'bookingMode\', \'form152\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'form152' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">📝 Анкета на сайте (152-ФЗ)</button></div></div>' +
-            '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">📸 2. Режим показа фото в Меню:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV44(\'photoMode\', \'hybrid\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'hybrid' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🎨 Гибрид (Все фото)</button><button type="button" onclick="setAdminSettingV44(\'photoMode\', \'strict_real\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'strict_real' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🕊️ Только 100% фото из ВК</button></div></div>' +
+            '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">🪑 1. Режим кнопки «Бронь столика»:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV45(\'bookingMode\', \'messenger\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'messenger' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">✈️ Telegram / ВК (Без 152-ФЗ)</button><button type="button" onclick="setAdminSettingV45(\'bookingMode\', \'form152\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'form152' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">📝 Анкета на сайте (152-ФЗ)</button></div></div>' +
+            '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">📸 2. Режим показа фото в Меню:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV45(\'photoMode\', \'hybrid\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'hybrid' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🎨 Гибрид (Все фото)</button><button type="button" onclick="setAdminSettingV45(\'photoMode\', \'strict_real\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'strict_real' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🕊️ Только 100% фото из ВК</button></div></div>' +
           '</div>' +
           '<div class="bg-[#2E3D28] text-[#FFFDF9] rounded-2xl p-4 space-y-2.5 flex flex-col justify-between">' +
             '<div><span class="text-[10px] font-extrabold uppercase text-[#F2B880]">ДНК ПЛАТФОРМЫ</span><h4 class="font-serif text-xl font-bold mt-0.5">🧬 Полный Текстовый Мастер-Промпт</h4><p class="text-xs text-stone-300 mt-1">Техническое задание на русском языке с сохранением правок.</p></div>' +
@@ -1231,7 +1300,7 @@ def upgrade_template_html_in_place(tpl_html):
               ? '<div class="grid grid-cols-2 gap-1.5 pt-2">' + d.sizes.map((sz, sIdx) => '<button type="button" onclick="addToCart(' + realIdx + ',' + sIdx + ')" class="py-2 px-2 rounded-xl bg-[#556432] hover:bg-[#D48238] text-white font-extrabold text-[11px] cursor-pointer">' + esc(sz.label) + ' • ' + sz.price + ' ₽ +</button>').join("") + '</div>'
               : '<div class="flex items-center justify-between pt-2 border-t border-stone-100"><div><span class="text-[11px] text-stone-400 font-bold block">' + esc(d.weight || "") + '</span><strong class="text-lg font-extrabold text-[#2E3D28]">' + d.price + ' ₽</strong></div><button type="button" onclick="addToCart(' + realIdx + ',0)" class="px-4 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">+ В корзину</button></div>');
 
-        return '<div class="zoom-card bg-white rounded-3xl p-3.5 border border-stone-200 shadow-sm flex flex-col justify-between gap-2 transition ' + (isOff ? 'opacity-40 grayscale-[35%]' : '') + '">' +
+        return '<div class="zoom-card bg-white rounded-3xl p-3.5 border border-stone-200 shadow-sm flex flex-col justify-between gap-2 ' + (isOff ? 'opacity-40 grayscale-[35%]' : '') + '">' +
           '<div>' +
             '<div class="relative h-44 rounded-2xl overflow-hidden mb-2.5 bg-stone-100">' +
               '<img src="' + esc(d.photo) + '" onclick="openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
@@ -1249,7 +1318,7 @@ def upgrade_template_html_in_place(tpl_html):
 
     window.addEventListener("DOMContentLoaded", () => {
       syncMenuWithCustomAndDeleted();
-      applyV44CleanLayout();
+      applyV45CleanLayout();
       document.querySelectorAll("[data-dove-holder]").forEach(el => { el.innerHTML = SIGN_DOVE_SVG; });
       applyManualOverridesToMenuData();
       rollRandomGastroPulse();
@@ -1266,19 +1335,19 @@ def upgrade_template_html_in_place(tpl_html):
 </body>
 </html>
 """
-    return tpl_html + v44_js
+    return tpl_html + v45_js
 
 
 def build_clean_master_prompt_text():
     if os.path.exists("MASTER_PROMPT_MIRMIR.txt"):
         try:
-            txt = clean_slang_from_text(open("MASTER_PROMPT_MIRMIR.txt", "r", encoding="utf-8").read().strip())
+            txt = sanitize_text(open("MASTER_PROMPT_MIRMIR.txt", "r", encoding="utf-8").read().strip())
             open("MASTER_PROMPT_MIRMIR.txt", "w", encoding="utf-8").write(txt)
             if len(txt) > 500:
                 return txt
         except Exception:
             pass
-    return "ПОЛНОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) ВЕГАН-КАФЕ «МИР МИР» (v4.4)"
+    return "ПОЛНОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) ВЕГАН-КАФЕ «МИР МИР» (v4.5)"
 
 
 def sync_files_to_root_repo():
@@ -1305,8 +1374,7 @@ def sync_files_to_root_repo():
 
 
 def main():
-    auto_migrate_assets()
-    clean_non_vegan_and_junk_images()
+    prepare_and_clean_assets()
     import importlib
     import menu_data
     importlib.reload(menu_data)
@@ -1334,7 +1402,7 @@ def main():
 
     now_stamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     data_payload = {
-        "version": f"Релиз v4.4 • Сборка #{build_num} ({now_stamp})",
+        "version": f"Релиз v4.5 • Сборка #{build_num} ({now_stamp})",
         "menu": clean_menu,
         "shop": menu_data.CAFE_SHOP_ITEMS,
         "posts": fetch_vk_wall_posts(),
@@ -1375,7 +1443,7 @@ def push_to_github():
     subprocess.run(["git", "checkout", "-B", "main"], cwd=target_git_dir, check=False)
     subprocess.run(["git", "add", "-f", "index.html", "menu_data.py", "template.html", "app.py", "tz_mirmir.json", "build_history.json", "MASTER_PROMPT_MIRMIR.txt", "cache_posts.json"], cwd=target_git_dir, check=False)
     subprocess.run(["git", "add", "img/"], cwd=target_git_dir, check=False)
-    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v4.4 ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target_git_dir, check=False)
+    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v4.5 ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target_git_dir, check=False)
     subprocess.run(["git", "push", "-u", "origin", "main", "--force"], cwd=target_git_dir, check=False)
 
 
