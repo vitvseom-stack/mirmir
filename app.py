@@ -282,10 +282,10 @@ def upgrade_template_html_in_place(tpl_html):
       "Супы": "img/macro_tomyum_bowl.jpg",
       "Боулы и Омлеты": "img/vk_5128_1.jpg",
       "Салаты": "img/macro_caesar_romaine.jpg",
-      "Лапша": "img/vk_5118_0.jpg",
+      "Лапша": "img/vk_5094_0.jpg",
       "Бургеры и Из печи": "img/macro_vegan_burger.jpg",
       "Десерты без сахара": "img/vk_5069_0.jpg",
-      "Барное меню: Смузи и Кофе": "img/vk_5134_0.jpg",
+      "Барное меню: Смузи и Кофе": "img/macro_strawberry_banana.jpg",
       "Чайная карта": "img/vk_5122_0.jpg",
       "Дополнительно": "img/vk_5085_1.jpg"
     };
@@ -980,55 +980,167 @@ def upgrade_template_html_in_place(tpl_html):
       window.generateDishCandidateAI(idx);
     };
 
+// === РЕАЛЬНЫЙ ПОИСК (OPENVERSE / WIKIMEDIA) И ИИ-ГЕНЕРАЦИЯ (FLUX / TURBO) v4.6 ===
     window.generateDishCandidateAI = async function(idx) {
       const d = DATA.menu[idx];
       if (!d) return;
       const inp = document.getElementById("hub-ai-prm-" + idx);
       if (inp && inp.value.trim()) window.customPromptsPerDish[idx] = inp.value.trim();
-      const raw = window.customPromptsPerDish[idx] || d.ai_prompt || d.name;
+      let raw = window.customPromptsPerDish[idx] || d.ai_prompt || d.name;
       window.dishVariantStep[idx] = (window.dishVariantStep[idx] || 0) + 1;
       const step = window.dishVariantStep[idx];
-      const engine = window.selectedAiEnginePerDish[idx] || "gastro_hd";
+      const engine = window.selectedAiEnginePerDish[idx] || "flux_ai";
 
+      // Если промпт на русском — переводим ключевые слова для зарубежных фото-баз и генератора
+      let engQuery = raw;
+      if (/[а-яё]/i.test(engQuery)) {
+        try {
+          pushDiagLog(idx, "🌐", "Перевод", "Переводим запрос на английский...");
+          const tr = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(engQuery.slice(0, 140)) + "&langpair=ru|en");
+          const tj = await tr.json();
+          if (tj.responseData && tj.responseData.translatedText) {
+            engQuery = tj.responseData.translatedText;
+          }
+        } catch (e) {
+          engQuery = d.ai_prompt || "vegan plant based dish";
+        }
+      }
+
+      // Чистый пул реальных фото ЕДЫ из ВК (без обложек, аватарок и афиш мероприятий!)
+      const bannedVkSubstrings = [
+        "vk_cover", "vk_avatar", "5140_", "5138_", "5136_", "5134_", "5133_",
+        "5129_", "5123_", "5068_", "5047_", "yorg_"
+      ];
+      const cleanVkFoodPool = ((DATA.vk_food_photos && DATA.vk_food_photos.length) ? DATA.vk_food_photos : ["img/vk_5128_1.jpg"])
+        .filter(p => !bannedVkSubstrings.some(b => p.includes(b)));
+
+      // 1 & 2. НАСТОЯЩАЯ ГЕНЕРАЦИЯ НЕЙРОСЕТЬЮ (Flux AI / Turbo SDXL)
+      if (engine === "flux_ai" || engine === "turbo_ai") {
+        const mdl = engine === "flux_ai" ? "flux" : "turbo";
+        const seed = Math.floor(Math.random() * 899999) + step * 137;
+        const cleanPrompt = "100% vegan plant-based restaurant dish: " +
+          engQuery.replace(/Vegan plant-based/gi, "").slice(0, 95) +
+          ", gourmet food photography, ceramic plate, natural light, no meat, no text";
+        const aiUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(cleanPrompt) +
+          "?model=" + mdl + "&width=640&height=640&seed=" + seed + "&nologo=true";
+
+        pushDiagLog(idx, "⏳", mdl.toUpperCase() + " AI", "Генерация нового кадра (seed #" + seed + ")...");
+        window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
+          url: aiUrl,
+          source: "🎨 " + mdl.toUpperCase() + " AI (Сгенерировано • Seed #" + seed + ")",
+          prompt: cleanPrompt,
+          diag: "✅ ИИ-кадр сгенерирован"
+        };
+        window.renderUnifiedSystemHub();
+        return;
+      }
+
+      // 4. РЕАЛЬНЫЙ ПОИСК В ФОТО-БАНКЕ OPENVERSE HD (по API)
+      if (engine === "openverse_hd") {
+        try {
+          const shortQ = engQuery
+            .replace(/Vegan plant-based|100% vegan|no meat|no seafood|close-up|in a ceramic bowl/gi, "")
+            .split(",")[0]
+            .trim()
+            .slice(0, 45);
+          pushDiagLog(idx, "📡", "Openverse API", "Поиск фото по запросу: «" + shortQ + "»...");
+          const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent("vegan " + shortQ + " food") + "&page_size=20");
+          if (r.ok) {
+            const j = await r.json();
+            const badWords = /meat|beef|pork|chicken|steak|bacon|sausage|fish|shrimp|egg|person|people/i;
+            const results = (j.results || []).filter(it => it.url && !badWords.test(it.title || ""));
+            if (results.length > 0) {
+              const pick = results[(step - 1) % results.length];
+              pushDiagLog(idx, "✅", "Openverse HD", "Найдено реальное фото #" + step + " из " + results.length);
+              window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
+                url: pick.url,
+                source: "📸 Openverse HD (" + (pick.title || shortQ).slice(0, 36) + ")",
+                prompt: shortQ,
+                diag: "✅ Найдено в Openverse"
+              };
+              window.renderUnifiedSystemHub();
+              return;
+            }
+          }
+          pushDiagLog(idx, "⚠️", "Openverse API", "Точных совпадений нет, пробуем Wikimedia...");
+        } catch (e) {
+          pushDiagLog(idx, "⚠️", "Openverse API", "Ошибка сети: " + e.message);
+        }
+      }
+
+      // 5. РЕАЛЬНЫЙ ПОИСК В ЭНЦИКЛОПЕДИИ WIKIMEDIA COMMONS (по API)
+      if (engine === "wikimedia" || engine === "openverse_hd") {
+        try {
+          const shortQ = engQuery
+            .replace(/Vegan plant-based|100% vegan|no meat|no seafood/gi, "")
+            .split(",")[0]
+            .trim()
+            .slice(0, 40);
+          pushDiagLog(idx, "📡", "Wikimedia API", "Поиск в Wikimedia: «" + shortQ + "»...");
+          const wikiUrl = "https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=" +
+            encodeURIComponent("filetype:bitmap " + shortQ + " food") +
+            "&gsrlimit=15&prop=imageinfo&iiprop=url&format=json&origin=*";
+          const r = await fetch(wikiUrl);
+          if (r.ok) {
+            const j = await r.json();
+            const pages = (j.query && j.query.pages) ? Object.values(j.query.pages) : [];
+            const imgs = pages
+              .map(p => p.imageinfo && p.imageinfo[0] && p.imageinfo[0].url)
+              .filter(u => u && /\.(jpg|jpeg|png|webp)$/i.test(u));
+            if (imgs.length > 0) {
+              const pickUrl = imgs[(step - 1) % imgs.length];
+              pushDiagLog(idx, "✅", "Wikimedia", "Найдено фото #" + step + " из " + imgs.length);
+              window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
+                url: pickUrl,
+                source: "🥗 Wikimedia Commons (#" + step + ")",
+                prompt: shortQ,
+                diag: "✅ Найдено в Wikimedia"
+              };
+              window.renderUnifiedSystemHub();
+              return;
+            }
+          }
+        } catch (e) {
+          pushDiagLog(idx, "⚠️", "Wikimedia API", "Ошибка сети: " + e.message);
+        }
+      }
+
+      // 6. ЧИСТЫЙ АРХИВ ФОТО БЛЮД ИЗ ВК (без афиш и аватарок)
+      if (engine === "vk_food_archive") {
+        const pickVk = cleanVkFoodPool[(step - 1) % cleanVkFoodPool.length];
+        pushDiagLog(idx, "✅", "Архив ВК (Еда)", "Выбран кадр блюда #" + step + ": " + pickVk);
+        window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
+          url: pickVk,
+          source: "🌿 Архив блюд ВК (#" + (((step - 1) % cleanVkFoodPool.length) + 1) + ")",
+          prompt: pickVk,
+          diag: "✅ Реальное фото блюда из ВК"
+        };
+        window.renderUnifiedSystemHub();
+        return;
+      }
+
+      // 3. GASTROBANK HD (только проверенные тематические макро-кадры по категории блюда)
       const nm = (d.name || "").toLowerCase();
       let bankKey = "salad";
       if (nm.includes("бургер") || nm.includes("сэндвич") || nm.includes("завертон") || nm.includes("неряха")) bankKey = "burger";
-      else if (nm.includes("суп") || nm.includes("том ям") || nm.includes("борщ")) bankKey = "soup";
+      else if (nm.includes("суп") || nm.includes("том ям") || nm.includes("ватапа") || nm.includes("мисо")) bankKey = "soup";
       else if (nm.includes("пицца") || nm.includes("лапша") || nm.includes("пад тай") || nm.includes("паста") || nm.includes("плов")) bankKey = "main";
-      else if (nm.includes("чай") || nm.includes("кофе") || nm.includes("лимонад") || nm.includes("смузи")) bankKey = "drink";
-      else if (nm.includes("сырники") || nm.includes("десерт") || nm.includes("шарлотка") || nm.includes("мороженое")) bankKey = "dessert";
+      else if (nm.includes("чай") || nm.includes("кофе") || nm.includes("лимонад") || nm.includes("смузи") || nm.includes("фреш")) bankKey = "drink";
+      else if (nm.includes("сырники") || nm.includes("десерт") || nm.includes("шарлотка") || nm.includes("мороженое") || nm.includes("батончик")) bankKey = "dessert";
 
-      const vkPool = (DATA.vk_food_photos && DATA.vk_food_photos.length) ? DATA.vk_food_photos : ["img/vk_5128_1.jpg"];
-      const bankPool = [...(CURATED_VEGAN_HD_BANK[bankKey] || CURATED_VEGAN_HD_BANK.main), ...vkPool];
-
-      if (engine === "flux_ai" || engine === "turbo_ai") {
-        const mdl = engine === "flux_ai" ? "flux" : "turbo";
-        const seed = Math.floor(Math.random() * 899999) + step * 97;
-        const aiUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent("100% vegan plant-based " + raw.slice(0, 80) + ", restaurant food photo, no meat, no text") + "?model=" + mdl + "&width=640&height=640&seed=" + seed + "&nologo=true";
-        pushDiagLog(idx, "📡", mdl.toUpperCase(), "Запрос генерации (seed #" + seed + ")...");
-        const cObj = { url: aiUrl, source: "🎨 " + mdl.toUpperCase() + " AI (Seed #" + seed + ")", prompt: raw, diag: "✅ Кандидат сгенерирован" };
-        window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = cObj;
-        window.renderUnifiedSystemHub();
-        return;
-      }
-
-      if (engine === "vk_food_archive") {
-        const pickVk = vkPool[(step - 1) % vkPool.length];
-        pushDiagLog(idx, "✅", "Архив ВК", "Кадр #" + step + ": " + pickVk);
-        const cObj = { url: pickVk, source: "🌿 Архив ВК кафе (#" + (((step - 1) % vkPool.length) + 1) + ")", prompt: pickVk, diag: "✅ Реальное фото из группы ВК" };
-        window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = cObj;
-        window.renderUnifiedSystemHub();
-        return;
-      }
-
-      const pickLocal = bankPool[(step - 1) % bankPool.length];
-      pushDiagLog(idx, "✅", engine.toUpperCase(), "Выбран веган-кадр #" + step + " (" + pickLocal + ")");
-      const cObj = { url: pickLocal, source: "🍔 Вариант #" + step + " (" + pickLocal + ")", prompt: raw, diag: "✅ Проверенный веган-кадр" };
-      window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = cObj;
+      const categoryPool = CURATED_VEGAN_HD_BANK[bankKey] || CURATED_VEGAN_HD_BANK.main;
+      const pickLocal = categoryPool[(step - 1) % categoryPool.length];
+      pushDiagLog(idx, "✅", "GastroBank HD", "Подобран тематический кадр #" + step + " (" + pickLocal + ")");
+      window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
+        url: pickLocal,
+        source: "🍔 GastroBank HD (" + pickLocal + ")",
+        prompt: raw,
+        diag: "✅ Тематический веган-кадр"
+      };
       window.renderUnifiedSystemHub();
     };
 
-    window.previewManualUrlCandidate = function(idx) {
+        window.previewManualUrlCandidate = function(idx) {
       const val = (document.getElementById("hub-url-inp-" + idx)?.value || "").trim();
       if (!val) { alert("Вставьте прямую ссылку или путь img/..."); return; }
       const cObj = { url: val, source: "🔗 Прямой URL", prompt: val, diag: "✅ Загружено по ссылке" };
@@ -1159,7 +1271,7 @@ def upgrade_template_html_in_place(tpl_html):
           '<div class="space-y-2.5">' + filtered.map(d => {
             const idx = DATA.menu.indexOf(d);
             const isOff = window.isDishDisabled(d.name);
-            const curEngine = window.selectedAiEnginePerDish[idx] || "gastro_hd";
+            const curEngine = window.selectedAiEnginePerDish[idx] || "flux_ai";
             const cand = window.pendingDishCandidates[idx];
             const promptVal = window.customPromptsPerDish[idx] !== undefined ? window.customPromptsPerDish[idx] : (d.ai_prompt || d.name);
             const diagLines = window.dishDiagLogs[idx] || [];
@@ -1360,7 +1472,7 @@ def upgrade_template_html_in_place(tpl_html):
     });
 
       </script>
-  <script src="live_constructor.js?v=4.5"></script>
+  <script src="live_constructor.js?v=4.6"></script>
 </body>
 </html>
 """
@@ -1433,7 +1545,7 @@ def main():
     vk_files = sorted([fn for fn in os.listdir("img") if fn.startswith("vk_") and "5047_" not in fn], reverse=True) if os.path.exists("img") else []
     other_clean = sorted([fn for fn in os.listdir("img") if not fn.startswith(("vk_", "ai_v", "ingr_", "ymap_org_")) and "5047_" not in fn]) if os.path.exists("img") else []
     ready_photos = ["img/" + fn for fn in (vk_files + other_clean) if fn.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
-    vk_food_photos = ["img/" + fn for fn in vk_files if "5068_" not in fn]
+    vk_food_photos = ["img/" + fn for fn in vk_files if not any(b in fn for b in ["5068_", "vk_cover", "vk_avatar", "5140_", "5138_", "5136_", "5134_", "5133_", "5129_", "5123_"])]
 
     now_stamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     data_payload = {
