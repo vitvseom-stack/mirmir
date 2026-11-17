@@ -124,7 +124,7 @@ MENU_DATABASE = [
         "name": "Суп выходного дня",
         "weight": "300 мл",
         "price": 350,
-        "photo": "img/macro_mushrooms_raw.jpg",
+        "photo": "img/macro_tomyum_bowl.jpg",
         "photo_type": "ai_ingr",
         "desc": "Особый суп шеф-повара по секретному рецепту выходного дня.",
         "ai_prompt": "Vegan plant-based rich aromatic mushroom and vegetable soup with fresh herbs in a stoneware bowl, 100% vegan, no meat, no seafood"
@@ -214,7 +214,7 @@ MENU_DATABASE = [
         "weight": "280 г",
         "price": 420,
         "photo": "img/vk_5055_0.jpg",
-        "photo_type: ": "real",
+        "photo_type": "real",
         "desc": "Пряная ближневосточная шакшука с тофу-скрэмблом в насыщенном томатном соусе с перцем.",
         "ai_prompt": "Vegan plant-based middle eastern Shakshuka with tofu scramble in rich spiced tomato and bell pepper sauce in cast iron skillet, 100% vegan, no meat, no seafood"
     },
@@ -314,7 +314,7 @@ MENU_DATABASE = [
         "category": "Лапша",
         "name": "Лапша Зии Дан",
         "sizes": [{"label": "Порция 270 г", "price": 430}, {"label": "Большая 400 г", "price": 590}],
-        "photo": "img/macro_rice_noodles.jpg",
+        "photo": "img/vk_5094_0.jpg",
         "photo_type": "ai_ingr",
         "desc": "Пряная азиатская лапша во wok-соусе с обжаренным тофу и овощами.",
         "ai_prompt": "Vegan plant-based asian stir-fried noodles with crispy tofu, vegetables, sesame seeds and teriyaki glaze, 100% vegan, no meat, no seafood"

@@ -45,6 +45,22 @@ MASTER_TASKS_DEFAULT = [
 ]
 
 
+
+def write_mirmir_file_log(event_text):
+    """Записывает события сборки в папку logs/logs_YYYYMMDD.txt и logs_latest.txt."""
+    try:
+        logs_d = os.path.join(BASE_DIR, 'logs')
+        os.makedirs(logs_d, exist_ok=True)
+        day_stamp = datetime.now().strftime('%Y%m%d')
+        now_s = datetime.now().strftime('%d.%m.%Y %H:%M:%S')
+        line = f'[{now_s}] {event_text}\n'
+        for fn in (f'logs_{day_stamp}.txt', 'logs_latest.txt'):
+            with open(os.path.join(logs_d, fn), 'a', encoding='utf-8') as lf:
+                lf.write(line)
+    except Exception:
+        pass
+
+
 def sanitize_text(txt):
     if not isinstance(txt, str):
         return txt
@@ -268,7 +284,7 @@ def upgrade_template_html_in_place(tpl_html):
       "Салаты": "img/macro_caesar_romaine.jpg",
       "Лапша": "img/vk_5118_0.jpg",
       "Бургеры и Из печи": "img/macro_vegan_burger.jpg",
-      "Десерты без сахара": "img/vk_5101_0.jpg",
+      "Десерты без сахара": "img/vk_5069_0.jpg",
       "Барное меню: Смузи и Кофе": "img/vk_5134_0.jpg",
       "Чайная карта": "img/vk_5122_0.jpg",
       "Дополнительно": "img/vk_5085_1.jpg"
@@ -367,7 +383,7 @@ def upgrade_template_html_in_place(tpl_html):
     window.renderInteriorSlideState = function() {
       if (_baseRenderInteriorSlide) _baseRenderInteriorSlide();
       const slides = window.getInteriorSlidesList();
-      const imgEl = document.getElementById("interior-slide-img");
+      const imgEl = document.getElementById("interior-slide-img") || document.getElementById("hero-interior-slide-img");
       if (imgEl && slides.length) {
         const curSrc = imgEl.getAttribute("src") || "";
         const found = slides.find(s => curSrc.includes(s.src)) || slides[0];
@@ -495,7 +511,7 @@ def upgrade_template_html_in_place(tpl_html):
     window.renderHeroRightColumn = function() {
       if (_baseRenderHeroRight) _baseRenderHeroRight();
       window.renderRightTwoPictureFields();
-      const stage3d = document.getElementById("carousel-3d-stage");
+      const stage3d = document.getElementById("carousel-3d-stage") || document.getElementById("stage-3d-box");
       if (stage3d) {
         stage3d.style.height = "290px";
         stage3d.querySelectorAll("div").forEach(cardEl => {
@@ -535,7 +551,7 @@ def upgrade_template_html_in_place(tpl_html):
         st.textContent = `
           html, body { min-height: auto !important; height: auto !important; }
           header { display: none !important; }
-          main.max-w-\\[1440px\\], footer .max-w-\\[1440px\\] { max-width: 1640px !important; width: 100% !important; min-height: 0 !important; }
+          main.max-w-\\[1440px\\], footer .max-w-\\[1440px\\] { max-width: 1320px !important; width: 100% !important; min-height: 0 !important; }
           main.max-w-\\[1440px\\] { padding-top: 14px !important; padding-bottom: 28px !important; }
           main section .lg\\:col-span-7, main section .lg\\:col-span-5 { display: flex !important; }
           #hero-work-badge,
@@ -675,7 +691,7 @@ def upgrade_template_html_in_place(tpl_html):
             '</div>' +
 
             '<div class="lg:col-span-7 min-h-[280px] sm:min-h-[320px] rounded-2xl overflow-hidden border border-[#F2B880]/40 bg-[#1B2616] relative">' +
-              '<iframe src="https://yandex.ru/map-widget/v1/?ll=43.990383%2C56.322355&z=17&pt=43.990383,56.322355,pm2rdm" class="w-full h-full min-h-[280px] sm:min-h-[320px] border-0" allowfullscreen loading="lazy" title="Карта проезда Мир Мир Ильинская 45"></iframe>' +
+              '<iframe src="https://yandex.ru/map-widget/v1/?ll=43.990383%2C56.322355&z=17&oid=7309581265&ol=biz" class="w-full h-full min-h-[280px] sm:min-h-[320px] border-0" allowfullscreen loading="lazy" title="Карта проезда Мир Мир Ильинская 45"></iframe>' +
             '</div>';
         }
       });
@@ -744,7 +760,7 @@ def upgrade_template_html_in_place(tpl_html):
       function stepTicker() {
         const grid = document.getElementById("posts-grid");
         if (grid && !window.newsAutoScrollPaused && Date.now() > window.newsManualPauseUntil) {
-          grid.scrollLeft += 0.5;
+          grid.scrollLeft += (typeof window.liveNewsSpeedVal === "number" ? window.liveNewsSpeedVal : 0.5);
           if (grid.scrollLeft >= grid.scrollWidth / 2) {
             grid.scrollLeft = 0;
           }
@@ -838,6 +854,11 @@ def upgrade_template_html_in_place(tpl_html):
     window.setHubSearch = function(qStr) {
       window.hubDishSearchQuery = hubDishSearchQuery = qStr;
       window.renderUnifiedSystemHub();
+    };
+    window.openUnifiedSystemHub = function(tabId) {
+      if (tabId) window.hubActiveTab = hubActiveTab = tabId;
+      const m = document.getElementById('unified-system-hub');
+      if (m) { m.classList.remove('hidden'); m.classList.add('flex'); window.renderUnifiedSystemHub(); }
     };
     window.closeUnifiedSystemHub = function() {
       const m = document.getElementById("unified-system-hub");
@@ -942,7 +963,7 @@ def upgrade_template_html_in_place(tpl_html):
       salad: ["img/macro_caesar_romaine.jpg", "img/vk_5085_1.jpg", "img/vk_5118_0.jpg", "img/vk_5128_1.jpg"],
       drink: ["img/macro_citrus_mint.jpg", "img/vk_5122_0.jpg", "img/vk_5134_0.jpg"],
       main: ["img/vk_5118_0.jpg", "img/vk_5128_1.jpg", "img/macro_vegan_burger.jpg", "img/macro_tomyum_bowl.jpg"],
-      dessert: ["img/vk_5101_0.jpg", "img/vk_5122_0.jpg", "img/vk_5128_1.jpg"]
+      dessert: ["img/vk_5069_0.jpg", "img/vk_5122_0.jpg", "img/vk_5128_1.jpg"]
     };
 
     function pushDiagLog(idx, icon, eng, msg) {
@@ -1093,10 +1114,15 @@ def upgrade_template_html_in_place(tpl_html):
         { id: "toggles", label: "⚡ Режимы, Бронь & Промпт" }
       ];
 
+      const lcOn = Boolean(window.isLcEnabledInHub && window.isLcEnabledInHub());
+      const lcQuickBtn = '<button type="button" onclick="if(window.setLcEnabledInHub)window.setLcEnabledInHub(' + (!lcOn) + ')" ' +
+        'class="px-3 py-1.5 rounded-xl text-xs font-extrabold cursor-pointer transition border ' +
+        (lcOn ? 'bg-emerald-600 text-white border-amber-300 shadow' : 'bg-black/30 text-amber-200 border-amber-400/40 hover:bg-black/50') + '">' +
+        (lcOn ? '🎛️ Конструктор: ВКЛ' : '🎛️ Конструктор: ВЫКЛ') + '</button>';
       tabsBox.innerHTML = tabDefs.map(t =>
         '<button type="button" onclick="setHubTab(\'' + t.id + '\')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold cursor-pointer transition ' +
         (curTab === t.id ? 'bg-[#D48238] text-white shadow' : 'bg-white/10 text-stone-200 hover:bg-white/20') + '">' + t.label + '</button>'
-      ).join("");
+      ).join("") + lcQuickBtn;
 
       if (curTab === "dishes72") {
         const cats = ["Все", ...Array.from(new Set(DATA.menu.map(d => d.category)))];
@@ -1267,6 +1293,7 @@ def upgrade_template_html_in_place(tpl_html):
           '<div class="bg-white rounded-2xl p-4 border border-stone-200 space-y-3">' +
             '<h4 class="font-serif text-lg font-bold text-[#2E3D28]">🛠️ Настройки режимов сайта</h4>' +
             '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">🪑 1. Режим кнопки «Бронь столика»:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV45(\'bookingMode\', \'messenger\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'messenger' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">✈️ Telegram / ВК (Без 152-ФЗ)</button><button type="button" onclick="setAdminSettingV45(\'bookingMode\', \'form152\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'form152' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">📝 Анкета на сайте (152-ФЗ)</button></div></div>' +
+            '<div class="p-3 rounded-xl bg-emerald-50/90 border-2 border-[#556432] space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">🎛️ Инженерный пульт «Живой конструктор окон и фото»:</div><div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5"><button type="button" onclick="if(window.setLcEnabledInHub)window.setLcEnabledInHub(true)" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + ((window.isLcEnabledInHub && window.isLcEnabledInHub()) ? 'bg-[#2E3D28] text-[#F2B880] shadow' : 'bg-white border') + '">👁️ Показать кнопку на сайте (ВКЛ)</button><button type="button" onclick="if(window.setLcEnabledInHub)window.setLcEnabledInHub(false)" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + ((!window.isLcEnabledInHub || !window.isLcEnabledInHub()) ? 'bg-rose-700 text-white shadow' : 'bg-white border') + '">🔒 Скрыть кнопку с экрана (ВЫКЛ)</button><button type="button" onclick="if(window.setLcEnabledInHub){window.setLcEnabledInHub(true);closeUnifiedSystemHub();window.toggleLcMode(true);}" class="p-2 rounded-lg bg-[#D48238] text-white text-[11px] font-extrabold cursor-pointer shadow">🚀 Запустить конструктор сейчас</button></div></div>' +
             '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">📸 2. Режим показа фото в Меню:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV45(\'photoMode\', \'hybrid\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'hybrid' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🎨 Гибрид (Все фото)</button><button type="button" onclick="setAdminSettingV45(\'photoMode\', \'strict_real\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'strict_real' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🕊️ Только 100% фото из ВК</button></div></div>' +
           '</div>' +
           '<div class="bg-[#2E3D28] text-[#FFFDF9] rounded-2xl p-4 space-y-2.5 flex flex-col justify-between">' +
@@ -1331,7 +1358,9 @@ def upgrade_template_html_in_place(tpl_html):
       window.renderCategoryShowcaseAndRail();
       setInterval(syncMainCartBadge, 400);
     });
-  </script>
+
+      </script>
+  <script src="live_constructor.js?v=4.5"></script>
 </body>
 </html>
 """
@@ -1353,7 +1382,7 @@ def build_clean_master_prompt_text():
 def sync_files_to_root_repo():
     if os.path.abspath(ROOT_REPO_DIR) == os.path.abspath(BASE_DIR):
         return
-    for fn in ["index.html", "menu_data.py", "template.html", "app.py", "tz_mirmir.json", "build_history.json", "MASTER_PROMPT_MIRMIR.txt", "run_counter.txt", "cache_posts.json"]:
+    for fn in ["index.html", "menu_data.py", "template.html", "app.py", "live_constructor.py", "live_constructor.js", "tz_mirmir.json", "build_history.json", "MASTER_PROMPT_MIRMIR.txt", "run_counter.txt", "cache_posts.json"]:
         s, d = os.path.join(BASE_DIR, fn), os.path.join(ROOT_REPO_DIR, fn)
         if os.path.exists(s):
             try:
@@ -1374,7 +1403,13 @@ def sync_files_to_root_repo():
 
 
 def main():
+    write_mirmir_file_log('=== ЗАПУСК СБОРКИ APP.PY (v4.5) ===')
     prepare_and_clean_assets()
+    try:
+        import live_constructor
+        live_constructor.build_constructor_js()
+    except Exception:
+        pass
     import importlib
     import menu_data
     importlib.reload(menu_data)
@@ -1420,6 +1455,7 @@ def main():
     final_html = tpl_html.replace("__MIRMIR_DATA_JSON__", json.dumps(data_payload, ensure_ascii=False).replace("</", "<\\/"))
     open("index.html", "w", encoding="utf-8").write(final_html)
     sync_files_to_root_repo()
+    write_mirmir_file_log(f'Сборка #{build_num} успешно скомпилирована в index.html.')
     if sys.stdin and sys.stdin.isatty() and os.environ.get("GITHUB_ACTIONS") != "true":
         try:
             os.startfile("index.html")
