@@ -305,7 +305,7 @@ def upgrade_template_html_in_place(tpl_html):
       try { localStorage.setItem("mirmir_disabled_dishes_v1", JSON.stringify(map)); } catch(e) {}
       window.renderUnifiedSystemHub();
       window.renderDishes();
-      window.renderHeroRightColumn();
+      window.renderHeroRightColumn(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
     };
 
     window.getDeletedDishesMap = function() {
@@ -323,8 +323,8 @@ def upgrade_template_html_in_place(tpl_html):
       DATA.menu.splice(idx, 1);
       window.renderUnifiedSystemHub();
       window.renderDishes();
-      window.renderHeroRightColumn();
-      window.renderCategoryShowcaseAndRail();
+      window.renderHeroRightColumn(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
+      window.renderCategoryShowcaseAndRail(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
     };
     window.restoreAllDeletedDishes = function() {
       if (!confirm("Восстановить все ранее удалённые блюда в меню?")) return;
@@ -387,7 +387,7 @@ def upgrade_template_html_in_place(tpl_html):
       if (imgEl && slides.length) {
         const curSrc = imgEl.getAttribute("src") || "";
         const found = slides.find(s => curSrc.includes(s.src)) || slides[0];
-        imgEl.style.objectFit = "cover";
+        // objectFit управляется режимом Ambient No-Crop
         imgEl.style.objectPosition = found.pos || "center center";
         if (imgEl.parentElement) {
           imgEl.parentElement.style.height = "300px";
@@ -690,9 +690,7 @@ def upgrade_template_html_in_place(tpl_html):
               '</div>' +
             '</div>' +
 
-            '<div class="lg:col-span-7 min-h-[280px] sm:min-h-[320px] rounded-2xl overflow-hidden border border-[#F2B880]/40 bg-[#1B2616] relative">' +
-              '<iframe src="https://yandex.ru/map-widget/v1/?ll=43.990383%2C56.322355&z=17&oid=7309581265&ol=biz" class="w-full h-full min-h-[280px] sm:min-h-[320px] border-0" allowfullscreen loading="lazy" title="Карта проезда Мир Мир Ильинская 45"></iframe>' +
-            '</div>';
+            <div class="lg:col-span-7 min-h-[280px] sm:min-h-[320px] rounded-2xl overflow-hidden border border-[#F2B880]/40 bg-[#1B2616] relative flex flex-col justify-between p-5" id="mirmir-clean-map-box"><div class="flex items-start justify-between gap-3"><div class="space-y-1"><span class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-800/80 text-[#F2B880] text-[10px] font-extrabold uppercase tracking-wider">🗺️ Схема проезда • Без сторонней рекламы</span><h3 class="font-serif text-2xl sm:text-3xl font-bold text-white">ул. Ильинская, 45 — Исторический центр</h3><p class="text-xs text-stone-300">5 минут пешком от ул. Большой Покровской и пл. Горького • GPS: <span class="font-mono text-[#F2B880]">56.322355, 43.990383</span></p></div><div class="w-12 h-12 rounded-full flex-shrink-0 shadow-lg" data-dove-holder></div></div><div class="my-3 p-4 rounded-2xl bg-black/35 border border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs"><div><span class="text-[#F2B880] font-extrabold block">🚶 Пешком от центра</span><span class="text-stone-300">От ст. м. Горьковская или ул. Б. Покровской по ул. Маслякова / Ильинской.</span></div><div><span class="text-[#F2B880] font-extrabold block">🏛️ Ориентир входа</span><span class="text-stone-300">Старинный кирпичный дом № 45, фирменная кованая вывеска с белой Голубкой мира.</span></div><div><span class="text-[#F2B880] font-extrabold block">🅿️ Парковка</span><span class="text-stone-300">Городские парковочные карманы вдоль ул. Ильинской и Сергиевской.</span></div></div><div class="flex flex-wrap items-center gap-2.5"><a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="px-4 py-2.5 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs shadow-lg cursor-pointer transition">🗺️ Открыть точку в Яндекс.Картах ↗</a><a href="https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=auto" target="_blank" class="px-4 py-2.5 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white font-extrabold text-xs border border-[#F2B880]/30 cursor-pointer transition">🧭 Построить маршрут ↗</a><button type="button" onclick="const b=document.getElementById('mirmir-clean-map-box');b.classList.remove('p-5');b.innerHTML='<iframe src=\'https://yandex.ru/map-widget/v1/?ll=43.990383%2C56.322355&z=17&oid=7309581265&ol=biz\' class=\'w-full h-full min-h-[300px] border-0\' allowfullscreen></iframe>';" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-[#F2B880] font-extrabold text-xs cursor-pointer transition">🌐 Загрузить интерактивную карту</button></div></div>;
         }
       });
 
@@ -953,18 +951,133 @@ def upgrade_template_html_in_place(tpl_html):
       DATA.menu.unshift(obj);
       window.renderUnifiedSystemHub();
       window.renderDishes();
-      window.renderCategoryShowcaseAndRail();
+      window.renderCategoryShowcaseAndRail(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
       alert("✅ Блюдо «" + name + "» добавлено в меню.");
     };
 
-    const CURATED_VEGAN_HD_BANK = {
-      burger: ["img/macro_vegan_burger.jpg", "img/macro_avocado_burger.jpg", "img/macro_spicy_burger.jpg", "img/vk_5128_1.jpg"],
-      soup: ["img/macro_tomyum_bowl.jpg", "img/vk_5085_1.jpg", "img/vk_5118_0.jpg", "img/vk_5128_1.jpg"],
-      salad: ["img/macro_caesar_romaine.jpg", "img/vk_5085_1.jpg", "img/vk_5118_0.jpg", "img/vk_5128_1.jpg"],
-      drink: ["img/macro_citrus_mint.jpg", "img/vk_5122_0.jpg", "img/vk_5134_0.jpg"],
-      main: ["img/vk_5118_0.jpg", "img/vk_5128_1.jpg", "img/macro_vegan_burger.jpg", "img/macro_tomyum_bowl.jpg"],
-      dessert: ["img/vk_5069_0.jpg", "img/vk_5122_0.jpg", "img/vk_5128_1.jpg"]
+const CURATED_VEGAN_HD_BANK = {
+      soup: [
+        "img/macro_tomyum_bowl.jpg",
+        "img/macro_miso_tofu.jpg",
+        "img/vk_5057_1.jpg",
+        "img/vk_5053_0.jpg"
+      ],
+      burger: [
+        "img/macro_vegan_burger.jpg",
+        "img/macro_avocado_burger.jpg",
+        "img/macro_spicy_burger.jpg",
+        "img/vk_5118_1.jpg"
+      ],
+      salad: [
+        "img/macro_caesar_romaine.jpg",
+        "img/macro_greek_olives.jpg",
+        "img/macro_tuna_chickpea.jpg",
+        "img/macro_cucumbers_sesame.jpg",
+        "img/vk_5128_1.jpg"
+      ],
+      pizza: [
+        "img/vk_5085_1.jpg",
+        "img/vk_5118_0.jpg",
+        "img/macro_pepperoni_pizza.jpg"
+      ],
+      noodles: [
+        "img/vk_5094_0.jpg",
+        "img/macro_creamy_pasta.jpg",
+        "img/vk_5118_2.jpg",
+        "img/vk_5057_0.jpg"
+      ],
+      drink: [
+        "img/macro_strawberry_banana.jpg",
+        "img/macro_berry_smoothie.jpg",
+        "img/macro_pineapple_mint.jpg",
+        "img/macro_citrus_mint.jpg",
+        "img/macro_coffee_pine.jpg",
+        "img/vk_5122_0.jpg"
+      ],
+      dessert: [
+        "img/vk_5069_0.jpg",
+        "img/macro_syrniki_berries.jpg",
+        "img/vk_5005_0.jpg",
+        "img/vk_5103_1.jpg",
+        "img/macro_vegan_icecream.jpg"
+      ],
+      main: [
+        "img/vk_5122_1.jpg",
+        "img/vk_5121_0.jpg",
+        "img/vk_5094_1.jpg",
+        "img/vk_5055_0.jpg",
+        "img/vk_5087_1.jpg"
+      ]
     };
+
+    const RU_TO_EN_DISH_KEYWORDS = [
+      { re: /том ям/i, search: "tom yum soup", flux: "authentic Thai Tom Yum soup, clear spicy red-orange lemongrass broth, oyster mushrooms, cherry tomatoes, lime wedge, fresh cilantro, ceramic bowl" },
+      { re: /мисо/i, search: "miso soup tofu", flux: "Japanese miso soup with silken tofu cubes, wakame seaweed, green onions, black ceramic bowl" },
+      { re: /крем-суп.*горош/i, search: "green pea soup", flux: "velvety emerald green pea and avocado cream soup topped with pumpkin seeds and microgreens" },
+      { re: /ватапа/i, search: "brazilian coconut soup", flux: "creamy golden Brazilian Vatapa coconut peanut soup with herbs and toasted bread" },
+      { re: /суп/i, search: "vegetable soup bowl", flux: "hearty rustic vegetable and mushroom soup with fresh herbs in stoneware bowl" },
+      { re: /пад тай/i, search: "pad thai noodles", flux: "authentic Pad Thai stir-fried rice noodles with golden crispy tofu cubes, crushed peanuts, lime wedge and bean sprouts" },
+      { re: /сливочная лапша/i, search: "creamy fettuccine pasta", flux: "creamy vegan fettuccine pasta with sliced plant sausages, black pepper and fresh basil" },
+      { re: /раста-паста/i, search: "rasta pasta peppers", flux: "colorful Caribbean Rasta penne pasta with red yellow green bell peppers, jerk spiced soy strips and creamy coconut sauce" },
+      { re: /лапша/i, search: "asian stir fry noodles", flux: "Asian wok stir-fried noodles with vegetables, sesame seeds and crispy tofu" },
+      { re: /пицца.*пепперони/i, search: "pepperoni pizza", flux: "artisan wood-fired vegan pepperoni pizza with melted plant mozzarella, tomato sauce and oregano" },
+      { re: /пицца.*том ям/i, search: "mushroom pizza", flux: "artisan thin-crust pizza topped with golden chanterelle mushrooms, green edamame beans, tofu and herbs" },
+      { re: /пицца/i, search: "artisan vegetable pizza", flux: "artisan thin-crust vegan pizza with roasted vegetables, melted plant cheese and arugula" },
+      { re: /авокадо-фиш/i, search: "avocado burger", flux: "gourmet burger with crispy nori-battered tofu fillet, sliced fresh avocado, lettuce and tartar sauce in brioche bun" },
+      { re: /неряха джо/i, search: "sloppy joe burger", flux: "hearty Sloppy Joe burger overflowing with rich spiced soy ragu in tomato sauce and pickled red onions" },
+      { re: /бургер/i, search: "gourmet vegan burger", flux: "gourmet plant-based burger with thick grilled patty, caramelized apricots, pickles, lettuce and sesame bun" },
+      { re: /тропикал кубана/i, search: "pineapple avocado salad", flux: "fresh tropical salad with diced pineapple, ripe avocado, cherry tomatoes, romaine lettuce and black beans" },
+      { re: /цезарь/i, search: "caesar salad croutons", flux: "crisp romaine Caesar salad with golden garlic croutons, cherry tomatoes, nori flakes and creamy dressing" },
+      { re: /греческий/i, search: "greek salad olives", flux: "fresh Greek salad with tomatoes, cucumbers, kalamata olives, white tofu feta cubes and flaxseed crackers" },
+      { re: /пай хуан гуа/i, search: "smashed cucumber salad", flux: "Chinese smashed cucumber salad with garlic, sesame seeds, chili oil and cilantro" },
+      { re: /салат/i, search: "fresh green salad", flux: "vibrant fresh garden salad with avocado, mixed greens, seeds and olive oil dressing" },
+      { re: /шакшука/i, search: "shakshuka skillet", flux: "Middle Eastern Shakshuka in cast-iron skillet with golden tofu scramble simmered in spiced red tomato and pepper sauce" },
+      { re: /боул/i, search: "buddha bowl quinoa", flux: "colorful nourishing Buddha bowl with quinoa, roasted sweet potato, falafel balls, avocado slices and tahini drizzle" },
+      { re: /омлет/i, search: "chickpea omelet", flux: "fluffy golden chickpea and tofu omelet folded with spinach, cherry tomatoes and herbs" },
+      { re: /сырники/i, search: "cottage cheese pancakes", flux: "golden pan-seared vegan tofu syrniki pancakes topped with fresh berries and coconut cream" },
+      { re: /шарлотка/i, search: "apple pie cake", flux: "homemade rustic apple charlotte sponge cake dusted with cinnamon" },
+      { re: /мороженое/i, search: "coconut ice cream", flux: "two scoops of creamy white coconut ice cream garnished with fresh berries and mint leaf" },
+      { re: /сникерс/i, search: "chocolate peanut smoothie", flux: "thick chocolate peanut butter banana smoothie in tall glass topped with crushed peanuts" },
+      { re: /клубника/i, search: "strawberry smoothie", flux: "creamy pastel pink strawberry banana coconut smoothie in glass" },
+      { re: /смузи/i, search: "fruit berry smoothie", flux: "vibrant smoothie in tall glass with fresh fruit garnish" },
+      { re: /фреш|сок/i, search: "fresh orange juice", flux: "freshly squeezed citrus juice in glass with fruit slice and ice" },
+      { re: /капучино|кофе/i, search: "cappuccino latte art", flux: "velvety oat-milk cappuccino with latte art foam in ceramic cup" },
+      { re: /пуэр|да хун пао|улун|чай/i, search: "chinese tea teapot", flux: "traditional Chinese Gongfu tea ceremony with clay teapot, amber brewed tea and small porcelain cups" },
+      { re: /масала/i, search: "masala chai tea", flux: "spiced Indian Masala chai tea with cinnamon stick, star anise and cardamom" },
+      { re: /глинтвейн/i, search: "mulled wine berries", flux: "hot ruby lingonberry mulled drink with orange slice and cinnamon stick in glass mug" }
+    ];
+
+    function buildAccurateDishQueries(dishObj, userPrompt) {
+      const nm = (dishObj.name || "").trim();
+      for (let i = 0; i < RU_TO_EN_DISH_KEYWORDS.length; i++) {
+        if (RU_TO_EN_DISH_KEYWORDS[i].re.test(nm)) {
+          return RU_TO_EN_DISH_KEYWORDS[i];
+        }
+      }
+      // Если пользователь ввёл свой текст — очищаем от служебных слов и берём суть
+      const cleaned = (userPrompt || dishObj.ai_prompt || nm)
+        .replace(/Vegan plant-based|100% vegan|no meat|no seafood|close-up|restaurant food photo/gi, "")
+        .split(",")[0]
+        .trim();
+      const shortWords = cleaned.split(/\s+/).slice(0, 3).join(" ") || "vegan food";
+      return {
+        search: shortWords,
+        flux: cleaned + ", gourmet 100% vegan food photography, ceramic plate, natural lighting"
+      };
+    }
+
+    function detectDishBankCategory(dishObj) {
+      const nm = (dishObj.name || "").toLowerCase();
+      const cat = (dishObj.category || "").toLowerCase();
+      if (nm.includes("пицца")) return "pizza";
+      if (cat.includes("суп") || nm.includes("суп") || nm.includes("том ям") || nm.includes("ватапа") || nm.includes("мисо")) return "soup";
+      if (nm.includes("бургер") || nm.includes("сэндвич") || nm.includes("неряха")) return "burger";
+      if (cat.includes("салат") || nm.includes("салат") || nm.includes("цезарь") || nm.includes("пай хуан")) return "salad";
+      if (cat.includes("лапша") || nm.includes("лапша") || nm.includes("пад тай") || nm.includes("паста")) return "noodles";
+      if (cat.includes("чай") || cat.includes("барн") || nm.includes("чай") || nm.includes("кофе") || nm.includes("смузи") || nm.includes("фреш") || nm.includes("лимонад")) return "drink";
+      if (cat.includes("десерт") || nm.includes("сырники") || nm.includes("шарлотка") || nm.includes("мороженое") || nm.includes("батончик")) return "dessert";
+      return "main";
+    }
 
     function pushDiagLog(idx, icon, eng, msg) {
       const tm = new Date().toLocaleTimeString("ru-RU");
@@ -980,162 +1093,138 @@ def upgrade_template_html_in_place(tpl_html):
       window.generateDishCandidateAI(idx);
     };
 
-// === РЕАЛЬНЫЙ ПОИСК (OPENVERSE / WIKIMEDIA) И ИИ-ГЕНЕРАЦИЯ (FLUX / TURBO) v4.6 ===
     window.generateDishCandidateAI = async function(idx) {
       const d = DATA.menu[idx];
       if (!d) return;
       const inp = document.getElementById("hub-ai-prm-" + idx);
       if (inp && inp.value.trim()) window.customPromptsPerDish[idx] = inp.value.trim();
-      let raw = window.customPromptsPerDish[idx] || d.ai_prompt || d.name;
+      const userRaw = window.customPromptsPerDish[idx] || "";
       window.dishVariantStep[idx] = (window.dishVariantStep[idx] || 0) + 1;
       const step = window.dishVariantStep[idx];
       const engine = window.selectedAiEnginePerDish[idx] || "flux_ai";
 
-      // Если промпт на русском — переводим ключевые слова для зарубежных фото-баз и генератора
-      let engQuery = raw;
-      if (/[а-яё]/i.test(engQuery)) {
+      const qPack = buildAccurateDishQueries(d, userRaw);
+      let searchTerm = qPack.search;
+      let fluxSubject = qPack.flux;
+
+      // Если пользователь ввёл свой запрос на русском — переводим его для поиска/генерации
+      if (userRaw && /[а-яё]/i.test(userRaw) && userRaw !== d.name) {
         try {
-          pushDiagLog(idx, "🌐", "Перевод", "Переводим запрос на английский...");
-          const tr = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(engQuery.slice(0, 140)) + "&langpair=ru|en");
+          const tr = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(userRaw.slice(0, 120)) + "&langpair=ru|en");
           const tj = await tr.json();
           if (tj.responseData && tj.responseData.translatedText) {
-            engQuery = tj.responseData.translatedText;
+            fluxSubject = tj.responseData.translatedText + ", gourmet vegan food photography";
+            searchTerm = tj.responseData.translatedText.split(/\s+/).slice(0, 3).join(" ");
           }
-        } catch (e) {
-          engQuery = d.ai_prompt || "vegan plant based dish";
-        }
+        } catch (e) {}
       }
 
-      // Чистый пул реальных фото ЕДЫ из ВК (без обложек, аватарок и афиш мероприятий!)
-      const bannedVkSubstrings = [
+      const bannedVk = [
         "vk_cover", "vk_avatar", "5140_", "5138_", "5136_", "5134_", "5133_",
         "5129_", "5123_", "5068_", "5047_", "yorg_"
       ];
       const cleanVkFoodPool = ((DATA.vk_food_photos && DATA.vk_food_photos.length) ? DATA.vk_food_photos : ["img/vk_5128_1.jpg"])
-        .filter(p => !bannedVkSubstrings.some(b => p.includes(b)));
+        .filter(p => !bannedVk.some(b => p.includes(b)));
 
-      // 1 & 2. НАСТОЯЩАЯ ГЕНЕРАЦИЯ НЕЙРОСЕТЬЮ (Flux AI / Turbo SDXL)
+      // 1 & 2. ГЕНЕРАЦИЯ НЕЙРОСЕТЬЮ (Flux AI / Turbo AI) с точным визуальным описанием блюда
       if (engine === "flux_ai" || engine === "turbo_ai") {
         const mdl = engine === "flux_ai" ? "flux" : "turbo";
-        const seed = Math.floor(Math.random() * 899999) + step * 137;
-        const cleanPrompt = "100% vegan plant-based restaurant dish: " +
-          engQuery.replace(/Vegan plant-based/gi, "").slice(0, 95) +
-          ", gourmet food photography, ceramic plate, natural light, no meat, no text";
-        const aiUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(cleanPrompt) +
+        const seed = Math.floor(Math.random() * 899999) + step * 173;
+        const fullPrompt = "Close-up studio food photography of " + fluxSubject +
+          ", 100% plant-based vegan, appetizing, sharp focus, no text, no watermark";
+        const aiUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(fullPrompt) +
           "?model=" + mdl + "&width=640&height=640&seed=" + seed + "&nologo=true";
 
-        pushDiagLog(idx, "⏳", mdl.toUpperCase() + " AI", "Генерация нового кадра (seed #" + seed + ")...");
+        pushDiagLog(idx, "🎨", mdl.toUpperCase() + " AI", "Генерация: «" + fluxSubject.slice(0, 52) + "...» (seed #" + seed + ")");
         window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
           url: aiUrl,
-          source: "🎨 " + mdl.toUpperCase() + " AI (Сгенерировано • Seed #" + seed + ")",
-          prompt: cleanPrompt,
-          diag: "✅ ИИ-кадр сгенерирован"
+          source: "🎨 " + mdl.toUpperCase() + " AI (Seed #" + seed + ")",
+          prompt: fullPrompt
         };
         window.renderUnifiedSystemHub();
         return;
       }
 
-      // 4. РЕАЛЬНЫЙ ПОИСК В ФОТО-БАНКЕ OPENVERSE HD (по API)
+      // 4. ПОИСК В OPENVERSE HD (короткий точный запрос из 2-3 слов!)
       if (engine === "openverse_hd") {
         try {
-          const shortQ = engQuery
-            .replace(/Vegan plant-based|100% vegan|no meat|no seafood|close-up|in a ceramic bowl/gi, "")
-            .split(",")[0]
-            .trim()
-            .slice(0, 45);
-          pushDiagLog(idx, "📡", "Openverse API", "Поиск фото по запросу: «" + shortQ + "»...");
-          const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent("vegan " + shortQ + " food") + "&page_size=20");
+          pushDiagLog(idx, "📡", "Openverse HD", "Поиск по ключевым словам: «" + searchTerm + "»...");
+          const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent(searchTerm) + "&page_size=25");
           if (r.ok) {
             const j = await r.json();
-            const badWords = /meat|beef|pork|chicken|steak|bacon|sausage|fish|shrimp|egg|person|people/i;
-            const results = (j.results || []).filter(it => it.url && !badWords.test(it.title || ""));
+            const badWords = /meat|beef|pork|chicken|shrimp|prawn|fish|salmon|bacon|egg|person|logo|vector/i;
+            const results = (j.results || []).filter(it => it.url && !badWords.test((it.title || "") + " " + (it.url || "")));
             if (results.length > 0) {
               const pick = results[(step - 1) % results.length];
-              pushDiagLog(idx, "✅", "Openverse HD", "Найдено реальное фото #" + step + " из " + results.length);
+              pushDiagLog(idx, "✅", "Openverse HD", "Найдено фото #" + step + " из " + results.length + " («" + searchTerm + "»)");
               window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
                 url: pick.url,
-                source: "📸 Openverse HD (" + (pick.title || shortQ).slice(0, 36) + ")",
-                prompt: shortQ,
-                diag: "✅ Найдено в Openverse"
+                source: "📸 Openverse HD (#" + step + " • " + searchTerm + ")",
+                prompt: searchTerm
               };
               window.renderUnifiedSystemHub();
               return;
             }
           }
-          pushDiagLog(idx, "⚠️", "Openverse API", "Точных совпадений нет, пробуем Wikimedia...");
+          pushDiagLog(idx, "⚠️", "Openverse HD", "По запросу «" + searchTerm + "» пусто, ищем в Wikimedia...");
         } catch (e) {
-          pushDiagLog(idx, "⚠️", "Openverse API", "Ошибка сети: " + e.message);
+          pushDiagLog(idx, "⚠️", "Openverse HD", "Ошибка сети: " + e.message);
         }
       }
 
-      // 5. РЕАЛЬНЫЙ ПОИСК В ЭНЦИКЛОПЕДИИ WIKIMEDIA COMMONS (по API)
+      // 5. ПОИСК В WIKIMEDIA COMMONS (короткий точный запрос из 2-3 слов!)
       if (engine === "wikimedia" || engine === "openverse_hd") {
         try {
-          const shortQ = engQuery
-            .replace(/Vegan plant-based|100% vegan|no meat|no seafood/gi, "")
-            .split(",")[0]
-            .trim()
-            .slice(0, 40);
-          pushDiagLog(idx, "📡", "Wikimedia API", "Поиск в Wikimedia: «" + shortQ + "»...");
+          pushDiagLog(idx, "📡", "Wikimedia", "Поиск в Wikimedia: «" + searchTerm + "»...");
           const wikiUrl = "https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=" +
-            encodeURIComponent("filetype:bitmap " + shortQ + " food") +
-            "&gsrlimit=15&prop=imageinfo&iiprop=url&format=json&origin=*";
+            encodeURIComponent("filetype:bitmap " + searchTerm) +
+            "&gsrlimit=20&prop=imageinfo&iiprop=url&format=json&origin=*";
           const r = await fetch(wikiUrl);
           if (r.ok) {
             const j = await r.json();
             const pages = (j.query && j.query.pages) ? Object.values(j.query.pages) : [];
             const imgs = pages
               .map(p => p.imageinfo && p.imageinfo[0] && p.imageinfo[0].url)
-              .filter(u => u && /\.(jpg|jpeg|png|webp)$/i.test(u));
+              .filter(u => u && /\.(jpg|jpeg|png|webp)$/i.test(u) && !/shrimp|prawn|chicken|meat|beef|pork/i.test(u));
             if (imgs.length > 0) {
               const pickUrl = imgs[(step - 1) % imgs.length];
-              pushDiagLog(idx, "✅", "Wikimedia", "Найдено фото #" + step + " из " + imgs.length);
+              pushDiagLog(idx, "✅", "Wikimedia", "Найдено фото #" + step + " из " + imgs.length + " («" + searchTerm + "»)");
               window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
                 url: pickUrl,
-                source: "🥗 Wikimedia Commons (#" + step + ")",
-                prompt: shortQ,
-                diag: "✅ Найдено в Wikimedia"
+                source: "🥗 Wikimedia (#" + step + " • " + searchTerm + ")",
+                prompt: searchTerm
               };
               window.renderUnifiedSystemHub();
               return;
             }
           }
         } catch (e) {
-          pushDiagLog(idx, "⚠️", "Wikimedia API", "Ошибка сети: " + e.message);
+          pushDiagLog(idx, "⚠️", "Wikimedia", "Ошибка сети: " + e.message);
         }
       }
 
-      // 6. ЧИСТЫЙ АРХИВ ФОТО БЛЮД ИЗ ВК (без афиш и аватарок)
+      // 6. ЧИСТЫЙ АРХИВ ФОТО БЛЮД ИЗ ВК
       if (engine === "vk_food_archive") {
         const pickVk = cleanVkFoodPool[(step - 1) % cleanVkFoodPool.length];
-        pushDiagLog(idx, "✅", "Архив ВК (Еда)", "Выбран кадр блюда #" + step + ": " + pickVk);
+        pushDiagLog(idx, "✅", "Архив ВК", "Кадр блюда #" + step + ": " + pickVk);
         window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
           url: pickVk,
           source: "🌿 Архив блюд ВК (#" + (((step - 1) % cleanVkFoodPool.length) + 1) + ")",
-          prompt: pickVk,
-          diag: "✅ Реальное фото блюда из ВК"
+          prompt: pickVk
         };
         window.renderUnifiedSystemHub();
         return;
       }
 
-      // 3. GASTROBANK HD (только проверенные тематические макро-кадры по категории блюда)
-      const nm = (d.name || "").toLowerCase();
-      let bankKey = "salad";
-      if (nm.includes("бургер") || nm.includes("сэндвич") || nm.includes("завертон") || nm.includes("неряха")) bankKey = "burger";
-      else if (nm.includes("суп") || nm.includes("том ям") || nm.includes("ватапа") || nm.includes("мисо")) bankKey = "soup";
-      else if (nm.includes("пицца") || nm.includes("лапша") || nm.includes("пад тай") || nm.includes("паста") || nm.includes("плов")) bankKey = "main";
-      else if (nm.includes("чай") || nm.includes("кофе") || nm.includes("лимонад") || nm.includes("смузи") || nm.includes("фреш")) bankKey = "drink";
-      else if (nm.includes("сырники") || nm.includes("десерт") || nm.includes("шарлотка") || nm.includes("мороженое") || nm.includes("батончик")) bankKey = "dessert";
-
+      // 3. GASTROBANK HD (строго по своей кулинарной категории: суп -> только супы!)
+      const bankKey = detectDishBankCategory(d);
       const categoryPool = CURATED_VEGAN_HD_BANK[bankKey] || CURATED_VEGAN_HD_BANK.main;
       const pickLocal = categoryPool[(step - 1) % categoryPool.length];
-      pushDiagLog(idx, "✅", "GastroBank HD", "Подобран тематический кадр #" + step + " (" + pickLocal + ")");
+      pushDiagLog(idx, "✅", "GastroBank HD [" + bankKey + "]", "Кадр #" + step + " (" + pickLocal + ")");
       window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
         url: pickLocal,
-        source: "🍔 GastroBank HD (" + pickLocal + ")",
-        prompt: raw,
-        diag: "✅ Тематический веган-кадр"
+        source: "🍔 GastroBank HD (" + bankKey + " • " + pickLocal + ")",
+        prompt: searchTerm
       };
       window.renderUnifiedSystemHub();
     };
@@ -1163,7 +1252,7 @@ def upgrade_template_html_in_place(tpl_html):
       closeReadyGalleryPopup();
       window.renderUnifiedSystemHub();
       window.renderDishes();
-      window.renderHeroRightColumn();
+      window.renderHeroRightColumn(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
     };
 
     window.approveDishCandidate = function(idx) {
@@ -1455,7 +1544,86 @@ def upgrade_template_html_in_place(tpl_html):
       }).join("");
     };
 
+// === УМНЫЙ РЕЖИМ ФОТО БЕЗ ОБРЕЗКИ (AMBIENT BLUR BACKDROP v4.7) ===
+    window.applyNoCropAmbientPhotos = function() {
+      if (!document.getElementById("mirmir-nocrop-ambient-css")) {
+        const st = document.createElement("style");
+        st.id = "mirmir-nocrop-ambient-css";
+        st.textContent = `
+          .mirmir-nocrop-wrap {
+            position: relative !important;
+            overflow: hidden !important;
+            background-color: #1D2918 !important;
+          }
+          .mirmir-nocrop-bg {
+            position: absolute !important;
+            inset: -16px !important;
+            background-size: cover !important;
+            background-position: center !important;
+            filter: blur(18px) brightness(0.68) saturate(1.35) !important;
+            transform: scale(1.14) !important;
+            z-index: 0 !important;
+            pointer-events: none !important;
+            transition: background-image 0.35s ease !important;
+          }
+          body:not(.mirmir-crop-cover-mode) .mirmir-nocrop-wrap > img {
+            position: relative !important;
+            z-index: 1 !important;
+            object-fit: contain !important;
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45)) !important;
+          }
+          body.mirmir-crop-cover-mode .mirmir-nocrop-wrap > img {
+            position: relative !important;
+            z-index: 1 !important;
+            object-fit: cover !important;
+          }
+          .mirmir-nocrop-wrap > *:not(.mirmir-nocrop-bg):not(img) {
+            z-index: 5 !important;
+          }
+        `;
+        document.head.appendChild(st);
+      }
+
+      const targets = document.querySelectorAll(
+        "#hero-interior-slide-img, #interior-slide-img, " +
+        "#hero-specials-3rows .zoom-card img, " +
+        "#posts-grid article img, " +
+        "#categories-showcase-grid .zoom-card img, #cat-showcase-grid .zoom-card img, " +
+        "#menu-dishes-grid .zoom-card img, " +
+        "#cafe-shop-grid .zoom-card img"
+      );
+
+      targets.forEach(im => {
+        const wrap = im.parentElement;
+        if (!wrap) return;
+        wrap.classList.add("mirmir-nocrop-wrap");
+        let bgDiv = wrap.querySelector(".mirmir-nocrop-bg");
+        if (!bgDiv) {
+          bgDiv = document.createElement("div");
+          bgDiv.className = "mirmir-nocrop-bg";
+          wrap.insertBefore(bgDiv, wrap.firstChild);
+        }
+        const curSrc = im.getAttribute("src") || im.src || "";
+        if (curSrc) {
+          bgDiv.style.backgroundImage = 'url("' + curSrc.replace(/"/g, '\\"') + '")';
+        }
+        if (!im.dataset.nocropHooked) {
+          im.dataset.nocropHooked = "1";
+          im.addEventListener("load", function() {
+            const s = this.getAttribute("src") || this.src || "";
+            const b = this.parentElement ? this.parentElement.querySelector(".mirmir-nocrop-bg") : null;
+            if (b && s) b.style.backgroundImage = 'url("' + s.replace(/"/g, '\\"') + '")';
+          });
+        }
+      });
+    };
+
     window.addEventListener("DOMContentLoaded", () => {
+      window.applyNoCropAmbientPhotos();
       syncMenuWithCustomAndDeleted();
       applyV45CleanLayout();
       document.querySelectorAll("[data-dove-holder]").forEach(el => { el.innerHTML = SIGN_DOVE_SVG; });
@@ -1463,11 +1631,11 @@ def upgrade_template_html_in_place(tpl_html):
       rollRandomGastroPulse();
       window.renderInteriorSlideState();
       setInterval(() => { stepInteriorSlide(1); window.renderInteriorSlideState(); }, 4200);
-      window.renderHeroRightColumn();
+      window.renderHeroRightColumn(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
       setInterval(() => step3DCarousel(1), 4500);
       setInterval(() => window.stepRightSpecialsPair(1), 5200);
-      window.renderNewsPosts();
-      window.renderCategoryShowcaseAndRail();
+      window.renderNewsPosts(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
+      window.renderCategoryShowcaseAndRail(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
       setInterval(syncMainCartBadge, 400);
     });
 
