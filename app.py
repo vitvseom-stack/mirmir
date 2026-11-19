@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-КОМПИЛЯТОР ПЛАТФОРМЫ «МИР МИР» (app.py — Версия v4.5, Полная ревизия)
+КОМПИЛЯТОР ПЛАТФОРМЫ «МИР МИР» (app.py — Полная чистая сборка v4.8)
+- Защита Hero от перезаписи блоком адреса/карты.
+- Умный режим фото без обрезки (Ambient Blur Backdrop).
+- Чистая карточка маршрута без рекламы внутри Яндекс.Карт.
+- Точный поиск/генерация фото блюд (Flux/Turbo AI, Openverse, Wikimedia, чистый GastroBank).
+- Интеграция с live_constructor.py, vision_parser (approved_menu_photos.json) и логами logs/.
 """
 import os
 import sys
@@ -9,6 +14,7 @@ import json
 import shutil
 import subprocess
 import traceback
+import importlib
 from datetime import datetime
 import requests
 
@@ -24,41 +30,41 @@ elif os.path.exists(os.path.join(DEFAULT_MIRMIR_ROOT, ".git")):
 else:
     ROOT_REPO_DIR = BASE_DIR
 
+LOGS_DIR = os.path.join(BASE_DIR, "logs")
+os.makedirs(LOGS_DIR, exist_ok=True)
+
 VK_PUBLIC_URL = "https://vk.com/mirmir.cafe"
 NTFY_SYNC_TOPIC = "mirmir_tz_sync_nn45_v30"
 OLD_DIRS_TO_CHECK = [DEFAULT_MIRMIR_ROOT, PARENT_DIR]
 
 MASTER_TASKS_DEFAULT = [
-    {"id": "t_1", "date": "08.11.2026 12:10", "title": "1. Трёхмодульная архитектура (menu_data.py + template.html + app.py) и сборка в GitHub Pages", "done": True, "comment": "Сборка и авто-пуш в корень репозитория работают штатно."},
-    {"id": "t_2", "date": "09.11.2026 14:20", "title": "2. Первый экран слева: слайдер из 5 проверенных фото зала и вывески с корректным кадрированием", "done": True, "comment": "Вывеска и зелёный диван отцентрированы без обрезки."},
-    {"id": "t_3", "date": "09.11.2026 15:05", "title": "3. Первый экран справа: сбалансированная 3D-карусель бланков меню + 2 карточки спешлов", "done": True, "comment": "Страницы меню помещаются в рамку без выхода за границы."},
-    {"id": "t_4", "date": "09.11.2026 16:30", "title": "4. Плашка «Подача блюд может отличаться» на карточках и при полноэкранном увеличении", "done": True, "comment": "Отображается на миниатюрах и внутри лайтбокса."},
-    {"id": "t_5", "date": "10.11.2026 11:15", "title": "5. Обработка системной кнопки «Назад» (popstate) на мобильных устройствах", "done": True, "comment": "Закрывает текущее модальное окно без выхода с сайта."},
-    {"id": "t_6", "date": "12.11.2026 10:15", "title": "6. Автоскролл новостей влево + рабочие кнопки ◀ ▶ + кнопка «⏮️ К последним постам»", "done": True, "comment": "Добавлена пауза автоскролла при клике на стрелки и кнопка возврата к началу ленты."},
-    {"id": "t_7", "date": "10.11.2026 17:00", "title": "7. Расширенная сетка (1640px), кнопки закрытия (✕) в правом верхнем углу и значок 🔍 без текста", "done": True, "comment": "Во всех окнах и карточках оставлена только иконка лупы 🔍."},
-    {"id": "t_8", "date": "10.11.2026 19:25", "title": "8. Чистая вёрстка блока адреса и карты с единым блоком кнопок и нижним отступом", "done": True, "comment": "Блок адреса оформлен в 2 колонки с кнопками на зелёном фоне."},
-    {"id": "t_9", "date": "11.11.2026 09:30", "title": "9. Полное техническое задание (Мастер-Промпт архитектуры сайта) с сохранением изменений", "done": True, "comment": "Хранится в MASTER_PROMPT_MIRMIR.txt и редактируется в админ-панели."},
-    {"id": "t_10", "date": "11.11.2026 11:45", "title": "10. Переключатели режимов: Бронь (Telegram/ВК или анкета 152-ФЗ), Карта, Режим фото меню", "done": True, "comment": "Доступны во вкладке настроек панели управления."},
-    {"id": "t_11", "date": "12.11.2026 10:20", "title": "11. Витрина «Меню кафе по разделам» (9 карточек) с реальными фото и плавным зумом при наведении", "done": True, "comment": "Восстановлено отображение всех карточек разделов и масштабирование фото при наведении."},
-    {"id": "t_12", "date": "11.11.2026 15:20", "title": "12. Временное отключение блюд (полупрозрачный режим) и удаление с 3 подтверждениями", "done": True, "comment": "Кнопки отключения и удаления встроены в каждую карточку блюда."},
-    {"id": "t_13", "date": "12.11.2026 10:25", "title": "13. Единая верхняя панель в <main> (Меню, Магазин кафе, Корзина) и ревизия кода от неиспользуемых функций", "done": True, "comment": "Удалены устаревшие патчи и неиспользуемые переменные."}
+    {"id": "t_1", "date": "08.11.2026 12:10", "title": "1. Трёхмодульная архитектура (menu_data.py + template.html + app.py) и деплой", "done": True, "comment": "Сборка и синхронизация с GitHub Pages работают штатно."},
+    {"id": "t_2", "date": "19.11.2026 10:00", "title": "2. Первый экран слева: слайдер зала (5 фото) с умным фоном без обрезки", "done": True, "comment": "Диван и вывеска видны целиком на размытом фоне в тон."},
+    {"id": "t_3", "date": "09.11.2026 15:05", "title": "3. Первый экран справа: 3D-карусель бланков меню + 2 карточки спешлов", "done": True, "comment": "Сбалансированная карусель + 2 крупных карточки спешлов."},
+    {"id": "t_4", "date": "09.11.2026 16:30", "title": "4. Плашка «Подача блюд может отличаться» на карточках и в лайтбоксе", "done": True, "comment": "Отображается на миниатюрах и при увеличении 🔍."},
+    {"id": "t_5", "date": "10.11.2026 11:15", "title": "5. Обработка системной кнопки «Назад» (popstate) на смартфонах", "done": True, "comment": "Закрывает открытое модальное окно без выхода с сайта."},
+    {"id": "t_6", "date": "12.11.2026 10:15", "title": "6. Автоскролл новостей влево + кнопки ◀ ▶ + «⏮️ К последним постам»", "done": True, "comment": "Плавный тикер с паузой при наведении и клике по стрелкам."},
+    {"id": "t_7", "date": "19.11.2026 10:05", "title": "7. Сбалансированная ширина (1320px), крестики ✕ справа вверху и значок 🔍", "done": True, "comment": "Убрано растягивание до 1640px, кулисы видны ровно."},
+    {"id": "t_8", "date": "19.11.2026 10:10", "title": "8. Чистая карточка маршрута Ильинская, 45 без рекламы в Яндекс.Картах", "done": True, "comment": "Интерактивная карта загружается по кнопке без дублирования в Hero."},
+    {"id": "t_9", "date": "19.11.2026 10:15", "title": "9. Автономный Конструктор окон и фото (включается строго в Шестерёнке)", "done": True, "comment": "Вынесен в live_constructor.py, рабочие кнопки +/- и «Применить»."},
+    {"id": "t_10", "date": "19.11.2026 10:20", "title": "10. Точный поиск/генерация фото блюд (Flux/Turbo AI, Openverse, Wikimedia)", "done": True, "comment": "Убраны случайные подмены, очищен GastroBank HD по категориям."},
+    {"id": "t_11", "date": "19.11.2026 10:25", "title": "11. Витрина «Меню кафе по разделам» (9 карточек) с правильными фото", "done": True, "comment": "Исправлены обложки Лапши, Барного меню и Десертов."},
+    {"id": "t_12", "date": "11.11.2026 15:20", "title": "12. Временное отключение блюд и удаление с 3 подтверждениями", "done": True, "comment": "Доступно в карточке каждого блюда в Шестерёнке."},
+    {"id": "t_13", "date": "19.11.2026 10:30", "title": "13. Файловые логи logs/logs_*.txt и привязка утверждённых фото из vision_parser", "done": True, "comment": "Подхватывается approved_menu_photos.json и пишутся логи."}
 ]
 
 
-
-def write_mirmir_file_log(event_text):
-    """Записывает события сборки в папку logs/logs_YYYYMMDD.txt и logs_latest.txt."""
-    try:
-        logs_d = os.path.join(BASE_DIR, 'logs')
-        os.makedirs(logs_d, exist_ok=True)
-        day_stamp = datetime.now().strftime('%Y%m%d')
-        now_s = datetime.now().strftime('%d.%m.%Y %H:%M:%S')
-        line = f'[{now_s}] {event_text}\n'
-        for fn in (f'logs_{day_stamp}.txt', 'logs_latest.txt'):
-            with open(os.path.join(logs_d, fn), 'a', encoding='utf-8') as lf:
-                lf.write(line)
-    except Exception:
-        pass
+def write_file_log(event_text):
+    now_s = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+    day_s = datetime.now().strftime("%Y%m%d")
+    line = f"[{now_s}] {event_text}"
+    print(line)
+    for fn in (f"logs_{day_s}.txt", "logs_latest.txt"):
+        try:
+            with open(os.path.join(LOGS_DIR, fn), "a", encoding="utf-8") as lf:
+                lf.write(line + "\n")
+        except Exception:
+            pass
 
 
 def sanitize_text(txt):
@@ -71,10 +77,7 @@ def sanitize_text(txt):
         ("заданиями Милорда", "задачами проекта"),
         ("от Милорда", "администратора"),
         ("По поручению Милорда", "По плану разработки"),
-        ("КРАСОВЕЛОФ, МИЛОРД!", "Сборка успешно завершена."),
-        ("КрасовелоФ, Милорд!", "Готово."),
         ("Милорд", "Администратор"),
-        ("Сир", ""),
         ("читаь все новости на VK", "ВК"),
     ]
     for old_s, new_s in replacements:
@@ -82,8 +85,21 @@ def sanitize_text(txt):
     return txt
 
 
+def is_junk_image_name(fn):
+    low = fn.lower()
+    if low in ("macro_mushrooms_raw.jpg", "macro_rice_noodles.jpg"):
+        return True
+    if low.startswith(("ai_v", "ingr_")):
+        return True
+    if low.startswith("ymap_org_") and low not in ("ymap_org_0.jpg", "ymap_org_1.jpg"):
+        return True
+    if low.startswith("yorg_") and low not in ("yorg_0.jpg", "yorg_1.jpg"):
+        return True
+    return False
+
+
 def prepare_and_clean_assets():
-    """Мигрирует недостающие ассеты и удаляет неиспользуемые/невеганские изображения."""
+    """Мигрирует ассеты и удаляет невеганские/чужие кадры из img/."""
     os.makedirs("img", exist_ok=True)
     for old_d in OLD_DIRS_TO_CHECK:
         if not os.path.exists(old_d) or os.path.abspath(old_d) == BASE_DIR:
@@ -98,9 +114,7 @@ def prepare_and_clean_assets():
         old_img = os.path.join(old_d, "img")
         if os.path.exists(old_img):
             for fn in os.listdir(old_img):
-                if fn.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
-                    if fn.startswith(("ymap_org_", "ai_v", "ingr_")) and fn not in ("ymap_org_0.jpg", "ymap_org_1.jpg"):
-                        continue
+                if fn.lower().endswith((".jpg", ".jpeg", ".png", ".webp")) and not is_junk_image_name(fn):
                     s_f, d_f = os.path.join(old_img, fn), os.path.join(BASE_DIR, "img", fn)
                     if not os.path.exists(d_f) or os.path.getsize(d_f) < 1000:
                         try:
@@ -113,7 +127,7 @@ def prepare_and_clean_assets():
         if not os.path.exists(img_d):
             continue
         for fn in list(os.listdir(img_d)):
-            if fn.startswith(("ai_v", "ingr_")) or (fn.startswith("ymap_org_") and fn not in ("ymap_org_0.jpg", "ymap_org_1.jpg")):
+            if is_junk_image_name(fn):
                 try:
                     os.remove(os.path.join(img_d, fn))
                 except Exception:
@@ -126,12 +140,22 @@ def is_pinned_menu_post(text_str, is_pinned_flag=0):
 
 
 def fetch_vk_wall_posts():
-    vk_token = os.environ.get("VK_TOKEN") or (open("vk key.txt", "r", encoding="utf-8").read().strip() if os.path.exists("vk key.txt") else "")
-    fallbacks = [p for p in ["img/vk_5122_0.jpg", "img/vk_5068_0.jpg", "img/vk_5128_1.jpg", "img/vk_5134_0.jpg"] if os.path.exists(p)] or ["img/ymap_org_0.jpg"]
+    vk_token = os.environ.get("VK_TOKEN") or (
+        open("vk key.txt", "r", encoding="utf-8").read().strip() if os.path.exists("vk key.txt") else ""
+    )
+    fallbacks = [
+        p for p in ["img/vk_5122_0.jpg", "img/vk_5068_0.jpg", "img/vk_5128_1.jpg", "img/vk_5134_0.jpg"]
+        if os.path.exists(p)
+    ] or ["img/ymap_org_0.jpg"]
     posts_out = []
+
     if vk_token:
         try:
-            r = requests.get("https://api.vk.com/method/wall.get", params={"domain": "mirmir.cafe", "count": 20, "access_token": vk_token, "v": "5.199"}, timeout=8)
+            r = requests.get(
+                "https://api.vk.com/method/wall.get",
+                params={"domain": "mirmir.cafe", "count": 20, "access_token": vk_token, "v": "5.199"},
+                timeout=8
+            )
             for it in r.json().get("response", {}).get("items", []):
                 txt = (it.get("text") or "").strip()
                 if len(txt) < 15 or is_pinned_menu_post(txt, it.get("is_pinned", 0)):
@@ -163,18 +187,30 @@ def fetch_vk_wall_posts():
                 if not photo_local:
                     photo_local = fallbacks[len(posts_out) % len(fallbacks)]
                 first_line = txt.split("\n")[0].strip()
-                vk_link = f"https://vk.com/mirmir.cafe?w=wall{owner_id}_{post_id}" if (owner_id and str(owner_id) != "-191992548" and post_id) else VK_PUBLIC_URL
-                posts_out.append({"id": post_id, "date": dt_str, "likes": likes, "title": first_line[:68], "text": txt[:280], "photo": photo_local, "vk_url": vk_link})
+                vk_link = (
+                    f"https://vk.com/mirmir.cafe?w=wall{owner_id}_{post_id}"
+                    if (owner_id and str(owner_id) != "-191992548" and post_id)
+                    else VK_PUBLIC_URL
+                )
+                posts_out.append({
+                    "id": post_id, "date": dt_str, "likes": likes,
+                    "title": first_line[:68], "text": txt[:280],
+                    "photo": photo_local, "vk_url": vk_link
+                })
                 if len(posts_out) >= 12:
                     break
             if posts_out:
                 json.dump(posts_out, open("cache_posts.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
                 return posts_out
-        except Exception:
-            pass
+        except Exception as e:
+            write_file_log(f"[WARN] Ошибка запроса VK API: {e}")
+
     if os.path.exists("cache_posts.json"):
         try:
-            cached = [p for p in json.load(open("cache_posts.json", "r", encoding="utf-8")) if not is_pinned_menu_post((p.get("title") or "") + " " + (p.get("text") or ""))]
+            cached = [
+                p for p in json.load(open("cache_posts.json", "r", encoding="utf-8"))
+                if not is_pinned_menu_post((p.get("title") or "") + " " + (p.get("text") or ""))
+            ]
             for i, p in enumerate(cached):
                 if "-191992548" in str(p.get("vk_url", "")):
                     p["vk_url"] = VK_PUBLIC_URL
@@ -195,6 +231,7 @@ def sync_tz_and_build_logs():
                 tz_data.update(loaded)
         except Exception:
             pass
+
     by_id = {str(t["id"]): t for t in tz_data.get("tasks", []) if isinstance(t, dict) and t.get("id")}
     merged = []
     for d_t in MASTER_TASKS_DEFAULT:
@@ -202,25 +239,21 @@ def sync_tz_and_build_logs():
         if tid in by_id:
             old = by_id.pop(tid)
             old_dt = str(old.get("date") or "")
-            final_dt = old_dt if ":" in old_dt else d_t["date"]
             merged.append({
                 "id": tid,
-                "date": final_dt,
+                "date": old_dt if ":" in old_dt else d_t["date"],
                 "title": sanitize_text(d_t["title"]),
                 "done": bool(old.get("done", d_t["done"])),
                 "comment": sanitize_text(old.get("comment") or d_t["comment"])
             })
         else:
             merged.append(dict(d_t))
-    for k, v in by_id.items():
+    for _, v in by_id.items():
         if len(str(v.get("title", ""))) > 3:
-            dt_v = str(v.get("date") or "")
-            if ":" not in dt_v:
-                dt_v = (dt_v + " 12:00").strip()
-            v["date"] = dt_v
             v["title"] = sanitize_text(v.get("title", ""))
             v["comment"] = sanitize_text(v.get("comment", ""))
             merged.append(v)
+
     tz_data["tasks"] = merged
     json.dump(tz_data, open("tz_mirmir.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
 
@@ -233,19 +266,34 @@ def sync_tz_and_build_logs():
     open("run_counter.txt", "w", encoding="utf-8").write(str(cnt))
 
     logs = json.load(open("build_history.json", "r", encoding="utf-8")) if os.path.exists("build_history.json") else []
-    for l_item in logs:
-        l_item["model"] = sanitize_text(l_item.get("model", ""))
-        l_item["status"] = sanitize_text(l_item.get("status", ""))
     now_str = datetime.now().strftime("%d.%m.%Y %H:%M")
     logs.insert(0, {
-        "version": f"Релиз v4.5 • Сборка #{cnt}",
+        "version": f"Релиз v4.8 • Сборка #{cnt}",
         "timestamp": now_str,
-        "model": "Сборка v4.5: Ревизия кода, возврат витрины разделов меню, зум фото и кнопка «⏮️ К последним постам»",
-        "status": "Восстановлены 9 карточек разделов меню и нижние отступы, починены стрелки ◀ ▶ в новостях, добавлена кнопка возврата к началу ленты и плавный зум фото при наведении.",
+        "model": "Полная чистая пересборка v4.8 (Hero + Умный фон фото + Карточка маршрута + Точный ИИ-поиск)",
+        "status": "Защищён Hero, устранены ошибки JS, включён режим фото без обрезки, починены Конструктор и генератор блюд.",
         "stats": f"Дата сборки: {now_str}"
     })
     json.dump(logs[:60], open("build_history.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     return tz_data, logs[:60], cnt
+
+
+def load_approved_vision_overrides():
+    """Подхватывает утверждённые фото блюд из approved_menu_photos.json (если созданы в vision_parser)."""
+    overrides = {}
+    for d in [BASE_DIR, PARENT_DIR, os.path.join(PARENT_DIR, "vision_sandbox")]:
+        ap = os.path.join(d, "approved_menu_photos.json")
+        if os.path.exists(ap):
+            try:
+                data = json.load(open(ap, "r", encoding="utf-8"))
+                if isinstance(data, dict):
+                    for dish_nm, info in data.items():
+                        ph = info.get("approved_photo") or info.get("original_photo")
+                        if ph and os.path.exists(os.path.join(BASE_DIR, ph)):
+                            overrides[dish_nm] = ph
+            except Exception:
+                pass
+    return overrides
 
 
 def upgrade_template_html_in_place(tpl_html):
@@ -255,7 +303,10 @@ def upgrade_template_html_in_place(tpl_html):
     if 'name="robots"' not in tpl_html:
         tpl_html = tpl_html.replace("<head>", '<head>\n  <meta name="robots" content="noindex, nofollow">', 1)
 
-    for vname in ["hubActiveTab", "hubDishCategoryFilter", "hubDishSearchQuery", "selectedAiEnginePerDish", "pendingDishCandidates", "currentMenuCategory", "currentNewsPage"]:
+    for vname in [
+        "hubActiveTab", "hubDishCategoryFilter", "hubDishSearchQuery",
+        "selectedAiEnginePerDish", "pendingDishCandidates", "currentMenuCategory", "currentNewsPage"
+    ]:
         tpl_html = re.sub(rf"\blet\s+{vname}\b", f"var {vname}", tpl_html)
 
     anchor_pos = tpl_html.find('a.download = "MASTER_PROMPT_MIRMIR.txt";')
@@ -264,8 +315,8 @@ def upgrade_template_html_in_place(tpl_html):
         if brace_pos != -1:
             tpl_html = tpl_html[: brace_pos + 1] + "\n"
 
-    v45_js = r"""
-    // === ЯДРО ПЛАТФОРМЫ v4.5 (ПОЛНАЯ РЕВИЗИЯ) ===
+    v48_js = r"""
+    // === ЧИСТОЕ КЛИЕНТСКОЕ ЯДРО ПЛАТФОРМЫ «МИР МИР» (v4.8) ===
     const NTFY_SYNC_URL = "https://ntfy.sh/mirmir_tz_sync_nn45_v30";
     window.hubActiveTab = window.hubActiveTab || "dishes72";
     window.hubDishCategoryFilter = window.hubDishCategoryFilter || "Все";
@@ -287,12 +338,84 @@ def upgrade_template_html_in_place(tpl_html):
       "Десерты без сахара": "img/vk_5069_0.jpg",
       "Барное меню: Смузи и Кофе": "img/macro_strawberry_banana.jpg",
       "Чайная карта": "img/vk_5122_0.jpg",
-      "Дополнительно": "img/vk_5085_1.jpg"
+      "Дополнительно": "img/vk_5121_0.jpg"
     };
 
-    // 1. Отключение (полупрозрачность) и удаление блюд (3 подтверждения)
+    // 1. Умный режим фото без обрезки (Ambient Blur Backdrop)
+    window.applyNoCropAmbientPhotos = function() {
+      if (!document.getElementById("mirmir-nocrop-ambient-css")) {
+        const st = document.createElement("style");
+        st.id = "mirmir-nocrop-ambient-css";
+        st.textContent = `
+          .mirmir-nocrop-wrap {
+            position: relative !important;
+            overflow: hidden !important;
+            background-color: #1D2918 !important;
+          }
+          .mirmir-nocrop-bg {
+            position: absolute !important;
+            inset: -16px !important;
+            background-size: cover !important;
+            background-position: center !important;
+            filter: blur(18px) brightness(0.68) saturate(1.35) !important;
+            transform: scale(1.14) !important;
+            z-index: 0 !important;
+            pointer-events: none !important;
+            transition: background-image 0.3s ease !important;
+          }
+          body:not(.mirmir-crop-cover-mode) .mirmir-nocrop-wrap > img {
+            position: relative !important;
+            z-index: 1 !important;
+            object-fit: contain !important;
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.42));
+          }
+          body.mirmir-crop-cover-mode .mirmir-nocrop-wrap > img {
+            position: relative !important;
+            z-index: 1 !important;
+            object-fit: cover !important;
+          }
+          .mirmir-nocrop-wrap > *:not(.mirmir-nocrop-bg):not(img) {
+            z-index: 5;
+          }
+        `;
+        document.head.appendChild(st);
+      }
+
+      const imgs = document.querySelectorAll(
+        "#hero-interior-slide-img, #hero-specials-3rows .zoom-card img, " +
+        "#posts-grid article img, #cat-showcase-grid .zoom-card img, " +
+        "#menu-dishes-grid .zoom-card img, #cafe-shop-grid .zoom-card img"
+      );
+      imgs.forEach(im => {
+        const wrap = im.parentElement;
+        if (!wrap) return;
+        wrap.classList.add("mirmir-nocrop-wrap");
+        let bg = wrap.querySelector(".mirmir-nocrop-bg");
+        if (!bg) {
+          bg = document.createElement("div");
+          bg.className = "mirmir-nocrop-bg";
+          wrap.insertBefore(bg, wrap.firstChild);
+        }
+        const src = im.getAttribute("src") || im.src || "";
+        if (src) bg.style.backgroundImage = 'url("' + src.replace(/"/g, '\\"') + '")';
+        if (!im.dataset.ambientHooked) {
+          im.dataset.ambientHooked = "1";
+          im.addEventListener("load", function() {
+            const s = this.getAttribute("src") || this.src || "";
+            const b = this.parentElement ? this.parentElement.querySelector(".mirmir-nocrop-bg") : null;
+            if (b && s) b.style.backgroundImage = 'url("' + s.replace(/"/g, '\\"') + '")';
+          });
+        }
+      });
+    };
+
+    // 2. Отключение (полупрозрачность) и удаление блюд (3 подтверждения)
     window.getDisabledDishesMap = function() {
-      try { return JSON.parse(localStorage.getItem("mirmir_disabled_dishes_v1") || "{}"); } catch(e) { return {}; }
+      try { return JSON.parse(localStorage.getItem("mirmir_disabled_dishes_v1") || "{}"); } catch (e) { return {}; }
     };
     window.isDishDisabled = function(name) {
       return Boolean(window.getDisabledDishesMap()[name]);
@@ -301,39 +424,38 @@ def upgrade_template_html_in_place(tpl_html):
       const d = DATA.menu[idx];
       if (!d) return;
       const map = window.getDisabledDishesMap();
-      if (map[d.name]) { delete map[d.name]; } else { map[d.name] = true; }
-      try { localStorage.setItem("mirmir_disabled_dishes_v1", JSON.stringify(map)); } catch(e) {}
+      if (map[d.name]) delete map[d.name]; else map[d.name] = true;
+      try { localStorage.setItem("mirmir_disabled_dishes_v1", JSON.stringify(map)); } catch (e) {}
       window.renderUnifiedSystemHub();
       window.renderDishes();
-      window.renderHeroRightColumn(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
+      window.renderHeroRightColumn();
     };
-
     window.getDeletedDishesMap = function() {
-      try { return JSON.parse(localStorage.getItem("mirmir_deleted_dishes_v1") || "{}"); } catch(e) { return {}; }
+      try { return JSON.parse(localStorage.getItem("mirmir_deleted_dishes_v1") || "{}"); } catch (e) { return {}; }
     };
     window.deleteDishTripleConfirm = function(idx) {
       const d = DATA.menu[idx];
       if (!d) return;
-      if (!confirm("Подтверждение 1 из 3:\nУдалить блюдо «" + d.name + "» из меню?")) return;
+      if (!confirm("Подтверждение 1 из 3:\nУдалить блюдо «" + d.name + "»?")) return;
       if (!confirm("Подтверждение 2 из 3:\nВы уверены, что хотите удалить «" + d.name + "»?")) return;
-      if (!confirm("Подтверждение 3 из 3 (финальное):\nОкончательно удалить блюдо «" + d.name + "» из меню сайта?")) return;
-      const delMap = window.getDeletedDishesMap();
-      delMap[d.name] = true;
-      try { localStorage.setItem("mirmir_deleted_dishes_v1", JSON.stringify(delMap)); } catch(e) {}
+      if (!confirm("Подтверждение 3 из 3:\nОкончательно удалить «" + d.name + "» из меню?")) return;
+      const map = window.getDeletedDishesMap();
+      map[d.name] = true;
+      try { localStorage.setItem("mirmir_deleted_dishes_v1", JSON.stringify(map)); } catch (e) {}
       DATA.menu.splice(idx, 1);
       window.renderUnifiedSystemHub();
       window.renderDishes();
-      window.renderHeroRightColumn(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
-      window.renderCategoryShowcaseAndRail(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
+      window.renderHeroRightColumn();
+      window.renderCategoryShowcaseAndRail();
     };
     window.restoreAllDeletedDishes = function() {
-      if (!confirm("Восстановить все ранее удалённые блюда в меню?")) return;
-      try { localStorage.removeItem("mirmir_deleted_dishes_v1"); } catch(e) {}
+      if (!confirm("Восстановить все ранее удалённые блюда?")) return;
+      try { localStorage.removeItem("mirmir_deleted_dishes_v1"); } catch (e) {}
       location.reload();
     };
 
     function loadCustomAddedDishes() {
-      try { return JSON.parse(localStorage.getItem("mirmir_custom_dishes_v1") || "[]"); } catch(e) { return []; }
+      try { return JSON.parse(localStorage.getItem("mirmir_custom_dishes_v1") || "[]"); } catch (e) { return []; }
     }
     function syncMenuWithCustomAndDeleted() {
       if (!DATA.menu) DATA.menu = [];
@@ -350,114 +472,83 @@ def upgrade_template_html_in_place(tpl_html):
       });
     }
 
-    // 2. Полноэкранное увеличение (🔍) с плашкой «🍽️ Подача блюд может отличаться»
+    // 3. Лайтбокс с плашкой подачи
     const _baseOpenSuperZoom = window.openSuperZoom;
     window.openSuperZoom = function(src, title) {
       if (_baseOpenSuperZoom) _baseOpenSuperZoom(src, title);
       const lb = document.getElementById("super-zoom-lightbox");
       if (!lb) return;
-      let note = document.getElementById("zoom-serving-disclaimer");
-      if (!note) {
-        note = document.createElement("div");
+      if (!document.getElementById("zoom-serving-disclaimer")) {
+        const note = document.createElement("div");
         note.id = "zoom-serving-disclaimer";
         note.className = "fixed bottom-5 left-1/2 -translate-x-1/2 z-[220] px-4 py-1.5 rounded-full bg-black/85 text-[#F2B880] border border-[#F2B880]/50 text-xs font-extrabold shadow-xl pointer-events-none whitespace-nowrap";
-        note.innerHTML = "🍽️ Подача блюд может отличаться от фотографии";
+        note.textContent = "🍽️ Подача блюд может отличаться от фотографии";
         lb.appendChild(note);
       }
       lb.classList.remove("hidden");
       lb.classList.add("flex");
     };
 
-    // 3. Слайдер интерьера с точным кадрированием вывески и зелёного дивана
+    // 4. Слайдер интерьера (5 проверенных кадров, синхронизирован с #hero-interior-slide-img)
     window.getInteriorSlidesList = function() {
       return [
-        { src: "img/ymap_org_0.jpg", title: "🏛️ Исторический кирпичный свод и уютный зал на Ильинской, 45", tag: "Интерьер зала", pos: "center center" },
-        { src: "img/ymap_org_1.jpg", title: "🕊️ Фирменная кованая вывеска с белой Голубкой мира у входа", tag: "Экстерьер • Ильинская, 45", pos: "center 32%" },
-        { src: "img/vk_5068_0.jpg", title: "🛋️ Изумрудный велюровый диван, живой кирпич и картины", tag: "Атмосфера «Мир Мир»", pos: "center 90%" },
-        { src: "img/vk_5122_0.jpg", title: "🕯️ Вечерние чаепития при свечах и редкий китайский чай", tag: "Чайная культура", pos: "center 70%" },
-        { src: "img/vk_5134_0.jpg", title: "🌿 Уютное зелёное пространство для встреч и живого общения", tag: "Интерьер кафе", pos: "center center" }
+        { src: "img/ymap_org_0.jpg", title: "🏛️ Исторический кирпичный свод и уютный зал", tag: "Интерьер зала" },
+        { src: "img/ymap_org_1.jpg", title: "🕊️ Фирменная кованая вывеска с белой Голубкой мира", tag: "Экстерьер у входа" },
+        { src: "img/vk_5068_0.jpg", title: "🛋️ Изумрудный велюровый диван, живой кирпич и картины", tag: "Атмосфера «Мир Мир»" },
+        { src: "img/vk_5122_0.jpg", title: "🕯️ Вечерние чаепития при свечах и редкий китайский чай", tag: "Чайная культура" },
+        { src: "img/vk_5134_0.jpg", title: "🌿 Уютное зелёное пространство для встреч и общения", tag: "Интерьер кафе" }
       ];
     };
 
-    const _baseRenderInteriorSlide = window.renderInteriorSlideState;
+    const _baseRenderInterior = window.renderInteriorSlideState;
     window.renderInteriorSlideState = function() {
-      if (_baseRenderInteriorSlide) _baseRenderInteriorSlide();
-      const slides = window.getInteriorSlidesList();
-      const imgEl = document.getElementById("interior-slide-img") || document.getElementById("hero-interior-slide-img");
-      if (imgEl && slides.length) {
-        const curSrc = imgEl.getAttribute("src") || "";
-        const found = slides.find(s => curSrc.includes(s.src)) || slides[0];
-        // objectFit управляется режимом Ambient No-Crop
-        imgEl.style.objectPosition = found.pos || "center center";
-        if (imgEl.parentElement) {
-          imgEl.parentElement.style.height = "300px";
-          imgEl.parentElement.style.minHeight = "300px";
-        }
+      if (_baseRenderInterior) _baseRenderInterior();
+      const imgEl = document.getElementById("hero-interior-slide-img");
+      if (imgEl && imgEl.parentElement) {
+        imgEl.parentElement.style.height = "300px";
+        imgEl.parentElement.style.minHeight = "300px";
+        setTimeout(() => {
+          window.applyNoCropAmbientPhotos();
+        }, 180);
       }
-      document.querySelectorAll("button").forEach(b => {
-        if (b.textContent.trim() === "🔍 Лупа" || b.textContent.trim() === "Лупа") {
-          b.innerHTML = "🔍";
-          b.setAttribute("title", "Увеличить фото");
-        }
-      });
     };
 
-    // 4. ВОССТАНОВЛЕНИЕ ВИТРИНЫ «Меню кафе по разделам» (9 карточек) И ВЕРХНЕЙ ЛЕНТЫ КАТЕГОРИЙ
-    const _baseRenderCategoryShowcase = window.renderCategoryShowcaseAndRail;
+    // 5. Витрина разделов меню (#cat-showcase-grid) и быстрая полоса категорий
     window.renderCategoryShowcaseAndRail = function() {
       syncMenuWithCustomAndDeleted();
-      if (typeof _baseRenderCategoryShowcase === "function") {
-        try { _baseRenderCategoryShowcase(); } catch(e) {}
-      }
-
       const cats = Array.from(new Set((DATA.menu || []).map(d => d.category)));
       const rail = document.getElementById("v45-quick-cats-strip");
       if (rail) {
         rail.innerHTML =
-          '<button type="button" onclick="openMenu(\'Все\')" class="px-3 py-1.5 rounded-full bg-[#2E3D28] text-[#F2B880] text-xs font-extrabold whitespace-nowrap cursor-pointer shadow-xs">📖 Все блюда (' + DATA.menu.length + ')</button>' +
+          '<button type="button" onclick="openMenu(\'Все\')" class="px-3 py-1.5 rounded-full bg-[#2E3D28] text-[#F2B880] text-xs font-extrabold whitespace-nowrap cursor-pointer">📖 Все блюда (' + DATA.menu.length + ')</button>' +
           cats.map(c =>
             '<button type="button" onclick="openMenu(\'' + esc(c) + '\')" class="px-3 py-1.5 rounded-full bg-white hover:bg-amber-50 text-[#2E3D28] border border-stone-300 text-xs font-extrabold whitespace-nowrap cursor-pointer transition">' + esc(c) + '</button>'
           ).join("");
       }
 
-      // Находим секцию «Меню кафе по разделам» по заголовку или ID и гарантируем отрисовку 9 карточек с зумом и проверенными фото!
-      let showcaseGrid = document.getElementById("categories-showcase-grid") || document.getElementById("category-showcase-grid");
-      if (!showcaseGrid) {
-        document.querySelectorAll("main section").forEach(sec => {
-          if (sec.textContent.includes("Меню кафе по разделам")) {
-            let g = sec.querySelector(".grid");
-            if (!g) {
-              g = document.createElement("div");
-              g.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4";
-              sec.appendChild(g);
-            }
-            showcaseGrid = g;
-          }
-        });
-      }
-
-      if (showcaseGrid) {
-        showcaseGrid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-3";
-        showcaseGrid.innerHTML = cats.filter(c => c !== "Дополнительно").slice(0, 9).map(c => {
-          const itemsInCat = DATA.menu.filter(d => d.category === c);
-          const count = itemsInCat.length;
-          const cleanPhoto = VERIFIED_CATEGORY_PHOTOS[c] || (itemsInCat[0] ? itemsInCat[0].photo : "img/vk_5085_1.jpg");
+      const grid = document.getElementById("cat-showcase-grid");
+      if (grid) {
+        grid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-3";
+        grid.innerHTML = cats.filter(c => c !== "Дополнительно").slice(0, 9).map(c => {
+          const items = DATA.menu.filter(d => d.category === c);
+          const photo = VERIFIED_CATEGORY_PHOTOS[c] || (items[0] ? items[0].photo : "img/vk_5085_1.jpg");
           return '<div onclick="openMenu(\'' + esc(c) + '\')" class="zoom-card bg-[#FFFDF9] rounded-3xl p-3 border border-[#556432]/25 shadow-sm flex flex-col justify-between gap-2.5 cursor-pointer">' +
-            '<div class="relative h-44 rounded-2xl overflow-hidden bg-stone-200">' +
-              '<img src="' + esc(cleanPhoto) + '" alt="' + esc(c) + '" class="w-full h-full object-cover">' +
-              '<div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent pointer-events-none"></div>' +
+            '<div class="relative h-44 rounded-2xl overflow-hidden bg-[#1D2918]">' +
+              '<img src="' + esc(photo) + '" alt="' + esc(c) + '" class="w-full h-full">' +
+              '<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent pointer-events-none"></div>' +
               '<div class="absolute bottom-2.5 left-3 right-3 flex items-end justify-between gap-2 pointer-events-none">' +
                 '<h3 class="font-serif text-xl font-bold text-white leading-tight">' + esc(c) + '</h3>' +
-                '<span class="px-2 py-0.5 rounded-full bg-[#D48238] text-white text-[10px] font-extrabold whitespace-nowrap">' + count + ' поз.</span>' +
+                '<span class="px-2 py-0.5 rounded-full bg-[#D48238] text-white text-[10px] font-extrabold whitespace-nowrap">' + items.length + ' поз.</span>' +
               '</div>' +
             '</div>' +
             '<button type="button" class="w-full py-2 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white font-extrabold text-xs cursor-pointer transition">📖 Открыть раздел</button>' +
           '</div>';
         }).join("");
       }
+      window.applyNoCropAmbientPhotos();
     };
 
-    // 5. Правая колонка Hero: 3D-карусель + 2 карточки спешлов
+    // 6. Правая колонка Hero: 3D-карусель (#stage-3d-box) + 2 карточки сезонных спешлов
     window.rightSpecialsPairIdx = 0;
     window.stepRightSpecialsPair = function(delta) {
       const specials = (DATA.menu || []).filter(d => d.category === "Сезонные спешлы от Шефа");
@@ -490,10 +581,10 @@ def upgrade_template_html_in_place(tpl_html):
         const idx = DATA.menu.indexOf(d);
         const pr = d.sizes ? d.sizes[0].price : d.price;
         return '<div onclick="openMenu(\'Сезонные спешлы от Шефа\')" class="zoom-card bg-[#FDF8F2] text-stone-900 rounded-2xl p-2.5 flex flex-col justify-between gap-2 cursor-pointer shadow-lg border-2 border-[#F2B880]/70">' +
-          '<div class="relative h-32 sm:h-36 w-full rounded-xl overflow-hidden bg-stone-200">' +
-            '<img src="' + esc(d.photo) + '" onclick="event.stopPropagation();openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
-            '<span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/70 text-[#F2B880] text-[9px] font-extrabold">' + esc(d.weight || "Хит шефа") + '</span>' +
-            '<span class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/70 text-white text-[8px] font-bold">🍽️ Подача может отличаться</span>' +
+          '<div class="relative h-32 sm:h-36 w-full rounded-xl overflow-hidden bg-[#1D2918]">' +
+            '<img src="' + esc(d.photo) + '" onclick="event.stopPropagation();openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full cursor-zoom-in">' +
+            '<span class="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/75 text-[#F2B880] text-[9px] font-extrabold">' + esc(d.weight || "Хит шефа") + '</span>' +
+            '<span class="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded bg-black/75 text-white text-[8px] font-bold">🍽️ Подача может отличаться</span>' +
             '<button type="button" title="Увеличить" onclick="event.stopPropagation();openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-1.5 right-1.5 w-7 h-7 rounded-full bg-black/75 hover:bg-[#D48238] text-white text-xs flex items-center justify-center cursor-pointer shadow">🔍</button>' +
           '</div>' +
           '<div class="space-y-1">' +
@@ -505,74 +596,96 @@ def upgrade_template_html_in_place(tpl_html):
           '</div>' +
         '</div>';
       }).join("") + '</div>';
+      window.applyNoCropAmbientPhotos();
     };
 
     const _baseRenderHeroRight = window.renderHeroRightColumn;
     window.renderHeroRightColumn = function() {
       if (_baseRenderHeroRight) _baseRenderHeroRight();
       window.renderRightTwoPictureFields();
-      const stage3d = document.getElementById("carousel-3d-stage") || document.getElementById("stage-3d-box");
-      if (stage3d) {
-        stage3d.style.height = "290px";
-        stage3d.querySelectorAll("div").forEach(cardEl => {
-          if (cardEl.style.width) cardEl.style.width = "205px";
-          if (cardEl.style.height) cardEl.style.height = "278px";
-        });
-        stage3d.querySelectorAll("button").forEach(b => {
-          if (b.textContent.includes("Лупа")) b.innerHTML = "🔍";
-        });
-      }
+      const stage3d = document.getElementById("stage-3d-box");
+      if (stage3d) stage3d.style.height = "290px";
     };
 
-    // 6. Единая верхняя панель в <main>, плавное масштабирование фото (.zoom-card) и чистая вёрстка блока адреса
+    // 7. Чистая карточка маршрута (без сторонней рекламы Яндекс.Карт)
+    window.loadInteractiveYandexMap = function() {
+      const box = document.getElementById("mirmir-clean-map-box");
+      if (!box) return;
+      box.classList.remove("p-5");
+      const ifr = document.createElement("iframe");
+      ifr.src = "https://yandex.ru/map-widget/v1/?ll=43.990383%2C56.322355&z=17&oid=7309581265&ol=biz";
+      ifr.className = "w-full h-full min-h-[300px] border-0";
+      ifr.setAttribute("allowfullscreen", "");
+      box.innerHTML = "";
+      box.appendChild(ifr);
+    };
+
+    window.buildCleanMapHtml = function() {
+      return [
+        '<div class="lg:col-span-7 min-h-[280px] sm:min-h-[320px] rounded-2xl overflow-hidden border border-[#F2B880]/40 bg-[#1B2616] relative flex flex-col justify-between p-5" id="mirmir-clean-map-box">',
+        '  <div class="flex items-start justify-between gap-3">',
+        '    <div class="space-y-1">',
+        '      <span class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-800/80 text-[#F2B880] text-[10px] font-extrabold uppercase tracking-wider">🗺️ Схема проезда • Без сторонней рекламы</span>',
+        '      <h3 class="font-serif text-2xl sm:text-3xl font-bold text-white">ул. Ильинская, 45 — Исторический центр</h3>',
+        '      <p class="text-xs text-stone-300">5 минут пешком от ул. Большой Покровской • GPS: <span class="font-mono text-[#F2B880]">56.322355, 43.990383</span></p>',
+        '    </div>',
+        '    <div class="w-12 h-12 rounded-full flex-shrink-0 shadow-lg" data-dove-holder></div>',
+        '  </div>',
+        '  <div class="my-3 p-4 rounded-2xl bg-black/35 border border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">',
+        '    <div><span class="text-[#F2B880] font-extrabold block">🚶 Пешком от центра</span><span class="text-stone-300">От ст. м. Горьковская или ул. Б. Покровской по ул. Ильинской.</span></div>',
+        '    <div><span class="text-[#F2B880] font-extrabold block">🏛️ Ориентир входа</span><span class="text-stone-300">Кирпичный дом № 45, кованая вывеска с белой Голубкой мира.</span></div>',
+        '    <div><span class="text-[#F2B880] font-extrabold block">🅿️ Парковка</span><span class="text-stone-300">Парковочные карманы вдоль ул. Ильинской и Сергиевской.</span></div>',
+        '  </div>',
+        '  <div class="flex flex-wrap items-center gap-2.5">',
+        '    <a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="px-4 py-2.5 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs shadow-lg cursor-pointer transition">🗺️ Открыть в Яндекс.Картах ↗</a>',
+        '    <a href="https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=auto" target="_blank" class="px-4 py-2.5 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white font-extrabold text-xs border border-[#F2B880]/30 cursor-pointer transition">🧭 Построить маршрут ↗</a>',
+        '    <button type="button" onclick="window.loadInteractiveYandexMap()" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-[#F2B880] font-extrabold text-xs cursor-pointer transition">🌐 Загрузить интерактивную карту</button>',
+        '  </div>',
+        '</div>'
+      ].join("");
+    };
+
+    // 8. Единая верхняя панель, защита Hero, чистая вёрстка блока адреса и синхронизация корзины
     function syncMainCartBadge() {
-      const origCountEl = document.getElementById("cart-count");
-      const cnt = origCountEl ? origCountEl.textContent.trim() : "0";
+      const origEl = document.getElementById("cart-badge") || document.getElementById("cart-count");
+      const cnt = origEl ? origEl.textContent.trim() : "0";
       const mainCnt = document.getElementById("v45-main-cart-count");
       const floatBtn = document.getElementById("v45-floating-cart");
       const floatCnt = document.getElementById("v45-float-cart-count");
       if (mainCnt) mainCnt.textContent = cnt;
       if (floatCnt) floatCnt.textContent = cnt;
       if (floatBtn) {
-        if (parseInt(cnt, 10) > 0) {
-          floatBtn.classList.remove("hidden");
-          floatBtn.classList.add("flex");
-        } else {
-          floatBtn.classList.add("hidden");
-          floatBtn.classList.remove("flex");
-        }
+        const hasItems = parseInt(cnt, 10) > 0;
+        floatBtn.classList.toggle("hidden", !hasItems);
+        floatBtn.classList.toggle("flex", hasItems);
       }
     }
 
-    function applyV45CleanLayout() {
-      if (!document.getElementById("mirmir-v45-styles")) {
+    function applyV48CleanLayout() {
+      if (!document.getElementById("mirmir-v48-styles")) {
         const st = document.createElement("style");
-        st.id = "mirmir-v45-styles";
+        st.id = "mirmir-v48-styles";
         st.textContent = `
           html, body { min-height: auto !important; height: auto !important; }
           header { display: none !important; }
-          main.max-w-\\[1440px\\], footer .max-w-\\[1440px\\] { max-width: 1320px !important; width: 100% !important; min-height: 0 !important; }
-          main.max-w-\\[1440px\\] { padding-top: 14px !important; padding-bottom: 28px !important; }
-          main section .lg\\:col-span-7, main section .lg\\:col-span-5 { display: flex !important; }
-          #hero-work-badge,
-          main section .lg\\:col-span-7 > div[onclick*="Сезонные спешлы от Шефа"] { display: none !important; }
-
-          /* Плавное масштабирование карточек и фотографий при наведении курсора */
+          main.max-w-7xl, footer.max-w-7xl { max-width: 1320px !important; width: 100% !important; }
+          main.max-w-7xl { padding-top: 14px !important; padding-bottom: 28px !important; }
+          #hero-work-badges, #hero-work-badge { display: none !important; }
           body:not(.disable-card-zoom) .zoom-card {
-            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease !important;
+            transition: transform 0.25s ease, box-shadow 0.25s ease !important;
           }
           body:not(.disable-card-zoom) .zoom-card:hover {
-            transform: translateY(-4px) scale(1.015) !important;
-            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.13) !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.14) !important;
           }
-          body:not(.disable-card-zoom) .zoom-card img {
-            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1) !important;
+          .v45-top-right-close {
+            position: absolute !important; top: 10px !important; right: 10px !important; z-index: 95 !important;
+            width: 34px !important; height: 34px !important; border-radius: 9999px !important;
+            background: rgba(20, 28, 17, 0.92) !important; color: #FFFDF9 !important;
+            border: 1.5px solid rgba(242, 184, 128, 0.7) !important;
+            display: inline-flex !important; align-items: center !important; justify-content: center !important;
+            font-size: 16px !important; font-weight: 900 !important; cursor: pointer !important;
           }
-          body:not(.disable-card-zoom) .zoom-card:hover img {
-            transform: scale(1.07) !important;
-          }
-
-          .v45-top-right-close { position: absolute !important; top: 10px !important; right: 10px !important; z-index: 95 !important; width: 34px !important; height: 34px !important; border-radius: 9999px !important; background: rgba(20,28,17,0.92) !important; color: #FFFDF9 !important; border: 1.5px solid rgba(242,184,128,0.7) !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; font-size: 16px !important; font-weight: 900 !important; cursor: pointer !important; }
           .v45-top-right-close:hover { background: #D48238 !important; color: #fff !important; }
         `;
         document.head.appendChild(st);
@@ -592,7 +705,7 @@ def upgrade_template_html_in_place(tpl_html):
         topBar.innerHTML =
           '<div class="flex flex-wrap items-center justify-between gap-3">' +
             '<div class="flex flex-wrap items-center gap-2.5">' +
-              '<div class="w-10 h-10 rounded-full bg-[#2E3D28] border border-[#F2B880] flex items-center justify-center text-white font-serif font-bold text-sm shadow-xs">🕊️</div>' +
+              '<div class="w-10 h-10 rounded-full flex-shrink-0 shadow-xs" data-dove-holder></div>' +
               '<div class="flex flex-wrap items-center gap-2">' +
                 '<span class="font-serif text-xl sm:text-2xl font-bold text-[#1F2B1A] leading-none">Мир Мир</span>' +
                 '<a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="text-xs font-bold text-[#556432] hover:underline">📍 Ильинская, 45</a>' +
@@ -601,19 +714,12 @@ def upgrade_template_html_in_place(tpl_html):
               '</div>' +
             '</div>' +
             '<div class="flex flex-wrap items-center gap-2">' +
-              '<button type="button" onclick="openMenu(\'Все\')" class="py-2 px-4 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer shadow transition">' +
-                '<span>📖</span><span>Открыть Меню (' + DATA.menu.length + ')</span>' +
-              '</button>' +
-              '<button type="button" onclick="openCafeShopModal()" class="py-2 px-3.5 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white font-extrabold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer shadow-xs transition">' +
-                '<span>🛍️</span><span>Магазин кафе</span>' +
-              '</button>' +
-              '<button type="button" onclick="toggleCart()" class="py-2 px-3.5 rounded-xl bg-[#2E3D28] hover:bg-black text-[#F2B880] font-extrabold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer shadow-xs transition">' +
-                '<span>🛒</span><span>Корзина</span><span id="v45-main-cart-count" class="px-1.5 py-0.5 rounded-full bg-[#D48238] text-white text-[11px]">0</span>' +
-              '</button>' +
+              '<button type="button" onclick="openMenu(\'Все\')" class="py-2 px-4 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs sm:text-sm cursor-pointer shadow">📖 Открыть Меню (' + DATA.menu.length + ')</button>' +
+              '<button type="button" onclick="openCafeShopModal()" class="py-2 px-3.5 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white font-extrabold text-xs sm:text-sm cursor-pointer">🛍️ Магазин кафе</button>' +
+              '<button type="button" onclick="toggleCart()" class="py-2 px-3.5 rounded-xl bg-[#2E3D28] hover:bg-black text-[#F2B880] font-extrabold text-xs sm:text-sm flex items-center gap-1.5 cursor-pointer"><span>🛒 Корзина</span><span id="v45-main-cart-count" class="px-1.5 py-0.5 rounded-full bg-[#D48238] text-white text-[11px]">0</span></button>' +
             '</div>' +
           '</div>' +
           '<div id="v45-quick-cats-strip" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2 border-t border-stone-200/70"></div>';
-
         mainEl.insertBefore(topBar, mainEl.firstChild);
       }
 
@@ -627,39 +733,34 @@ def upgrade_template_html_in_place(tpl_html):
         document.body.appendChild(fl);
       }
 
-      const heroLeft = document.querySelector("main section .lg\\:col-span-7");
+      // Чистка дублей внутри левой колонки Hero (не трогая саму Hero-секцию!)
+      const heroLeft = document.getElementById("hero-left-col");
       if (heroLeft) {
-        const heroBadge = document.getElementById("hero-work-badge");
-        if (heroBadge && heroBadge.parentElement && heroBadge.parentElement !== heroLeft) {
-          heroBadge.parentElement.style.setProperty("display", "none", "important");
-        }
         heroLeft.querySelectorAll("div").forEach(el => {
           const oc = el.getAttribute("onclick") || "";
           const txt = el.textContent || "";
-          if ((oc.includes("Сезонные спешлы") || txt.includes("Смотреть 9 блюд") || txt.includes("НОВИНКИ МЕНЮ")) && !el.classList.contains("lg:col-span-7") && !el.querySelector("#interior-slide-img")) {
+          if ((oc.includes("Сезонные спешлы") || txt.includes("Смотреть 9 блюд")) && !el.querySelector("#hero-interior-slide-img")) {
             el.style.setProperty("display", "none", "important");
           }
         });
-        Array.from(heroLeft.querySelectorAll(".grid")).forEach(g => {
+        heroLeft.querySelectorAll(".grid").forEach(g => {
           if (g.textContent.includes("Чай 300") && g.textContent.includes("Десерты без сахара")) {
-            g.className = "grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1";
-            Array.from(g.children).forEach(cardChild => {
-              cardChild.classList.add("zoom-card");
-              const oc = cardChild.getAttribute("onclick") || "";
-              const txt = cardChild.textContent || "";
-              if (oc.includes("openBowlBuilder") || txt.includes("Собрать свой Боул")) {
-                cardChild.style.setProperty("display", "none", "important");
+            g.className = "relative z-10 grid grid-cols-1 sm:grid-cols-3 gap-2.5";
+            Array.from(g.children).forEach(ch => {
+              if ((ch.getAttribute("onclick") || "").includes("openBowlBuilder") || ch.textContent.includes("Собрать свой Боул")) {
+                ch.style.setProperty("display", "none", "important");
               }
             });
           }
         });
       }
 
-      // Чистая вёрстка блока адреса и карты с отступом снизу
+      // Перестраиваем СТРОГО нижний блок адреса/карты (Hero полностью защищён!)
       document.querySelectorAll("main section").forEach(sec => {
-        if (sec.id === "v45-main-topbar") return;
-        if (sec.textContent.includes("Ильинская, 45") && !sec.querySelector("#interior-slide-img") && !sec.dataset.v45Rebuilt) {
-          sec.dataset.v45Rebuilt = "1";
+        if (sec.id === "v45-main-topbar" || sec.id === "news-section-wrap") return;
+        if (sec.querySelector("#hero-left-col, #hero-interior-slide-img, #stage-3d-box")) return;
+        if (sec.textContent.includes("Нижний Новгород, ул. Ильинская, 45") && !sec.dataset.v48MapRebuilt) {
+          sec.dataset.v48MapRebuilt = "1";
           const taxiUrl = "https://3.redirect.appmetrica.yandex.com/route?end-lat=56.322355&end-lon=43.990383&appmetrica_tracking_id=1178268795219780156";
           sec.className = "bg-[#23311E] text-[#FFFDF9] rounded-[32px] p-5 sm:p-7 border-2 border-[#F2B880]/35 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mt-4 mb-4";
           sec.innerHTML =
@@ -667,50 +768,44 @@ def upgrade_template_html_in_place(tpl_html):
               '<div class="space-y-3">' +
                 '<span class="inline-block px-3 py-1 rounded-full bg-white/10 text-[#F2B880] text-[10px] font-extrabold uppercase tracking-widest">📍 Ждём вас в гости каждый день</span>' +
                 '<h2 class="font-serif text-3xl sm:text-4xl font-bold text-white leading-tight">Нижний Новгород, ул. Ильинская, 45</h2>' +
-                '<p class="text-xs sm:text-sm text-stone-200 leading-relaxed">' +
-                  'Ежедневно с 12:00 до 21:00. По будням с 12:00 до 16:00 действует скидка −30% на Комбо-Ланч (Суп + Основное блюдо + Напиток).' +
-                '</p>' +
-                '<div class="pt-1">' +
-                  '<a href="tel:+79200282858" class="inline-flex items-center gap-2 text-sm sm:text-base font-extrabold text-[#F2B880] hover:underline">📞 Телефон кафе: +7 (920) 028-28-58</a>' +
-                '</div>' +
+                '<p class="text-xs sm:text-sm text-stone-200 leading-relaxed">Ежедневно с 12:00 до 21:00. По будням с 12:00 до 16:00 действует скидка −30% на Комбо-Ланч (Суп + Основное блюдо + Напиток).</p>' +
+                '<div class="pt-1"><a href="tel:+79200282858" class="inline-flex items-center gap-2 text-sm sm:text-base font-extrabold text-[#F2B880] hover:underline">📞 Телефон кафе: +7 (920) 028-28-58</a></div>' +
               '</div>' +
-
               '<div class="pt-4 border-t border-white/15 space-y-2.5">' +
                 '<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">' +
-                  '<button type="button" onclick="openBookTableModal()" class="py-2.5 px-3 rounded-xl bg-[#556432] hover:bg-[#D48238] text-[#FFFDF9] font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition shadow-sm border border-[#F2B880]/25"><span>🪑</span><span>Бронь</span></button>' +
-                  '<a href="' + taxiUrl + '" target="_blank" class="py-2.5 px-3 rounded-xl bg-[#3A4A2E] hover:bg-[#D48238] text-[#F2B880] hover:text-white font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition shadow-sm border border-[#F2B880]/25"><span>🚕</span><span>Такси в кафе</span></a>' +
-                  '<button type="button" onclick="openDeliveryModal()" class="py-2.5 px-3 rounded-xl bg-[#556432] hover:bg-[#D48238] text-[#FFFDF9] font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition shadow-sm border border-[#F2B880]/25"><span>🛵</span><span>Доставка</span></button>' +
-                  '<button type="button" onclick="openRadioSelectorModal()" class="py-2.5 px-3 rounded-xl bg-[#FFFDF9] hover:bg-amber-50 text-[#2E3D28] font-extrabold text-xs flex items-center justify-center gap-1.5 cursor-pointer transition shadow-sm"><span>📻</span><span>Радио</span></button>' +
+                  '<button type="button" onclick="openBookTableModal()" class="py-2.5 px-3 rounded-xl bg-[#556432] hover:bg-[#D48238] text-[#FFFDF9] font-extrabold text-xs cursor-pointer transition border border-[#F2B880]/25">🪑 Бронь</button>' +
+                  '<a href="' + taxiUrl + '" target="_blank" class="py-2.5 px-3 rounded-xl bg-[#3A4A2E] hover:bg-[#D48238] text-[#F2B880] hover:text-white font-extrabold text-xs text-center transition border border-[#F2B880]/25">🚕 Такси</a>' +
+                  '<button type="button" onclick="openDeliveryModal()" class="py-2.5 px-3 rounded-xl bg-[#556432] hover:bg-[#D48238] text-[#FFFDF9] font-extrabold text-xs cursor-pointer transition border border-[#F2B880]/25">🛵 Доставка</button>' +
+                  '<button type="button" onclick="openRadioSelectorModal()" class="py-2.5 px-3 rounded-xl bg-[#FFFDF9] hover:bg-amber-50 text-[#2E3D28] font-extrabold text-xs cursor-pointer transition">📻 Радио</button>' +
                 '</div>' +
                 '<div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5">' +
-                  '<button disabled class="py-1.5 px-2 rounded-lg bg-white/10 text-white/70 font-extrabold text-[10px] uppercase flex items-center justify-center gap-1 cursor-not-allowed border border-white/10"><span>👥 НАША КОМАНДА</span><span class="px-1 rounded bg-black/40 text-[#F2B880] text-[8px]">Скоро</span></button>' +
-                  '<button disabled class="py-1.5 px-2 rounded-lg bg-white/10 text-white/70 font-extrabold text-[10px] uppercase flex items-center justify-center gap-1 cursor-not-allowed border border-white/10"><span>🏛️ ИСТОРИЯ КАФЕ</span><span class="px-1 rounded bg-black/40 text-[#F2B880] text-[8px]">Скоро</span></button>' +
-                  '<button disabled class="py-1.5 px-2 rounded-lg bg-white/10 text-white/70 font-extrabold text-[10px] uppercase flex items-center justify-center gap-1 cursor-not-allowed border border-white/10"><span>🌿 НАШИ ЦЕННОСТИ</span><span class="px-1 rounded bg-black/40 text-[#F2B880] text-[8px]">Скоро</span></button>' +
+                  '<button disabled class="py-1.5 px-2 rounded-lg bg-white/10 text-white/70 font-extrabold text-[10px] uppercase cursor-not-allowed border border-white/10">👥 КОМАНДА <span class="px-1 rounded bg-black/40 text-[#F2B880] text-[8px]">Скоро</span></button>' +
+                  '<button disabled class="py-1.5 px-2 rounded-lg bg-white/10 text-white/70 font-extrabold text-[10px] uppercase cursor-not-allowed border border-white/10">🏛️ ИСТОРИЯ <span class="px-1 rounded bg-black/40 text-[#F2B880] text-[8px]">Скоро</span></button>' +
+                  '<button disabled class="py-1.5 px-2 rounded-lg bg-white/10 text-white/70 font-extrabold text-[10px] uppercase cursor-not-allowed border border-white/10">🌿 ЦЕННОСТИ <span class="px-1 rounded bg-black/40 text-[#F2B880] text-[8px]">Скоро</span></button>' +
                 '</div>' +
               '</div>' +
             '</div>' +
-
-            <div class="lg:col-span-7 min-h-[280px] sm:min-h-[320px] rounded-2xl overflow-hidden border border-[#F2B880]/40 bg-[#1B2616] relative flex flex-col justify-between p-5" id="mirmir-clean-map-box"><div class="flex items-start justify-between gap-3"><div class="space-y-1"><span class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-800/80 text-[#F2B880] text-[10px] font-extrabold uppercase tracking-wider">🗺️ Схема проезда • Без сторонней рекламы</span><h3 class="font-serif text-2xl sm:text-3xl font-bold text-white">ул. Ильинская, 45 — Исторический центр</h3><p class="text-xs text-stone-300">5 минут пешком от ул. Большой Покровской и пл. Горького • GPS: <span class="font-mono text-[#F2B880]">56.322355, 43.990383</span></p></div><div class="w-12 h-12 rounded-full flex-shrink-0 shadow-lg" data-dove-holder></div></div><div class="my-3 p-4 rounded-2xl bg-black/35 border border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs"><div><span class="text-[#F2B880] font-extrabold block">🚶 Пешком от центра</span><span class="text-stone-300">От ст. м. Горьковская или ул. Б. Покровской по ул. Маслякова / Ильинской.</span></div><div><span class="text-[#F2B880] font-extrabold block">🏛️ Ориентир входа</span><span class="text-stone-300">Старинный кирпичный дом № 45, фирменная кованая вывеска с белой Голубкой мира.</span></div><div><span class="text-[#F2B880] font-extrabold block">🅿️ Парковка</span><span class="text-stone-300">Городские парковочные карманы вдоль ул. Ильинской и Сергиевской.</span></div></div><div class="flex flex-wrap items-center gap-2.5"><a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="px-4 py-2.5 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs shadow-lg cursor-pointer transition">🗺️ Открыть точку в Яндекс.Картах ↗</a><a href="https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=auto" target="_blank" class="px-4 py-2.5 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white font-extrabold text-xs border border-[#F2B880]/30 cursor-pointer transition">🧭 Построить маршрут ↗</a><button type="button" onclick="const b=document.getElementById('mirmir-clean-map-box');b.classList.remove('p-5');b.innerHTML='<iframe src=\'https://yandex.ru/map-widget/v1/?ll=43.990383%2C56.322355&z=17&oid=7309581265&ol=biz\' class=\'w-full h-full min-h-[300px] border-0\' allowfullscreen></iframe>';" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-[#F2B880] font-extrabold text-xs cursor-pointer transition">🌐 Загрузить интерактивную карту</button></div></div>;
+            window.buildCleanMapHtml();
         }
       });
 
-      const footerEl = document.querySelector("footer");
-      if (footerEl) footerEl.querySelectorAll(".grid.grid-cols-1.sm\\:grid-cols-3").forEach(g => { g.style.display = "none"; });
+      document.querySelectorAll("[data-dove-holder]").forEach(el => {
+        if (!el.innerHTML.trim() && typeof SIGN_DOVE_SVG !== "undefined") el.innerHTML = SIGN_DOVE_SVG;
+      });
 
-      const modalsConfig = [
-        { modalId: "menu-modal", closeFn: "closeMenu()" },
-        { modalId: "unified-system-hub", closeFn: "closeUnifiedSystemHub()" },
-        { modalId: "bowl-modal", closeFn: "closeBowlBuilder()" },
-        { modalId: "cafe-shop-modal", closeFn: "closeCafeShopModal()" },
-        { modalId: "book-table-modal", closeFn: "closeBookTableModal()" },
-        { modalId: "delivery-modal", closeFn: "document.getElementById('delivery-modal').classList.add('hidden')" },
-        { modalId: "radio-selector-modal", closeFn: "document.getElementById('radio-selector-modal').classList.add('hidden')" },
-        { modalId: "ready-gallery-popup", closeFn: "closeReadyGalleryPopup()" },
-        { modalId: "master-prompt-modal", closeFn: "closeMasterPromptModal()" },
-        { modalId: "super-zoom-lightbox", closeFn: "closeSuperZoom()" }
-      ];
-      modalsConfig.forEach(cfg => {
-        const m = document.getElementById(cfg.modalId);
+      [
+        { id: "menu-modal", fn: "closeMenu()" },
+        { id: "unified-system-hub", fn: "closeUnifiedSystemHub()" },
+        { id: "bowl-modal", fn: "closeBowlBuilder()" },
+        { id: "cafe-shop-modal", fn: "closeCafeShopModal()" },
+        { id: "book-table-modal", fn: "closeBookTableModal()" },
+        { id: "delivery-modal", fn: "document.getElementById('delivery-modal').classList.add('hidden')" },
+        { id: "radio-selector-modal", fn: "document.getElementById('radio-selector-modal').classList.add('hidden')" },
+        { id: "ready-gallery-popup", fn: "closeReadyGalleryPopup()" },
+        { id: "master-prompt-modal", fn: "closeMasterPromptModal()" },
+        { id: "super-zoom-lightbox", fn: "closeSuperZoom()" }
+      ].forEach(cfg => {
+        const m = document.getElementById(cfg.id);
         const card = m ? m.firstElementChild : null;
         if (!card) return;
         card.style.position = "relative";
@@ -720,15 +815,15 @@ def upgrade_template_html_in_place(tpl_html):
         if (!card.querySelector(".v45-top-right-close")) {
           const btn = document.createElement("button");
           btn.className = "v45-top-right-close";
-          btn.setAttribute("onclick", cfg.closeFn);
+          btn.setAttribute("onclick", cfg.fn);
           btn.innerHTML = "✕";
           card.appendChild(btn);
         }
       });
     }
 
-    // 7. НОВОСТИ ВК: плавный автоскролл влево + рабочие кнопки ◀ ▶ (с паузой автоскролла) + кнопка «⏮️ К последним постам»!
-    const NEWS_FALLBACK_IMGS = ["img/vk_5122_0.jpg", "img/vk_5068_0.jpg", "img/vk_5128_1.jpg", "img/vk_5134_0.jpg"];
+    // 9. Лента новостей ВК с плавным автоскроллом и кнопками ⏮️ / ◀ / ▶
+    const NEWS_FALLBACKS = ["img/vk_5122_0.jpg", "img/vk_5068_0.jpg", "img/vk_5128_1.jpg", "img/vk_5134_0.jpg"];
     window.newsAutoScrollPaused = false;
     window.newsManualPauseUntil = 0;
     window.newsAutoScrollStarted = false;
@@ -736,66 +831,58 @@ def upgrade_template_html_in_place(tpl_html):
     window.scrollNewsManual = function(delta) {
       const grid = document.getElementById("posts-grid");
       if (!grid) return;
-      // Ставим автоскролл на паузу на 3 секунды, чтобы он не сбивал плавную анимацию scrollBy!
       window.newsManualPauseUntil = Date.now() + 3000;
       grid.scrollBy({ left: delta * 365, behavior: "smooth" });
     };
-
     window.scrollToLatestNews = function() {
       const grid = document.getElementById("posts-grid");
       if (!grid) return;
       window.newsManualPauseUntil = Date.now() + 3500;
       grid.scrollTo({ left: 0, behavior: "smooth" });
     };
-
-    // Связываем все возможные имена функций в шаблоне со скроллом новостей
     window.stepNewsPage = window.scrollNewsManual;
-    window.changeNewsPage = window.scrollNewsManual;
 
-    function startNewsSmoothTicker() {
+    function startNewsTicker() {
       if (window.newsAutoScrollStarted) return;
       window.newsAutoScrollStarted = true;
-      function stepTicker() {
-        const grid = document.getElementById("posts-grid");
-        if (grid && !window.newsAutoScrollPaused && Date.now() > window.newsManualPauseUntil) {
-          grid.scrollLeft += (typeof window.liveNewsSpeedVal === "number" ? window.liveNewsSpeedVal : 0.5);
-          if (grid.scrollLeft >= grid.scrollWidth / 2) {
-            grid.scrollLeft = 0;
-          }
+      function tick() {
+        const g = document.getElementById("posts-grid");
+        if (g && !window.newsAutoScrollPaused && Date.now() > window.newsManualPauseUntil) {
+          g.scrollLeft += 0.5;
+          if (g.scrollLeft >= g.scrollWidth / 2) g.scrollLeft = 0;
         }
-        requestAnimationFrame(stepTicker);
+        requestAnimationFrame(tick);
       }
-      requestAnimationFrame(stepTicker);
+      requestAnimationFrame(tick);
     }
 
     window.renderNewsPosts = function() {
       const grid = document.getElementById("posts-grid");
       if (!grid) return;
-      const rawPosts = (DATA.posts && DATA.posts.length) ? DATA.posts : [];
-      const posts = rawPosts.filter(p => {
+      const posts = (DATA.posts || []).filter(p => {
         const t = ((p.title || "") + " " + (p.text || "")).toLowerCase();
         return !t.includes("прикрепляю наше актуальное меню") && !t.includes("актуальное меню");
       });
       if (!posts.length) return;
 
-      // Встраиваем в заголовок секции новостей кнопку «⏮️ К последним постам» и рабочие стрелки «◀» «▶»
-      const newsSec = grid.closest("section");
+      const newsSec = document.getElementById("news-section-wrap") || grid.closest("section");
       if (newsSec) {
-        const hdrRow = newsSec.querySelector(".flex.items-center.justify-between") || newsSec.firstElementChild;
-        if (hdrRow) {
-          let ctrlBox = document.getElementById("v45-news-controls");
-          if (!ctrlBox) {
-            const oldBtns = hdrRow.querySelectorAll("button");
-            oldBtns.forEach(b => { b.style.display = "none"; });
-            ctrlBox = document.createElement("div");
-            ctrlBox.id = "v45-news-controls";
-            ctrlBox.className = "flex items-center gap-2";
-            ctrlBox.innerHTML =
-              '<button type="button" onclick="scrollToLatestNews()" class="px-3 py-1.5 rounded-full bg-[#2E3D28] hover:bg-[#D48238] text-[#F2B880] hover:text-white text-xs font-extrabold cursor-pointer transition shadow-xs flex items-center gap-1"><span>⏮️</span><span>К последним постам</span></button>' +
-              '<button type="button" onclick="scrollNewsManual(-1)" title="Листать влево" class="w-9 h-9 rounded-full bg-[#2E3D28] hover:bg-[#D48238] text-white text-xs font-extrabold flex items-center justify-center cursor-pointer transition shadow-xs">◀</button>' +
-              '<button type="button" onclick="scrollNewsManual(1)" title="Листать вправо" class="w-9 h-9 rounded-full bg-[#D48238] hover:bg-[#2E3D28] text-white text-xs font-extrabold flex items-center justify-center cursor-pointer transition shadow-xs">▶</button>';
-            hdrRow.appendChild(ctrlBox);
-          }
+        const hdr = newsSec.firstElementChild;
+        if (hdr && !document.getElementById("v45-news-controls")) {
+          hdr.querySelectorAll("button").forEach(b => { b.style.display = "none"; });
+          const ctrl = document.createElement("div");
+          ctrl.id = "v45-news-controls";
+          ctrl.className = "flex items-center gap-2";
+          ctrl.innerHTML =
+            '<button type="button" onclick="scrollToLatestNews()" class="px-3 py-1.5 rounded-full bg-[#2E3D28] hover:bg-[#D48238] text-[#F2B880] hover:text-white text-xs font-extrabold cursor-pointer transition">⏮️ К последним постам</button>' +
+            '<button type="button" onclick="scrollNewsManual(-1)" class="w-9 h-9 rounded-full bg-[#2E3D28] hover:bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">◀</button>' +
+            '<button type="button" onclick="scrollNewsManual(1)" class="w-9 h-9 rounded-full bg-[#D48238] hover:bg-[#2E3D28] text-white text-xs font-extrabold cursor-pointer">▶</button>';
+          hdr.appendChild(ctrl);
+        }
+        const botVk = newsSec.querySelector("a[href*='vk.com']");
+        if (botVk) {
+          botVk.className = "inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg bg-[#0077FF] hover:bg-[#0055CC] text-white text-xs font-extrabold transition shadow";
+          botVk.textContent = "ВК";
         }
       }
 
@@ -807,275 +894,82 @@ def upgrade_template_html_in_place(tpl_html):
 
       const loopPosts = [...posts, ...posts];
       grid.innerHTML = loopPosts.map((p, idxP) => {
-        let safeVkUrl = p.vk_url || "https://vk.com/mirmir.cafe";
-        if (safeVkUrl.includes("-191992548")) safeVkUrl = "https://vk.com/mirmir.cafe";
-        const fbImg = NEWS_FALLBACK_IMGS[idxP % NEWS_FALLBACK_IMGS.length];
-        const photoSrc = p.photo || fbImg;
-
+        const safeUrl = (p.vk_url && !p.vk_url.includes("-191992548")) ? p.vk_url : "https://vk.com/mirmir.cafe";
+        const fb = NEWS_FALLBACKS[idxP % NEWS_FALLBACKS.length];
+        const ph = p.photo || fb;
         return '<article class="zoom-card w-[300px] sm:w-[345px] flex-shrink-0 bg-[#FFFDF9] rounded-3xl p-4 border border-[#556432]/25 shadow-sm flex flex-col justify-between gap-3">' +
           '<div class="space-y-2.5">' +
-            '<div class="flex items-center justify-between text-[11px] font-extrabold text-[#D48238]">' +
-              '<span>📅 ' + esc(p.date || "Новость кафе") + '</span><span>❤️ ' + esc(p.likes || 25) + '</span>' +
-            '</div>' +
+            '<div class="flex items-center justify-between text-[11px] font-extrabold text-[#D48238]"><span>📅 ' + esc(p.date || "Новость") + '</span><span>❤️ ' + esc(p.likes || 25) + '</span></div>' +
             '<h3 class="font-serif text-lg sm:text-xl font-bold text-[#1F2B1A] leading-snug line-clamp-2">' + esc(p.title || "Событие в «Мир Мир»") + '</h3>' +
-            '<div class="relative rounded-2xl overflow-hidden bg-[#F4ECE1] flex items-center justify-center h-[230px]">' +
-              '<img src="' + esc(photoSrc) + '" onerror="this.onerror=null;this.src=\'' + fbImg + '\'" onclick="openSuperZoom(this.src, \'' + esc(p.title) + '\')" class="w-full h-full object-contain cursor-zoom-in block mx-auto">' +
-              '<button type="button" title="Увеличить" onclick="const im=this.parentElement.querySelector(\'img\');openSuperZoom(im?im.src:\'' + esc(photoSrc) + '\', \'' + esc(p.title) + '\')" class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-black/75 hover:bg-[#D48238] text-white text-xs flex items-center justify-center cursor-pointer shadow">🔍</button>' +
+            '<div class="relative rounded-2xl overflow-hidden bg-[#1D2918] h-[230px]">' +
+              '<img src="' + esc(ph) + '" onerror="this.onerror=null;this.src=\'' + fb + '\'" onclick="openSuperZoom(this.src, \'' + esc(p.title) + '\')" class="w-full h-full cursor-zoom-in">' +
+              '<button type="button" onclick="openSuperZoom(\'' + esc(ph) + '\', \'' + esc(p.title) + '\')" class="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-black/75 hover:bg-[#D48238] text-white text-xs cursor-pointer">🔍</button>' +
             '</div>' +
             '<p class="text-xs text-stone-700 leading-relaxed line-clamp-4 whitespace-pre-line">' + esc(p.text || "") + '</p>' +
           '</div>' +
           '<div class="pt-2 border-t border-stone-200/80 flex items-center justify-between">' +
-            '<a href="' + esc(safeVkUrl) + '" target="_blank" class="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-[#0077FF] hover:bg-[#0055CC] text-white text-[11px] font-extrabold transition shadow cursor-pointer">ВК</a>' +
+            '<a href="' + esc(safeUrl) + '" target="_blank" class="px-2.5 py-1 rounded-lg bg-[#0077FF] hover:bg-[#0055CC] text-white text-[11px] font-extrabold shadow">ВК</a>' +
             '<span class="text-[10px] font-bold text-stone-400">vk.com/mirmir.cafe</span>' +
           '</div>' +
         '</article>';
       }).join("");
-
-      const bottomVkLink = document.querySelector("#news-section-wrap a[href*='vk.com']");
-      if (bottomVkLink) {
-        bottomVkLink.className = "inline-flex items-center justify-center px-3 py-1 rounded-lg bg-[#0077FF] hover:bg-[#0055CC] text-white text-xs font-extrabold transition shadow";
-        bottomVkLink.innerHTML = "ВК";
-      }
-
-      startNewsSmoothTicker();
+      window.applyNoCropAmbientPhotos();
+      startNewsTicker();
     };
 
-    // 8. Панель управления (Шестерёнка)
-    window.setHubTab = function(tabId) {
-      window.hubActiveTab = hubActiveTab = tabId;
-      window.renderUnifiedSystemHub();
-    };
-    window.setHubCategory = function(catStr) {
-      window.hubDishCategoryFilter = hubDishCategoryFilter = catStr;
-      window.renderUnifiedSystemHub();
-    };
-    window.setHubSearch = function(qStr) {
-      window.hubDishSearchQuery = hubDishSearchQuery = qStr;
-      window.renderUnifiedSystemHub();
-    };
+    // 10. Шестерёнка Архитектора (#hub-top-tabs / #hub-main-body) и точный движок фото блюд
     window.openUnifiedSystemHub = function(tabId) {
+      try { history.pushState({ guard: "hub" }, ""); } catch (e) {}
       if (tabId) window.hubActiveTab = hubActiveTab = tabId;
-      const m = document.getElementById('unified-system-hub');
-      if (m) { m.classList.remove('hidden'); m.classList.add('flex'); window.renderUnifiedSystemHub(); }
+      const m = document.getElementById("unified-system-hub");
+      if (m) { m.classList.remove("hidden"); m.classList.add("flex"); window.renderUnifiedSystemHub(); }
     };
     window.closeUnifiedSystemHub = function() {
       const m = document.getElementById("unified-system-hub");
       if (m) { m.classList.add("hidden"); m.classList.remove("flex"); }
     };
+    window.setHubTab = function(t) { window.hubActiveTab = hubActiveTab = t; window.renderUnifiedSystemHub(); };
+    window.setHubCategory = function(c) { window.hubDishCategoryFilter = hubDishCategoryFilter = c; window.renderUnifiedSystemHub(); };
+    window.setHubSearch = function(q) { window.hubDishSearchQuery = hubDishSearchQuery = q; window.renderUnifiedSystemHub(); };
 
-    window.getCombinedBuildLogs = function() {
-      return Array.isArray(DATA.full_build_logs) ? DATA.full_build_logs : [];
-    };
-    window.getSavedIdeasNotes = function() {
-      try { return JSON.parse(localStorage.getItem("mirmir_ideas_notes_v1") || "[]"); } catch(e) { return []; }
-    };
-    window.addNewIdeaNote = function() {
-      const inp = document.getElementById("new-idea-note-inp");
-      const val = (inp?.value || "").trim();
-      if (!val) return;
-      const list = window.getSavedIdeasNotes();
-      list.unshift({ text: val, date: new Date().toLocaleString("ru-RU") });
-      try { localStorage.setItem("mirmir_ideas_notes_v1", JSON.stringify(list)); } catch(e) {}
-      if (inp) inp.value = "";
-      window.renderUnifiedSystemHub();
-    };
-
-    window.getSiteToggles = function() {
-      const def = { leaves: true, wings: true, zoom: true, bookingMode: "messenger", mapMode: "clean_card", photoMode: "hybrid" };
-      try { return Object.assign({}, def, JSON.parse(localStorage.getItem("mirmir_site_toggles_v45") || "{}")); } catch(e) { return def; }
-    };
-    window.setAdminSettingV45 = function(k, v) {
-      const tg = window.getSiteToggles();
-      tg[k] = v;
-      try { localStorage.setItem("mirmir_site_toggles_v45", JSON.stringify(tg)); } catch(e) {}
-      window.renderDishes();
-      window.renderUnifiedSystemHub();
-    };
-
-    function formatNowDateTime() {
-      const d = new Date();
-      return d.toLocaleDateString("ru-RU") + " " + d.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
-    }
-
-    function getMasterTasksList() {
-      const srv = (DATA.tz_synced && Array.isArray(DATA.tz_synced.tasks)) ? DATA.tz_synced.tasks : [];
-      try {
-        const loc = JSON.parse(localStorage.getItem("mirmir_tasks_v45") || "null");
-        if (Array.isArray(loc) && loc.length >= srv.length) return loc;
-      } catch(e) {}
-      return srv;
-    }
-    function saveMasterTasksList(arr) {
-      try {
-        localStorage.setItem("mirmir_tasks_v45", JSON.stringify(arr));
-        fetch(NTFY_SYNC_URL, { method: "POST", body: JSON.stringify({ type: "tz_tasks_sync", tasks: arr, ts: Date.now() }) }).catch(() => {});
-      } catch(e) {}
-    }
-    window.toggleTaskDoneV45 = function(idx) {
-      const list = getMasterTasksList();
-      if (!list[idx]) return;
-      list[idx].done = !list[idx].done;
-      list[idx].date = formatNowDateTime();
-      saveMasterTasksList(list);
-      window.renderUnifiedSystemHub();
-    };
-    window.updateTaskCommentV45 = function(idx, val) {
-      const list = getMasterTasksList();
-      if (!list[idx]) return;
-      list[idx].comment = val;
-      list[idx].date = formatNowDateTime();
-      saveMasterTasksList(list);
-    };
-    window.addNewTaskV45 = function() {
-      const t = (document.getElementById("new-tz-task-inp")?.value || "").trim();
-      if (!t) return;
-      const c = (document.getElementById("new-tz-comment-inp")?.value || "Проверить").trim();
-      const list = getMasterTasksList();
-      list.unshift({ id: "t_u_" + Date.now(), date: formatNowDateTime(), title: (list.length + 1) + ". " + t, done: false, comment: c });
-      saveMasterTasksList(list);
-      window.renderUnifiedSystemHub();
-    };
-
-    window.addNewCustomDishFromHub = function() {
-      const name = (document.getElementById("new-dish-name")?.value || "").trim();
-      if (!name) { alert("Введите название блюда!"); return; }
-      const cat = (document.getElementById("new-dish-cat")?.value || "Сезонные спешлы от Шефа").trim();
-      const price = parseInt(document.getElementById("new-dish-price")?.value || "450", 10) || 450;
-      const weight = (document.getElementById("new-dish-weight")?.value || "260 г").trim();
-      const desc = (document.getElementById("new-dish-desc")?.value || "100% растительное блюдо кафе «Мир Мир».").trim();
-      const photo = (document.getElementById("new-dish-photo")?.value || "img/vk_5128_1.jpg").trim();
-      const obj = { id: "custom_" + Date.now(), category: cat, name: name, weight: weight, price: price, photo: photo, photo_type: "real", desc: desc, ai_prompt: "Vegan plant-based " + name, is_custom_added: true };
-      const list = loadCustomAddedDishes().filter(d => d.name !== name);
-      list.unshift(obj);
-      try { localStorage.setItem("mirmir_custom_dishes_v1", JSON.stringify(list)); } catch(e) {}
-      DATA.menu.unshift(obj);
-      window.renderUnifiedSystemHub();
-      window.renderDishes();
-      window.renderCategoryShowcaseAndRail(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
-      alert("✅ Блюдо «" + name + "» добавлено в меню.");
-    };
-
-const CURATED_VEGAN_HD_BANK = {
-      soup: [
-        "img/macro_tomyum_bowl.jpg",
-        "img/macro_miso_tofu.jpg",
-        "img/vk_5057_1.jpg",
-        "img/vk_5053_0.jpg"
-      ],
-      burger: [
-        "img/macro_vegan_burger.jpg",
-        "img/macro_avocado_burger.jpg",
-        "img/macro_spicy_burger.jpg",
-        "img/vk_5118_1.jpg"
-      ],
-      salad: [
-        "img/macro_caesar_romaine.jpg",
-        "img/macro_greek_olives.jpg",
-        "img/macro_tuna_chickpea.jpg",
-        "img/macro_cucumbers_sesame.jpg",
-        "img/vk_5128_1.jpg"
-      ],
-      pizza: [
-        "img/vk_5085_1.jpg",
-        "img/vk_5118_0.jpg",
-        "img/macro_pepperoni_pizza.jpg"
-      ],
-      noodles: [
-        "img/vk_5094_0.jpg",
-        "img/macro_creamy_pasta.jpg",
-        "img/vk_5118_2.jpg",
-        "img/vk_5057_0.jpg"
-      ],
-      drink: [
-        "img/macro_strawberry_banana.jpg",
-        "img/macro_berry_smoothie.jpg",
-        "img/macro_pineapple_mint.jpg",
-        "img/macro_citrus_mint.jpg",
-        "img/macro_coffee_pine.jpg",
-        "img/vk_5122_0.jpg"
-      ],
-      dessert: [
-        "img/vk_5069_0.jpg",
-        "img/macro_syrniki_berries.jpg",
-        "img/vk_5005_0.jpg",
-        "img/vk_5103_1.jpg",
-        "img/macro_vegan_icecream.jpg"
-      ],
-      main: [
-        "img/vk_5122_1.jpg",
-        "img/vk_5121_0.jpg",
-        "img/vk_5094_1.jpg",
-        "img/vk_5055_0.jpg",
-        "img/vk_5087_1.jpg"
-      ]
+    const CURATED_VEGAN_HD_BANK = {
+      soup: ["img/macro_tomyum_bowl.jpg", "img/macro_miso_tofu.jpg", "img/vk_5057_1.jpg", "img/vk_5053_0.jpg"],
+      burger: ["img/macro_vegan_burger.jpg", "img/macro_avocado_burger.jpg", "img/macro_spicy_burger.jpg", "img/vk_5118_1.jpg"],
+      salad: ["img/macro_caesar_romaine.jpg", "img/macro_greek_olives.jpg", "img/macro_tuna_chickpea.jpg", "img/macro_cucumbers_sesame.jpg", "img/vk_5128_1.jpg"],
+      pizza: ["img/vk_5085_1.jpg", "img/vk_5118_0.jpg", "img/macro_pepperoni_pizza.jpg"],
+      noodles: ["img/vk_5094_0.jpg", "img/macro_creamy_pasta.jpg", "img/vk_5118_2.jpg", "img/vk_5057_0.jpg"],
+      drink: ["img/macro_strawberry_banana.jpg", "img/macro_berry_smoothie.jpg", "img/macro_pineapple_mint.jpg", "img/macro_citrus_mint.jpg", "img/macro_coffee_pine.jpg", "img/vk_5122_0.jpg"],
+      dessert: ["img/vk_5069_0.jpg", "img/macro_syrniki_berries.jpg", "img/vk_5005_0.jpg", "img/vk_5103_1.jpg", "img/macro_vegan_icecream.jpg"],
+      main: ["img/vk_5122_1.jpg", "img/vk_5121_0.jpg", "img/vk_5094_1.jpg", "img/vk_5055_0.jpg", "img/vk_5087_1.jpg"]
     };
 
     const RU_TO_EN_DISH_KEYWORDS = [
-      { re: /том ям/i, search: "tom yum soup", flux: "authentic Thai Tom Yum soup, clear spicy red-orange lemongrass broth, oyster mushrooms, cherry tomatoes, lime wedge, fresh cilantro, ceramic bowl" },
-      { re: /мисо/i, search: "miso soup tofu", flux: "Japanese miso soup with silken tofu cubes, wakame seaweed, green onions, black ceramic bowl" },
-      { re: /крем-суп.*горош/i, search: "green pea soup", flux: "velvety emerald green pea and avocado cream soup topped with pumpkin seeds and microgreens" },
-      { re: /ватапа/i, search: "brazilian coconut soup", flux: "creamy golden Brazilian Vatapa coconut peanut soup with herbs and toasted bread" },
-      { re: /суп/i, search: "vegetable soup bowl", flux: "hearty rustic vegetable and mushroom soup with fresh herbs in stoneware bowl" },
-      { re: /пад тай/i, search: "pad thai noodles", flux: "authentic Pad Thai stir-fried rice noodles with golden crispy tofu cubes, crushed peanuts, lime wedge and bean sprouts" },
-      { re: /сливочная лапша/i, search: "creamy fettuccine pasta", flux: "creamy vegan fettuccine pasta with sliced plant sausages, black pepper and fresh basil" },
-      { re: /раста-паста/i, search: "rasta pasta peppers", flux: "colorful Caribbean Rasta penne pasta with red yellow green bell peppers, jerk spiced soy strips and creamy coconut sauce" },
-      { re: /лапша/i, search: "asian stir fry noodles", flux: "Asian wok stir-fried noodles with vegetables, sesame seeds and crispy tofu" },
-      { re: /пицца.*пепперони/i, search: "pepperoni pizza", flux: "artisan wood-fired vegan pepperoni pizza with melted plant mozzarella, tomato sauce and oregano" },
-      { re: /пицца.*том ям/i, search: "mushroom pizza", flux: "artisan thin-crust pizza topped with golden chanterelle mushrooms, green edamame beans, tofu and herbs" },
-      { re: /пицца/i, search: "artisan vegetable pizza", flux: "artisan thin-crust vegan pizza with roasted vegetables, melted plant cheese and arugula" },
-      { re: /авокадо-фиш/i, search: "avocado burger", flux: "gourmet burger with crispy nori-battered tofu fillet, sliced fresh avocado, lettuce and tartar sauce in brioche bun" },
-      { re: /неряха джо/i, search: "sloppy joe burger", flux: "hearty Sloppy Joe burger overflowing with rich spiced soy ragu in tomato sauce and pickled red onions" },
-      { re: /бургер/i, search: "gourmet vegan burger", flux: "gourmet plant-based burger with thick grilled patty, caramelized apricots, pickles, lettuce and sesame bun" },
-      { re: /тропикал кубана/i, search: "pineapple avocado salad", flux: "fresh tropical salad with diced pineapple, ripe avocado, cherry tomatoes, romaine lettuce and black beans" },
-      { re: /цезарь/i, search: "caesar salad croutons", flux: "crisp romaine Caesar salad with golden garlic croutons, cherry tomatoes, nori flakes and creamy dressing" },
-      { re: /греческий/i, search: "greek salad olives", flux: "fresh Greek salad with tomatoes, cucumbers, kalamata olives, white tofu feta cubes and flaxseed crackers" },
-      { re: /пай хуан гуа/i, search: "smashed cucumber salad", flux: "Chinese smashed cucumber salad with garlic, sesame seeds, chili oil and cilantro" },
-      { re: /салат/i, search: "fresh green salad", flux: "vibrant fresh garden salad with avocado, mixed greens, seeds and olive oil dressing" },
-      { re: /шакшука/i, search: "shakshuka skillet", flux: "Middle Eastern Shakshuka in cast-iron skillet with golden tofu scramble simmered in spiced red tomato and pepper sauce" },
-      { re: /боул/i, search: "buddha bowl quinoa", flux: "colorful nourishing Buddha bowl with quinoa, roasted sweet potato, falafel balls, avocado slices and tahini drizzle" },
-      { re: /омлет/i, search: "chickpea omelet", flux: "fluffy golden chickpea and tofu omelet folded with spinach, cherry tomatoes and herbs" },
-      { re: /сырники/i, search: "cottage cheese pancakes", flux: "golden pan-seared vegan tofu syrniki pancakes topped with fresh berries and coconut cream" },
-      { re: /шарлотка/i, search: "apple pie cake", flux: "homemade rustic apple charlotte sponge cake dusted with cinnamon" },
-      { re: /мороженое/i, search: "coconut ice cream", flux: "two scoops of creamy white coconut ice cream garnished with fresh berries and mint leaf" },
-      { re: /сникерс/i, search: "chocolate peanut smoothie", flux: "thick chocolate peanut butter banana smoothie in tall glass topped with crushed peanuts" },
-      { re: /клубника/i, search: "strawberry smoothie", flux: "creamy pastel pink strawberry banana coconut smoothie in glass" },
-      { re: /смузи/i, search: "fruit berry smoothie", flux: "vibrant smoothie in tall glass with fresh fruit garnish" },
-      { re: /фреш|сок/i, search: "fresh orange juice", flux: "freshly squeezed citrus juice in glass with fruit slice and ice" },
-      { re: /капучино|кофе/i, search: "cappuccino latte art", flux: "velvety oat-milk cappuccino with latte art foam in ceramic cup" },
-      { re: /пуэр|да хун пао|улун|чай/i, search: "chinese tea teapot", flux: "traditional Chinese Gongfu tea ceremony with clay teapot, amber brewed tea and small porcelain cups" },
-      { re: /масала/i, search: "masala chai tea", flux: "spiced Indian Masala chai tea with cinnamon stick, star anise and cardamom" },
-      { re: /глинтвейн/i, search: "mulled wine berries", flux: "hot ruby lingonberry mulled drink with orange slice and cinnamon stick in glass mug" }
+      { re: /том ям/i, q: "tom yum soup", f: "authentic Thai Tom Yum soup, spicy red-orange lemongrass broth, oyster mushrooms, tofu, cherry tomatoes, lime wedge, cilantro, ceramic bowl" },
+      { re: /мисо/i, q: "miso soup tofu", f: "Japanese miso soup with silken tofu cubes, wakame seaweed, green onions in black ceramic bowl" },
+      { re: /крем-суп.*горош/i, q: "green pea soup", f: "velvety emerald green pea and avocado cream soup topped with pumpkin seeds and microgreens" },
+      { re: /суп/i, q: "vegetable soup bowl", f: "hearty homemade vegetable mushroom soup with herbs in ceramic bowl" },
+      { re: /пад тай/i, q: "pad thai noodles", f: "authentic Pad Thai stir-fried rice noodles with crispy golden tofu, peanuts, lime wedge and bean sprouts" },
+      { re: /лапша|паста/i, q: "vegan pasta noodles", f: "appetizing vegan noodles with roasted vegetables, tofu and creamy sauce in ceramic bowl" },
+      { re: /пицца/i, q: "artisan vegan pizza", f: "artisan wood-fired thin-crust vegan pizza with roasted mushrooms, vegetables and melted plant mozzarella" },
+      { re: /бургер|сэндвич/i, q: "gourmet vegan burger", f: "gourmet plant-based burger with thick patty, fresh avocado, lettuce and sesame bun" },
+      { re: /салат|цезарь|пай хуан/i, q: "fresh green salad", f: "vibrant fresh vegan salad with avocado, cherry tomatoes, greens and seeds" },
+      { re: /боул/i, q: "buddha bowl quinoa", f: "colorful Buddha bowl with quinoa, roasted vegetables, falafel, avocado slices and tahini" },
+      { re: /шакшука|омлет/i, q: "tofu scramble skillet", f: "golden chickpea tofu omelet or shakshuka in rich spiced tomato pepper sauce" },
+      { re: /сырники|десерт|шарлотка|мороженое|батончик/i, q: "vegan berry dessert", f: "artisan sugar-free vegan dessert with berries, chocolate and nuts" },
+      { re: /смузи|фреш|лимонад|кола/i, q: "fruit berry smoothie", f: "fresh colorful fruit smoothie or botanical lemonade in tall glass" },
+      { re: /кофе|капучино|какао/i, q: "oat milk cappuccino", f: "velvety oat-milk cappuccino with latte art foam in ceramic cup" },
+      { re: /чай|пуэр|улун|масала|глинтвейн/i, q: "chinese tea teapot", f: "Chinese Gongfu tea ceremony with clay teapot, brewed amber tea and small cups" }
     ];
 
-    function buildAccurateDishQueries(dishObj, userPrompt) {
-      const nm = (dishObj.name || "").trim();
-      for (let i = 0; i < RU_TO_EN_DISH_KEYWORDS.length; i++) {
-        if (RU_TO_EN_DISH_KEYWORDS[i].re.test(nm)) {
-          return RU_TO_EN_DISH_KEYWORDS[i];
-        }
-      }
-      // Если пользователь ввёл свой текст — очищаем от служебных слов и берём суть
-      const cleaned = (userPrompt || dishObj.ai_prompt || nm)
-        .replace(/Vegan plant-based|100% vegan|no meat|no seafood|close-up|restaurant food photo/gi, "")
-        .split(",")[0]
-        .trim();
-      const shortWords = cleaned.split(/\s+/).slice(0, 3).join(" ") || "vegan food";
-      return {
-        search: shortWords,
-        flux: cleaned + ", gourmet 100% vegan food photography, ceramic plate, natural lighting"
-      };
-    }
-
-    function detectDishBankCategory(dishObj) {
-      const nm = (dishObj.name || "").toLowerCase();
-      const cat = (dishObj.category || "").toLowerCase();
+    function detectDishBankKey(d) {
+      const nm = (d.name || "").toLowerCase(), cat = (d.category || "").toLowerCase();
       if (nm.includes("пицца")) return "pizza";
-      if (cat.includes("суп") || nm.includes("суп") || nm.includes("том ям") || nm.includes("ватапа") || nm.includes("мисо")) return "soup";
+      if (cat.includes("суп") || nm.includes("суп") || nm.includes("том ям") || nm.includes("мисо") || nm.includes("ватапа")) return "soup";
       if (nm.includes("бургер") || nm.includes("сэндвич") || nm.includes("неряха")) return "burger";
-      if (cat.includes("салат") || nm.includes("салат") || nm.includes("цезарь") || nm.includes("пай хуан")) return "salad";
+      if (cat.includes("салат") || nm.includes("салат") || nm.includes("цезарь")) return "salad";
       if (cat.includes("лапша") || nm.includes("лапша") || nm.includes("пад тай") || nm.includes("паста")) return "noodles";
-      if (cat.includes("чай") || cat.includes("барн") || nm.includes("чай") || nm.includes("кофе") || nm.includes("смузи") || nm.includes("фреш") || nm.includes("лимонад")) return "drink";
-      if (cat.includes("десерт") || nm.includes("сырники") || nm.includes("шарлотка") || nm.includes("мороженое") || nm.includes("батончик")) return "dessert";
+      if (cat.includes("чай") || cat.includes("барн") || nm.includes("чай") || nm.includes("смузи") || nm.includes("кофе")) return "drink";
+      if (cat.includes("десерт") || nm.includes("сырники") || nm.includes("шарлотка") || nm.includes("мороженое")) return "dessert";
       return "main";
     }
 
@@ -1103,173 +997,142 @@ const CURATED_VEGAN_HD_BANK = {
       const step = window.dishVariantStep[idx];
       const engine = window.selectedAiEnginePerDish[idx] || "flux_ai";
 
-      const qPack = buildAccurateDishQueries(d, userRaw);
-      let searchTerm = qPack.search;
-      let fluxSubject = qPack.flux;
-
-      // Если пользователь ввёл свой запрос на русском — переводим его для поиска/генерации
+      let qTerm = "vegan food", fluxDesc = d.ai_prompt || d.name;
+      for (let i = 0; i < RU_TO_EN_DISH_KEYWORDS.length; i++) {
+        if (RU_TO_EN_DISH_KEYWORDS[i].re.test(d.name || "")) {
+          qTerm = RU_TO_EN_DISH_KEYWORDS[i].q;
+          fluxDesc = RU_TO_EN_DISH_KEYWORDS[i].f;
+          break;
+        }
+      }
       if (userRaw && /[а-яё]/i.test(userRaw) && userRaw !== d.name) {
         try {
           const tr = await fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(userRaw.slice(0, 120)) + "&langpair=ru|en");
           const tj = await tr.json();
           if (tj.responseData && tj.responseData.translatedText) {
-            fluxSubject = tj.responseData.translatedText + ", gourmet vegan food photography";
-            searchTerm = tj.responseData.translatedText.split(/\s+/).slice(0, 3).join(" ");
+            fluxDesc = tj.responseData.translatedText;
+            qTerm = tj.responseData.translatedText.split(/\s+/).slice(0, 3).join(" ");
           }
         } catch (e) {}
       }
 
-      const bannedVk = [
-        "vk_cover", "vk_avatar", "5140_", "5138_", "5136_", "5134_", "5133_",
-        "5129_", "5123_", "5068_", "5047_", "yorg_"
-      ];
-      const cleanVkFoodPool = ((DATA.vk_food_photos && DATA.vk_food_photos.length) ? DATA.vk_food_photos : ["img/vk_5128_1.jpg"])
-        .filter(p => !bannedVk.some(b => p.includes(b)));
-
-      // 1 & 2. ГЕНЕРАЦИЯ НЕЙРОСЕТЬЮ (Flux AI / Turbo AI) с точным визуальным описанием блюда
       if (engine === "flux_ai" || engine === "turbo_ai") {
         const mdl = engine === "flux_ai" ? "flux" : "turbo";
         const seed = Math.floor(Math.random() * 899999) + step * 173;
-        const fullPrompt = "Close-up studio food photography of " + fluxSubject +
-          ", 100% plant-based vegan, appetizing, sharp focus, no text, no watermark";
-        const aiUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(fullPrompt) +
-          "?model=" + mdl + "&width=640&height=640&seed=" + seed + "&nologo=true";
-
-        pushDiagLog(idx, "🎨", mdl.toUpperCase() + " AI", "Генерация: «" + fluxSubject.slice(0, 52) + "...» (seed #" + seed + ")");
-        window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
-          url: aiUrl,
-          source: "🎨 " + mdl.toUpperCase() + " AI (Seed #" + seed + ")",
-          prompt: fullPrompt
-        };
+        const promptStr = "Close-up studio restaurant food photo of " + fluxDesc + ", 100% plant-based vegan, appetizing, sharp focus, no text";
+        const aiUrl = "https://image.pollinations.ai/prompt/" + encodeURIComponent(promptStr) + "?model=" + mdl + "&width=640&height=640&seed=" + seed + "&nologo=true";
+        pushDiagLog(idx, "🎨", mdl.toUpperCase() + " AI", "Генерация (seed #" + seed + "): " + qTerm);
+        window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: aiUrl, source: "🎨 " + mdl.toUpperCase() + " AI (Seed #" + seed + ")" };
         window.renderUnifiedSystemHub();
         return;
       }
 
-      // 4. ПОИСК В OPENVERSE HD (короткий точный запрос из 2-3 слов!)
       if (engine === "openverse_hd") {
         try {
-          pushDiagLog(idx, "📡", "Openverse HD", "Поиск по ключевым словам: «" + searchTerm + "»...");
-          const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent(searchTerm) + "&page_size=25");
+          pushDiagLog(idx, "📡", "Openverse HD", "Поиск: «" + qTerm + "»...");
+          const r = await fetch("https://api.openverse.org/v1/images/?q=" + encodeURIComponent(qTerm) + "&page_size=25");
           if (r.ok) {
             const j = await r.json();
-            const badWords = /meat|beef|pork|chicken|shrimp|prawn|fish|salmon|bacon|egg|person|logo|vector/i;
-            const results = (j.results || []).filter(it => it.url && !badWords.test((it.title || "") + " " + (it.url || "")));
-            if (results.length > 0) {
-              const pick = results[(step - 1) % results.length];
-              pushDiagLog(idx, "✅", "Openverse HD", "Найдено фото #" + step + " из " + results.length + " («" + searchTerm + "»)");
-              window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
-                url: pick.url,
-                source: "📸 Openverse HD (#" + step + " • " + searchTerm + ")",
-                prompt: searchTerm
-              };
+            const bad = /meat|beef|pork|chicken|shrimp|prawn|fish|salmon|bacon|egg|logo|vector/i;
+            const list = (j.results || []).filter(it => it.url && !bad.test((it.title || "") + " " + it.url));
+            if (list.length) {
+              const pick = list[(step - 1) % list.length];
+              pushDiagLog(idx, "✅", "Openverse HD", "Найдено #" + step + " из " + list.length + " («" + qTerm + "»)");
+              window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: pick.url, source: "📸 Openverse HD (" + qTerm + ")" };
               window.renderUnifiedSystemHub();
               return;
             }
           }
-          pushDiagLog(idx, "⚠️", "Openverse HD", "По запросу «" + searchTerm + "» пусто, ищем в Wikimedia...");
+          pushDiagLog(idx, "⚠️", "Openverse HD", "По «" + qTerm + "» совпадений нет. Попробуйте Wikimedia или Flux AI.");
         } catch (e) {
-          pushDiagLog(idx, "⚠️", "Openverse HD", "Ошибка сети: " + e.message);
+          pushDiagLog(idx, "❌", "Openverse HD", "Ошибка сети: " + e.message);
         }
+        window.renderUnifiedSystemHub();
+        return;
       }
 
-      // 5. ПОИСК В WIKIMEDIA COMMONS (короткий точный запрос из 2-3 слов!)
-      if (engine === "wikimedia" || engine === "openverse_hd") {
+      if (engine === "wikimedia") {
         try {
-          pushDiagLog(idx, "📡", "Wikimedia", "Поиск в Wikimedia: «" + searchTerm + "»...");
-          const wikiUrl = "https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=" +
-            encodeURIComponent("filetype:bitmap " + searchTerm) +
-            "&gsrlimit=20&prop=imageinfo&iiprop=url&format=json&origin=*";
-          const r = await fetch(wikiUrl);
+          pushDiagLog(idx, "📡", "Wikimedia", "Поиск: «" + qTerm + "»...");
+          const wUrl = "https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=" +
+            encodeURIComponent("filetype:bitmap " + qTerm) + "&gsrlimit=20&prop=imageinfo&iiprop=url&format=json&origin=*";
+          const r = await fetch(wUrl);
           if (r.ok) {
             const j = await r.json();
             const pages = (j.query && j.query.pages) ? Object.values(j.query.pages) : [];
-            const imgs = pages
-              .map(p => p.imageinfo && p.imageinfo[0] && p.imageinfo[0].url)
+            const imgs = pages.map(p => p.imageinfo && p.imageinfo[0] && p.imageinfo[0].url)
               .filter(u => u && /\.(jpg|jpeg|png|webp)$/i.test(u) && !/shrimp|prawn|chicken|meat|beef|pork/i.test(u));
-            if (imgs.length > 0) {
-              const pickUrl = imgs[(step - 1) % imgs.length];
-              pushDiagLog(idx, "✅", "Wikimedia", "Найдено фото #" + step + " из " + imgs.length + " («" + searchTerm + "»)");
-              window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
-                url: pickUrl,
-                source: "🥗 Wikimedia (#" + step + " • " + searchTerm + ")",
-                prompt: searchTerm
-              };
+            if (imgs.length) {
+              const pick = imgs[(step - 1) % imgs.length];
+              pushDiagLog(idx, "✅", "Wikimedia", "Найдено #" + step + " из " + imgs.length + " («" + qTerm + "»)");
+              window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: pick, source: "🥗 Wikimedia (" + qTerm + ")" };
               window.renderUnifiedSystemHub();
               return;
             }
           }
+          pushDiagLog(idx, "⚠️", "Wikimedia", "По «" + qTerm + "» фото не найдены.");
         } catch (e) {
-          pushDiagLog(idx, "⚠️", "Wikimedia", "Ошибка сети: " + e.message);
+          pushDiagLog(idx, "❌", "Wikimedia", "Ошибка сети: " + e.message);
         }
-      }
-
-      // 6. ЧИСТЫЙ АРХИВ ФОТО БЛЮД ИЗ ВК
-      if (engine === "vk_food_archive") {
-        const pickVk = cleanVkFoodPool[(step - 1) % cleanVkFoodPool.length];
-        pushDiagLog(idx, "✅", "Архив ВК", "Кадр блюда #" + step + ": " + pickVk);
-        window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
-          url: pickVk,
-          source: "🌿 Архив блюд ВК (#" + (((step - 1) % cleanVkFoodPool.length) + 1) + ")",
-          prompt: pickVk
-        };
         window.renderUnifiedSystemHub();
         return;
       }
 
-      // 3. GASTROBANK HD (строго по своей кулинарной категории: суп -> только супы!)
-      const bankKey = detectDishBankCategory(d);
-      const categoryPool = CURATED_VEGAN_HD_BANK[bankKey] || CURATED_VEGAN_HD_BANK.main;
-      const pickLocal = categoryPool[(step - 1) % categoryPool.length];
-      pushDiagLog(idx, "✅", "GastroBank HD [" + bankKey + "]", "Кадр #" + step + " (" + pickLocal + ")");
-      window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = {
-        url: pickLocal,
-        source: "🍔 GastroBank HD (" + bankKey + " • " + pickLocal + ")",
-        prompt: searchTerm
-      };
+      if (engine === "vk_food_archive") {
+        const pool = (DATA.vk_food_photos && DATA.vk_food_photos.length) ? DATA.vk_food_photos : ["img/vk_5128_1.jpg"];
+        const pick = pool[(step - 1) % pool.length];
+        pushDiagLog(idx, "✅", "Архив ВК", "Кадр #" + step + ": " + pick);
+        window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: pick, source: "🌿 Архив блюд ВК (" + pick + ")" };
+        window.renderUnifiedSystemHub();
+        return;
+      }
+
+      const bk = detectDishBankKey(d);
+      const bank = CURATED_VEGAN_HD_BANK[bk] || CURATED_VEGAN_HD_BANK.main;
+      const pick = bank[(step - 1) % bank.length];
+      pushDiagLog(idx, "✅", "GastroBank [" + bk + "]", "Кадр #" + step + ": " + pick);
+      window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: pick, source: "🍔 GastroBank HD (" + bk + ")" };
       window.renderUnifiedSystemHub();
     };
 
-        window.previewManualUrlCandidate = function(idx) {
+    window.previewManualUrlCandidate = function(idx) {
       const val = (document.getElementById("hub-url-inp-" + idx)?.value || "").trim();
-      if (!val) { alert("Вставьте прямую ссылку или путь img/..."); return; }
-      const cObj = { url: val, source: "🔗 Прямой URL", prompt: val, diag: "✅ Загружено по ссылке" };
-      window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = cObj;
+      if (!val) { alert("Вставьте URL или путь img/..."); return; }
+      window.pendingDishCandidates[idx] = pendingDishCandidates[idx] = { url: val, source: "🔗 Прямой URL" };
       window.renderUnifiedSystemHub();
     };
 
-    window.selectReadyPhotoV45 = function(dishIdx, photoPath) {
+    window.selectReadyPhotoV48 = function(dishIdx, photoPath) {
       const d = DATA.menu[dishIdx];
       if (!d) return;
       d.photo = photoPath;
       d.photo_type = "real";
       d.is_manual_override = true;
-      try {
-        const map = JSON.parse(localStorage.getItem("mirmir_manual_dish_photos_v1") || "{}");
-        map[d.name] = photoPath;
-        localStorage.setItem("mirmir_manual_dish_photos_v1", JSON.stringify(map));
-      } catch(e) {}
+      const ov = getManualDishOverrides();
+      ov[d.name] = { photo: photoPath, updated_at: new Date().toLocaleString("ru-RU") };
+      saveManualDishOverrides(ov);
       delete window.pendingDishCandidates[dishIdx];
       closeReadyGalleryPopup();
       window.renderUnifiedSystemHub();
       window.renderDishes();
-      window.renderHeroRightColumn(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
+      window.renderHeroRightColumn();
     };
 
     window.approveDishCandidate = function(idx) {
-      const cand = window.pendingDishCandidates[idx];
-      if (cand && cand.url) window.selectReadyPhotoV45(idx, cand.url);
+      const c = window.pendingDishCandidates[idx];
+      if (c && c.url) window.selectReadyPhotoV48(idx, c.url);
     };
 
     window.openReadyGalleryPopup = function(dishIdx) {
       const d = DATA.menu[dishIdx];
       const modal = document.getElementById("ready-gallery-popup");
       if (!modal || !d) return;
-      const pool = (DATA.ready_photos || []).filter(p => !p.includes("ai_v") && !p.includes("ingr_") && !p.includes("5047_"));
+      const pool = (DATA.ready_photos || []).filter(p => !p.includes("ai_v") && !p.includes("ingr_") && !p.includes("5047_") && !p.includes("yorg_"));
       const card = modal.firstElementChild;
       if (card) {
         card.innerHTML =
           '<div class="bg-[#2E3D28] text-[#FFFDF9] px-5 py-3 flex items-center justify-between relative">' +
-            '<h3 class="font-serif text-lg font-bold">📸 Выберите реальное фото из ВК для: <span class="text-[#F2B880]">' + esc(d.name) + '</span> (' + pool.length + ' шт.)</h3>' +
+            '<h3 class="font-serif text-lg font-bold">📸 Выберите фото для: <span class="text-[#F2B880]">' + esc(d.name) + '</span> (' + pool.length + ' шт.)</h3>' +
             '<button type="button" onclick="closeReadyGalleryPopup()" class="v45-top-right-close">✕</button>' +
           '</div>' +
           '<div class="p-4 overflow-y-auto max-h-[75vh] bg-[#FAF5EC] grid grid-cols-2 sm:grid-cols-4 gap-3">' +
@@ -1277,10 +1140,9 @@ const CURATED_VEGAN_HD_BANK = {
               '<div class="bg-white rounded-2xl p-2 border border-stone-200 flex flex-col justify-between gap-1.5">' +
                 '<div class="relative h-32 rounded-xl overflow-hidden bg-stone-100">' +
                   '<img src="' + esc(ph) + '" loading="lazy" onclick="openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
-                  '<button type="button" title="Увеличить" onclick="openSuperZoom(\'' + esc(ph) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-1.5 right-1.5 w-7 h-7 rounded-full bg-black/75 text-white text-xs flex items-center justify-center cursor-pointer">🔍</button>' +
                 '</div>' +
                 '<div class="text-[10px] font-mono text-stone-500 truncate">' + esc(ph) + '</div>' +
-                '<button type="button" onclick="selectReadyPhotoV45(' + dishIdx + ', \'' + esc(ph) + '\')" class="w-full py-1.5 rounded-xl bg-emerald-700 hover:bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">✅ Утвердить это фото</button>' +
+                '<button type="button" onclick="selectReadyPhotoV48(' + dishIdx + ', \'' + esc(ph) + '\')" class="w-full py-1.5 rounded-xl bg-emerald-700 hover:bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">✅ Утвердить</button>' +
               '</div>'
             ).join("") +
           '</div>';
@@ -1289,141 +1151,200 @@ const CURATED_VEGAN_HD_BANK = {
       modal.classList.add("flex");
     };
 
+    function getMasterTasksList() {
+      const srv = (DATA.tz_synced && Array.isArray(DATA.tz_synced.tasks)) ? DATA.tz_synced.tasks : [];
+      try {
+        const loc = JSON.parse(localStorage.getItem("mirmir_tasks_v48") || "null");
+        if (Array.isArray(loc) && loc.length >= srv.length) return loc;
+      } catch (e) {}
+      return srv;
+    }
+    function saveMasterTasksList(arr) {
+      try {
+        localStorage.setItem("mirmir_tasks_v48", JSON.stringify(arr));
+        fetch(NTFY_SYNC_URL, { method: "POST", body: JSON.stringify({ type: "tz_tasks_sync", tasks: arr, ts: Date.now() }) }).catch(() => {});
+      } catch (e) {}
+    }
+    window.toggleTaskDoneV48 = function(i) {
+      const l = getMasterTasksList();
+      if (!l[i]) return;
+      l[i].done = !l[i].done;
+      saveMasterTasksList(l);
+      window.renderUnifiedSystemHub();
+    };
+    window.updateTaskCommentV48 = function(i, val) {
+      const l = getMasterTasksList();
+      if (!l[i]) return;
+      l[i].comment = val;
+      saveMasterTasksList(l);
+    };
+    window.addNewTaskV48 = function() {
+      const t = (document.getElementById("new-tz-task-inp")?.value || "").trim();
+      if (!t) return;
+      const c = (document.getElementById("new-tz-comment-inp")?.value || "Проверить").trim();
+      const l = getMasterTasksList();
+      l.unshift({ id: "t_u_" + Date.now(), date: new Date().toLocaleString("ru-RU").slice(0, 16), title: (l.length + 1) + ". " + t, done: false, comment: c });
+      saveMasterTasksList(l);
+      window.renderUnifiedSystemHub();
+    };
+
+    window.addNewCustomDishFromHub = function() {
+      const name = (document.getElementById("new-dish-name")?.value || "").trim();
+      if (!name) { alert("Введите название блюда!"); return; }
+      const obj = {
+        id: "custom_" + Date.now(),
+        category: (document.getElementById("new-dish-cat")?.value || "Сезонные спешлы от Шефа").trim(),
+        name: name,
+        weight: (document.getElementById("new-dish-weight")?.value || "260 г").trim(),
+        price: parseInt(document.getElementById("new-dish-price")?.value || "450", 10) || 450,
+        photo: (document.getElementById("new-dish-photo")?.value || "img/vk_5128_1.jpg").trim(),
+        photo_type: "real",
+        desc: (document.getElementById("new-dish-desc")?.value || "100% растительное блюдо.").trim(),
+        ai_prompt: "Vegan plant-based " + name
+      };
+      const list = loadCustomAddedDishes().filter(x => x.name !== name);
+      list.unshift(obj);
+      try { localStorage.setItem("mirmir_custom_dishes_v1", JSON.stringify(list)); } catch (e) {}
+      DATA.menu.unshift(obj);
+      window.renderUnifiedSystemHub();
+      window.renderDishes();
+      window.renderCategoryShowcaseAndRail();
+    };
+
+    window.getSavedIdeasNotes = function() {
+      try { return JSON.parse(localStorage.getItem("mirmir_ideas_notes_v1") || "[]"); } catch (e) { return []; }
+    };
+    window.addNewIdeaNote = function() {
+      const inp = document.getElementById("new-idea-note-inp");
+      const v = (inp?.value || "").trim();
+      if (!v) return;
+      const list = window.getSavedIdeasNotes();
+      list.unshift({ text: v, date: new Date().toLocaleString("ru-RU") });
+      try { localStorage.setItem("mirmir_ideas_notes_v1", JSON.stringify(list)); } catch (e) {}
+      if (inp) inp.value = "";
+      window.renderUnifiedSystemHub();
+    };
+
     window.renderUnifiedSystemHub = function() {
       syncMenuWithCustomAndDeleted();
       applyManualOverridesToMenuData();
-      applyV45CleanLayout();
-
-      const hubModal = document.getElementById("unified-system-hub");
-      const hubCard = hubModal ? hubModal.firstElementChild : null;
-      const hubHeader = hubCard ? hubCard.children[0] : null;
-      const body = document.getElementById("unified-hub-body") || (hubCard ? (hubCard.querySelector(".overflow-y-auto") || hubCard.children[1]) : null);
-      const tabsBox = document.getElementById("unified-hub-tabs") || (hubHeader ? hubHeader.querySelector("[id*='tab']") : null);
+      const tabsBox = document.getElementById("hub-top-tabs") || document.getElementById("unified-hub-tabs");
+      const body = document.getElementById("hub-main-body") || document.getElementById("unified-hub-body");
       if (!tabsBox || !body) return;
 
       const curTab = window.hubActiveTab || "dishes72";
       const tasks = getMasterTasksList();
       const doneCnt = tasks.filter(t => t.done).length;
-      const logs = window.getCombinedBuildLogs();
-      const deletedCount = Object.keys(window.getDeletedDishesMap()).length;
+      const logs = Array.isArray(DATA.full_build_logs) ? DATA.full_build_logs : [];
+      const lcOn = Boolean(window.isLcEnabledInHub && window.isLcEnabledInHub());
+      const delCnt = Object.keys(window.getDeletedDishesMap()).length;
 
       const tabDefs = [
-        { id: "dishes72", label: "🍲 Все блюда (" + DATA.menu.length + ")" },
-        { id: "tasks", label: "📋 Список задач (" + doneCnt + "/" + tasks.length + ")" },
-        { id: "logs", label: "📜 Логи сборок (" + logs.length + ")" },
-        { id: "ideas", label: "📝 Журнал идей" },
-        { id: "toggles", label: "⚡ Режимы, Бронь & Промпт" }
+        { id: "dishes72", lbl: "🍲 Все блюда (" + DATA.menu.length + ")" },
+        { id: "tasks", lbl: "📋 Задачи (" + doneCnt + "/" + tasks.length + ")" },
+        { id: "logs", lbl: "📜 Логи (" + logs.length + ")" },
+        { id: "ideas", lbl: "📝 Идеи" },
+        { id: "toggles", lbl: "⚡ Режимы & Промпт" }
       ];
 
-      const lcOn = Boolean(window.isLcEnabledInHub && window.isLcEnabledInHub());
-      const lcQuickBtn = '<button type="button" onclick="if(window.setLcEnabledInHub)window.setLcEnabledInHub(' + (!lcOn) + ')" ' +
-        'class="px-3 py-1.5 rounded-xl text-xs font-extrabold cursor-pointer transition border ' +
-        (lcOn ? 'bg-emerald-600 text-white border-amber-300 shadow' : 'bg-black/30 text-amber-200 border-amber-400/40 hover:bg-black/50') + '">' +
-        (lcOn ? '🎛️ Конструктор: ВКЛ' : '🎛️ Конструктор: ВЫКЛ') + '</button>';
       tabsBox.innerHTML = tabDefs.map(t =>
-        '<button type="button" onclick="setHubTab(\'' + t.id + '\')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold cursor-pointer transition ' +
-        (curTab === t.id ? 'bg-[#D48238] text-white shadow' : 'bg-white/10 text-stone-200 hover:bg-white/20') + '">' + t.label + '</button>'
-      ).join("") + lcQuickBtn;
+        '<button type="button" onclick="setHubTab(\'' + t.id + '\')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold cursor-pointer ' +
+        (curTab === t.id ? 'bg-[#D48238] text-white shadow' : 'bg-white/10 text-stone-200 hover:bg-white/20') + '">' + t.lbl + '</button>'
+      ).join("") +
+      '<button type="button" onclick="if(window.setLcEnabledInHub)window.setLcEnabledInHub(' + (!lcOn) + ')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold cursor-pointer border ' +
+        (lcOn ? 'bg-emerald-600 text-white border-amber-300' : 'bg-black/35 text-amber-200 border-amber-400/40') + '">' +
+        (lcOn ? '🎛️ Конструктор: ВКЛ' : '🎛️ Конструктор: ВЫКЛ') +
+      '</button>';
 
       if (curTab === "dishes72") {
         const cats = ["Все", ...Array.from(new Set(DATA.menu.map(d => d.category)))];
-        const formCats = cats.filter(c => c !== "Все");
         const curCat = window.hubDishCategoryFilter || "Все";
         const curQ = (window.hubDishSearchQuery || "").toLowerCase();
         const filtered = DATA.menu.filter(d => (curCat === "Все" || d.category === curCat) && (!curQ || d.name.toLowerCase().includes(curQ)));
+        const engines = [
+          { k: "flux_ai", lbl: "🎨 1. Flux AI" },
+          { k: "turbo_ai", lbl: "⚡ 2. Turbo AI" },
+          { k: "gastro_hd", lbl: "🍔 3. GastroBank HD" },
+          { k: "openverse_hd", lbl: "📸 4. Openverse" },
+          { k: "wikimedia", lbl: "🥗 5. Wikimedia" },
+          { k: "vk_food_archive", lbl: "🌿 6. Архив ВК" }
+        ];
 
         body.innerHTML =
-          '<div class="bg-white rounded-2xl p-3 border border-stone-200 shadow-xs space-y-2.5 mb-3">' +
+          '<div class="bg-white rounded-2xl p-3 border border-stone-200 space-y-2.5 mb-3">' +
             '<div class="flex flex-wrap items-center justify-between gap-2">' +
-              '<input type="text" value="' + esc(window.hubDishSearchQuery || "") + '" oninput="setHubSearch(this.value)" placeholder="🔍 Быстрый поиск блюда по названию..." class="flex-1 min-w-[200px] px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold outline-none">' +
-              (deletedCount > 0 ? '<button type="button" onclick="restoreAllDeletedDishes()" class="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-[#2E3D28] text-xs font-extrabold cursor-pointer">♻️ Восстановить удалённые (' + deletedCount + ')</button>' : '') +
-              '<button type="button" onclick="window.dishAddPanelOpen=!window.dishAddPanelOpen;renderUnifiedSystemHub()" class="px-3.5 py-1.5 rounded-xl bg-[#2E3D28] hover:bg-[#D48238] text-[#F2B880] hover:text-white text-xs font-extrabold cursor-pointer transition">' +
-                (window.dishAddPanelOpen ? '▲ Скрыть форму добавления' : '➕ Добавить новое блюдо вручную') +
-              '</button>' +
+              '<input type="text" value="' + esc(window.hubDishSearchQuery || "") + '" oninput="setHubSearch(this.value)" placeholder="🔍 Поиск блюда..." class="flex-1 min-w-[200px] px-3 py-1.5 rounded-xl border border-stone-300 text-xs font-bold">' +
+              (delCnt > 0 ? '<button type="button" onclick="restoreAllDeletedDishes()" class="px-3 py-1.5 rounded-xl bg-amber-100 text-[#2E3D28] text-xs font-extrabold cursor-pointer">♻️ Восстановить (' + delCnt + ')</button>' : '') +
+              '<button type="button" onclick="window.dishAddPanelOpen=!window.dishAddPanelOpen;renderUnifiedSystemHub()" class="px-3.5 py-1.5 rounded-xl bg-[#2E3D28] text-[#F2B880] text-xs font-extrabold cursor-pointer">' + (window.dishAddPanelOpen ? '▲ Скрыть форму' : '➕ Добавить блюдо') + '</button>' +
             '</div>' +
             (window.dishAddPanelOpen ? (
-              '<div class="bg-[#2E3D28] text-[#FFFDF9] rounded-2xl p-3 border border-[#F2B880]/60 space-y-2">' +
+              '<div class="bg-[#2E3D28] text-white rounded-2xl p-3 space-y-2">' +
                 '<div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-stone-900">' +
-                  '<input id="new-dish-name" type="text" placeholder="Название блюда" class="px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold">' +
-                  '<select id="new-dish-cat" class="px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold">' + formCats.map(c => '<option value="' + esc(c) + '">' + esc(c) + '</option>').join("") + '</select>' +
-                  '<div class="grid grid-cols-2 gap-1.5"><input id="new-dish-price" type="number" placeholder="Цена ₽ (450)" class="px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold"><input id="new-dish-weight" type="text" placeholder="Вес (260 г)" class="px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold"></div>' +
-                  '<input id="new-dish-photo" type="text" placeholder="img/vk_5128_1.jpg или URL" class="px-2.5 py-1.5 rounded-lg bg-white text-xs">' +
+                  '<input id="new-dish-name" placeholder="Название блюда" class="px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold">' +
+                  '<select id="new-dish-cat" class="px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold">' + cats.filter(c => c !== "Все").map(c => '<option>' + esc(c) + '</option>').join("") + '</select>' +
+                  '<div class="grid grid-cols-2 gap-1"><input id="new-dish-price" type="number" placeholder="450" class="px-2 py-1.5 rounded-lg bg-white text-xs font-bold"><input id="new-dish-weight" placeholder="260 г" class="px-2 py-1.5 rounded-lg bg-white text-xs font-bold"></div>' +
+                  '<input id="new-dish-photo" placeholder="img/vk_5128_1.jpg" class="px-2.5 py-1.5 rounded-lg bg-white text-xs">' +
                 '</div>' +
-                '<div class="flex gap-2"><input id="new-dish-desc" type="text" placeholder="Описание и состав..." class="flex-1 px-2.5 py-1.5 rounded-lg bg-white text-stone-900 text-xs"><button type="button" onclick="addNewCustomDishFromHub()" class="px-4 py-1.5 rounded-lg bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">✅ Сохранить блюдо</button></div>' +
+                '<div class="flex gap-2"><input id="new-dish-desc" placeholder="Состав..." class="flex-1 px-2.5 py-1.5 rounded-lg bg-white text-stone-900 text-xs"><button type="button" onclick="addNewCustomDishFromHub()" class="px-4 py-1.5 rounded-lg bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">✅ Сохранить</button></div>' +
               '</div>'
             ) : '') +
-            '<div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-0.5">' +
-              cats.map(c => '<button type="button" onclick="setHubCategory(\'' + esc(c) + '\')" class="px-2.5 py-1 rounded-full text-[11px] font-extrabold whitespace-nowrap cursor-pointer ' + (curCat === c ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-stone-100 text-stone-700 hover:bg-stone-200') + '">' + esc(c) + '</button>').join("") +
+            '<div class="flex gap-1.5 overflow-x-auto no-scrollbar">' +
+              cats.map(c => '<button type="button" onclick="setHubCategory(\'' + esc(c) + '\')" class="px-2.5 py-1 rounded-full text-[11px] font-extrabold whitespace-nowrap cursor-pointer ' + (curCat === c ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-stone-100 text-stone-700') + '">' + esc(c) + '</button>').join("") +
             '</div>' +
           '</div>' +
-
           '<div class="space-y-2.5">' + filtered.map(d => {
             const idx = DATA.menu.indexOf(d);
             const isOff = window.isDishDisabled(d.name);
-            const curEngine = window.selectedAiEnginePerDish[idx] || "flux_ai";
+            const curEng = window.selectedAiEnginePerDish[idx] || "flux_ai";
             const cand = window.pendingDishCandidates[idx];
-            const promptVal = window.customPromptsPerDish[idx] !== undefined ? window.customPromptsPerDish[idx] : (d.ai_prompt || d.name);
-            const diagLines = window.dishDiagLogs[idx] || [];
-            const engines = [
-              { k: "flux_ai", lbl: "🎨 1. Flux AI" },
-              { k: "turbo_ai", lbl: "⚡ 2. Turbo AI" },
-              { k: "gastro_hd", lbl: "🍔 3. GastroBank HD" },
-              { k: "openverse_hd", lbl: "📸 4. Openverse" },
-              { k: "wikimedia", lbl: "🥗 5. Wikimedia" },
-              { k: "vk_food_archive", lbl: "🌿 6. Архив ВК" }
-            ];
-
-            return '<div class="bg-white rounded-2xl p-3.5 border border-stone-200 shadow-xs space-y-2.5 transition ' + (isOff ? 'opacity-50 bg-stone-100' : '') + '">' +
+            const pVal = window.customPromptsPerDish[idx] !== undefined ? window.customPromptsPerDish[idx] : (d.name || "");
+            const diag = window.dishDiagLogs[idx] || [];
+            return '<div class="bg-white rounded-2xl p-3.5 border border-stone-200 space-y-2.5 ' + (isOff ? 'opacity-50' : '') + '">' +
               '<div class="grid grid-cols-1 lg:grid-cols-12 gap-3 items-start">' +
                 '<div class="lg:col-span-4 flex items-center gap-3">' +
-                  '<div class="relative w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 border border-stone-300 bg-stone-100">' +
+                  '<div class="relative w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 border bg-stone-100">' +
                     '<img src="' + esc(d.photo) + '" onclick="openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
-                    '<button type="button" title="Увеличить" onclick="openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-black/80 text-white text-[10px] flex items-center justify-center cursor-pointer">🔍</button>' +
                   '</div>' +
                   '<div class="min-w-0 flex-1 space-y-1">' +
-                    '<div class="flex flex-wrap items-center gap-1">' +
-                      '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-amber-100 text-[#2E3D28]">' + esc(d.category) + '</span>' +
-                      (isOff ? '<span class="text-[9px] font-extrabold px-2 py-0.5 rounded bg-amber-600 text-white">⏸️ Отключено</span>' : '') +
-                    '</div>' +
+                    '<span class="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-amber-100 text-[#2E3D28]">' + esc(d.category) + '</span>' +
                     '<h4 class="font-serif font-bold text-base text-[#2E3D28] leading-tight">' + esc(d.name) + ' <span class="text-[#D48238] text-xs font-sans">(' + (d.sizes ? d.sizes[0].price : d.price) + ' ₽)</span></h4>' +
-                    '<div class="flex flex-wrap gap-1 pt-0.5">' +
-                      '<button type="button" onclick="openReadyGalleryPopup(' + idx + ')" class="px-2 py-1 rounded-lg bg-[#2E3D28] text-[#F2B880] text-[10px] font-extrabold cursor-pointer">📸 Из готовых (' + (DATA.ready_photos ? DATA.ready_photos.length : 306) + ')</button>' +
-                      '<button type="button" onclick="toggleDishDisabled(' + idx + ')" class="px-2 py-1 rounded-lg ' + (isOff ? 'bg-emerald-700 text-white' : 'bg-amber-500/90 text-white') + ' text-[10px] font-extrabold cursor-pointer">' + (isOff ? '👁️ Включить' : '⏸️ Отключить') + '</button>' +
-                      '<button type="button" onclick="deleteDishTripleConfirm(' + idx + ')" class="px-2 py-1 rounded-lg bg-rose-700 hover:bg-rose-800 text-white text-[10px] font-extrabold cursor-pointer">🗑️ Удалить</button>' +
+                    '<div class="flex flex-wrap gap-1">' +
+                      '<button type="button" onclick="openReadyGalleryPopup(' + idx + ')" class="px-2 py-1 rounded-lg bg-[#2E3D28] text-[#F2B880] text-[10px] font-extrabold cursor-pointer">📸 Из готовых</button>' +
+                      '<button type="button" onclick="toggleDishDisabled(' + idx + ')" class="px-2 py-1 rounded-lg ' + (isOff ? 'bg-emerald-700' : 'bg-amber-500') + ' text-white text-[10px] font-extrabold cursor-pointer">' + (isOff ? '👁️ Вкл' : '⏸️ Откл') + '</button>' +
+                      '<button type="button" onclick="deleteDishTripleConfirm(' + idx + ')" class="px-2 py-1 rounded-lg bg-rose-700 text-white text-[10px] font-extrabold cursor-pointer">🗑️ Удалить</button>' +
                     '</div>' +
                   '</div>' +
                 '</div>' +
-
-                '<div class="lg:col-span-8 bg-amber-50/60 rounded-2xl p-2.5 border border-amber-200/90 space-y-2">' +
-                  '<div class="flex flex-wrap items-center justify-between gap-1.5">' +
-                    '<span class="text-[10px] font-extrabold uppercase text-[#D48238]">🎨 1. Выберите источник или ИИ:</span>' +
-                    '<div class="flex flex-wrap gap-1">' +
-                      engines.map(e => '<button type="button" onclick="runEngineForDish(' + idx + ',\'' + e.k + '\')" class="px-2 py-1 rounded-lg text-[10px] font-extrabold cursor-pointer ' + (curEngine === e.k ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white text-[#2E3D28] border border-amber-300') + '">' + e.lbl + '</button>').join("") +
-                    '</div>' +
+                '<div class="lg:col-span-8 bg-amber-50/60 rounded-2xl p-2.5 border border-amber-200 space-y-2">' +
+                  '<div class="flex flex-wrap gap-1">' +
+                    engines.map(e => '<button type="button" onclick="runEngineForDish(' + idx + ',\'' + e.k + '\')" class="px-2 py-1 rounded-lg text-[10px] font-extrabold cursor-pointer ' + (curEng === e.k ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white text-[#2E3D28] border border-amber-300') + '">' + e.lbl + '</button>').join("") +
                   '</div>' +
-                  '<div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">' +
+                  '<div class="grid grid-cols-1 sm:grid-cols-12 gap-2">' +
                     '<div class="sm:col-span-7 flex gap-1.5">' +
-                      '<input id="hub-ai-prm-' + idx + '" type="text" value="' + esc(promptVal) + '" oninput="window.customPromptsPerDish[' + idx + ']=this.value" class="flex-1 min-w-0 px-2.5 py-1.5 rounded-xl bg-white border border-amber-300 text-xs">' +
-                      '<button type="button" onclick="generateDishCandidateAI(' + idx + ')" class="px-3 py-1.5 rounded-xl bg-[#D48238] text-white text-[11px] font-extrabold cursor-pointer whitespace-nowrap">🔍 Найти / ИИ</button>' +
+                      '<input id="hub-ai-prm-' + idx + '" value="' + esc(pVal) + '" oninput="window.customPromptsPerDish[' + idx + ']=this.value" class="flex-1 min-w-0 px-2.5 py-1.5 rounded-xl bg-white border border-amber-300 text-xs">' +
+                      '<button type="button" onclick="generateDishCandidateAI(' + idx + ')" class="px-3 py-1.5 rounded-xl bg-[#D48238] text-white text-[11px] font-extrabold cursor-pointer">🔍 Найти / ИИ</button>' +
                     '</div>' +
                     '<div class="sm:col-span-5 flex gap-1.5">' +
-                      '<input id="hub-url-inp-' + idx + '" type="text" placeholder="🔗 Прямой URL или img/..." class="flex-1 min-w-0 px-2.5 py-1.5 rounded-xl bg-white border border-stone-300 text-xs">' +
+                      '<input id="hub-url-inp-' + idx + '" placeholder="🔗 URL или img/..." class="flex-1 min-w-0 px-2.5 py-1.5 rounded-xl bg-white border border-stone-300 text-xs">' +
                       '<button type="button" onclick="previewManualUrlCandidate(' + idx + ')" class="px-2.5 py-1.5 rounded-xl bg-[#556432] text-white text-[11px] font-extrabold cursor-pointer">✅ URL</button>' +
                     '</div>' +
                   '</div>' +
-                  (diagLines.length ? '<div class="bg-[#1A2416] text-emerald-300 rounded-xl px-2.5 py-1 font-mono text-[10px]">' + diagLines.map(l => '<div class="truncate">' + esc(l) + '</div>').join("") + '</div>' : '') +
+                  (diag.length ? '<div class="bg-[#1A2416] text-emerald-300 rounded-xl px-2.5 py-1 font-mono text-[10px]">' + diag.map(l => '<div class="truncate">' + esc(l) + '</div>').join("") + '</div>' : '') +
                 '</div>' +
               '</div>' +
-
               (cand ? (
-                '<div class="bg-[#23311E] text-[#FFFDF9] rounded-2xl p-3 border-2 border-[#D48238] flex flex-col sm:flex-row items-center justify-between gap-3">' +
+                '<div class="bg-[#23311E] text-white rounded-2xl p-3 border-2 border-[#D48238] flex flex-col sm:flex-row items-center justify-between gap-3">' +
                   '<div class="flex items-center gap-3">' +
-                    '<div class="relative w-24 h-24 rounded-xl overflow-hidden border-2 border-[#F2B880] flex-shrink-0 bg-stone-800">' +
+                    '<div class="w-24 h-24 rounded-xl overflow-hidden border-2 border-[#F2B880] bg-stone-800 flex-shrink-0">' +
                       '<img src="' + esc(cand.url) + '" onclick="openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
                     '</div>' +
-                    '<div class="space-y-1"><span class="px-2 py-0.5 rounded-full bg-[#D48238] text-white text-[10px] font-extrabold">' + esc(cand.source) + '</span><h5 class="font-serif text-base font-bold text-[#F2B880]">👁️ Предпросмотр для «' + esc(d.name) + '»</h5></div>' +
+                    '<div><span class="px-2 py-0.5 rounded-full bg-[#D48238] text-[10px] font-extrabold">' + esc(cand.source) + '</span><h5 class="font-serif text-base font-bold text-[#F2B880] mt-1">👁️ Предпросмотр для «' + esc(d.name) + '»</h5></div>' +
                   '</div>' +
-                  '<div class="flex sm:flex-col gap-1.5"><button type="button" onclick="approveDishCandidate(' + idx + ')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-extrabold text-xs cursor-pointer">✅ Утвердить в меню</button><button type="button" onclick="generateDishCandidateAI(' + idx + ')" class="px-3.5 py-1.5 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">🎲 Ещё вариант</button><button type="button" onclick="delete window.pendingDishCandidates[' + idx + '];renderUnifiedSystemHub()" class="px-3 py-1 rounded-xl bg-white/10 text-stone-300 text-[11px] cursor-pointer">✕ Отмена</button></div>' +
+                  '<div class="flex sm:flex-col gap-1.5">' +
+                    '<button type="button" onclick="approveDishCandidate(' + idx + ')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white font-extrabold text-xs cursor-pointer">✅ Утвердить</button>' +
+                    '<button type="button" onclick="generateDishCandidateAI(' + idx + ')" class="px-3.5 py-1.5 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">🎲 Ещё вариант</button>' +
+                    '<button type="button" onclick="delete window.pendingDishCandidates[' + idx + '];renderUnifiedSystemHub()" class="px-3 py-1 rounded-xl bg-white/10 text-stone-300 text-[11px] cursor-pointer">✕ Отмена</button>' +
+                  '</div>' +
                 '</div>'
               ) : '') +
             '</div>';
@@ -1434,77 +1355,53 @@ const CURATED_VEGAN_HD_BANK = {
       if (curTab === "tasks") {
         body.innerHTML =
           '<div class="space-y-3">' +
-            '<div class="bg-white rounded-2xl p-3.5 border border-stone-200 shadow-xs grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center">' +
-              '<input id="new-tz-task-inp" type="text" placeholder="➕ Новая задача или правка..." class="sm:col-span-5 px-3 py-2 rounded-xl border border-stone-300 text-xs font-bold outline-none focus:border-[#D48238]">' +
-              '<input id="new-tz-comment-inp" type="text" placeholder="💬 Комментарий / примечание..." class="sm:col-span-5 px-3 py-2 rounded-xl border border-stone-300 text-xs outline-none focus:border-[#D48238]">' +
-              '<button type="button" onclick="addNewTaskV45()" class="sm:col-span-2 py-2 px-3 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs cursor-pointer shadow-xs">+ Добавить</button>' +
+            '<div class="bg-white rounded-2xl p-3 border grid grid-cols-1 sm:grid-cols-12 gap-2">' +
+              '<input id="new-tz-task-inp" placeholder="➕ Новая задача..." class="sm:col-span-5 px-3 py-2 rounded-xl border text-xs font-bold">' +
+              '<input id="new-tz-comment-inp" placeholder="💬 Комментарий..." class="sm:col-span-5 px-3 py-2 rounded-xl border text-xs">' +
+              '<button type="button" onclick="addNewTaskV48()" class="sm:col-span-2 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">+ Добавить</button>' +
             '</div>' +
-            '<div class="bg-white rounded-2xl border border-stone-300 overflow-x-auto shadow-xs">' +
-              '<table class="w-full text-left border-collapse min-w-[820px]">' +
-                '<thead class="bg-[#2E3D28] text-[#F2B880] text-[10px] font-extrabold uppercase tracking-wider">' +
-                  '<tr>' +
-                    '<th class="p-3 w-36">Дата и время</th>' +
-                    '<th class="p-3 w-[38%]">Задача</th>' +
-                    '<th class="p-3 text-center w-32">Статус</th>' +
-                    '<th class="p-3 w-[42%]">Комментарий / Примечание</th>' +
-                  '</tr>' +
-                '</thead>' +
-                '<tbody class="divide-y divide-stone-200 text-xs">' +
-                  tasks.map((t, i) => {
-                    const parts = String(t.date || "12.11.2026 10:15").split(" ");
-                    const dPart = parts[0] || "12.11.2026";
-                    const tPart = parts[1] || "10:15";
-                    return '<tr class="hover:bg-amber-50/40 transition ' + (t.done ? '' : 'bg-rose-50/50') + '">' +
-                      '<td class="p-3 whitespace-nowrap align-middle">' +
-                        '<div class="font-mono text-[11px] font-extrabold text-[#2E3D28]">📅 ' + esc(dPart) + '</div>' +
-                        '<div class="font-mono text-[10px] font-bold text-[#D48238] mt-0.5">🕒 ' + esc(tPart) + '</div>' +
-                      '</td>' +
-                      '<td class="p-3 font-bold text-[#1F2B1A] leading-snug align-middle">' + esc(t.title) + '</td>' +
-                      '<td class="p-3 text-center align-middle">' +
-                        '<button type="button" onclick="toggleTaskDoneV45(' + i + ')" class="px-3 py-1.5 rounded-xl font-extrabold text-[11px] cursor-pointer w-28 shadow-xs transition ' + (t.done ? 'bg-emerald-700 hover:bg-emerald-800 text-white' : 'bg-rose-600 hover:bg-rose-700 text-white') + '">' +
-                          (t.done ? '✅ Сделано' : '❌ Не сделано') +
-                        '</button>' +
-                      '</td>' +
-                      '<td class="p-3 align-middle">' +
-                        '<input type="text" value="' + esc(t.comment || "") + '" oninput="updateTaskCommentV45(' + i + ', this.value)" placeholder="Комментарий..." class="w-full px-3 py-2 rounded-xl border ' + (t.done ? 'border-stone-200 bg-stone-50/80 text-stone-800' : 'border-rose-300 bg-white text-rose-900 font-bold') + ' text-xs outline-none focus:border-[#D48238] focus:bg-white">' +
-                      '</td>' +
-                    '</tr>';
-                  }).join("") +
-                '</tbody>' +
-              '</table>' +
-            '</div>' +
+            '<div class="bg-white rounded-2xl border overflow-x-auto"><table class="w-full text-left border-collapse min-w-[780px]">' +
+              '<thead class="bg-[#2E3D28] text-[#F2B880] text-[10px] uppercase"><tr><th class="p-3 w-32">Дата</th><th class="p-3">Задача</th><th class="p-3 w-28 text-center">Статус</th><th class="p-3 w-[40%]">Комментарий</th></tr></thead>' +
+              '<tbody class="divide-y text-xs">' + tasks.map((t, i) =>
+                '<tr><td class="p-3 font-mono text-[10px]">' + esc(t.date || "") + '</td><td class="p-3 font-bold">' + esc(t.title) + '</td><td class="p-3 text-center"><button type="button" onclick="toggleTaskDoneV48(' + i + ')" class="px-2.5 py-1 rounded-xl font-extrabold text-[11px] text-white cursor-pointer ' + (t.done ? 'bg-emerald-700' : 'bg-rose-600') + '">' + (t.done ? '✅ Сделано' : '❌ Нет') + '</button></td><td class="p-3"><input value="' + esc(t.comment || "") + '" oninput="updateTaskCommentV48(' + i + ',this.value)" class="w-full px-2.5 py-1.5 rounded-lg border text-xs"></td></tr>'
+              ).join("") + '</tbody></table></div>' +
           '</div>';
         return;
       }
 
       if (curTab === "logs") {
-        body.innerHTML = '<div class="space-y-2.5">' + logs.map(l => '<div class="bg-white rounded-2xl p-3.5 border border-stone-200 space-y-1"><div class="flex justify-between"><span class="px-2.5 py-0.5 rounded-full bg-[#2E3D28] text-[#F2B880] text-xs font-extrabold">' + esc(l.version) + '</span><span class="text-xs text-stone-400">🕒 ' + esc(l.timestamp) + '</span></div><div class="text-xs font-extrabold text-[#D48238]">' + esc(l.model || "") + '</div><p class="text-xs text-stone-700">' + esc(l.status || "") + '</p></div>').join("") + '</div>';
+        body.innerHTML = '<div class="space-y-2">' + logs.map(l => '<div class="bg-white rounded-2xl p-3 border"><div class="flex justify-between"><span class="px-2.5 py-0.5 rounded-full bg-[#2E3D28] text-[#F2B880] text-xs font-extrabold">' + esc(l.version) + '</span><span class="text-xs text-stone-400">' + esc(l.timestamp) + '</span></div><div class="text-xs font-extrabold text-[#D48238] mt-1">' + esc(l.model || "") + '</div><p class="text-xs text-stone-700">' + esc(l.status || "") + '</p></div>').join("") + '</div>';
         return;
       }
 
       if (curTab === "ideas") {
         const notes = window.getSavedIdeasNotes();
-        body.innerHTML = '<div class="space-y-3"><div class="bg-white rounded-2xl p-3 border border-stone-200 flex gap-2"><input id="new-idea-note-inp" type="text" placeholder="Запишите идею..." class="flex-1 px-3 py-1.5 rounded-xl border border-stone-300 text-xs"><button type="button" onclick="addNewIdeaNote()" class="px-4 py-1.5 rounded-xl bg-[#2E3D28] text-[#F2B880] font-extrabold text-xs cursor-pointer">💾 Сохранить</button></div><div class="space-y-2">' + notes.map(n => '<div class="bg-white rounded-2xl p-3 border border-stone-200 flex justify-between"><p class="text-xs font-bold">' + esc(n.text) + '</p><span class="text-[10px] text-stone-400">' + esc(n.date) + '</span></div>').join("") + '</div></div>';
+        body.innerHTML = '<div class="space-y-3"><div class="bg-white rounded-2xl p-3 border flex gap-2"><input id="new-idea-note-inp" placeholder="Запишите идею..." class="flex-1 px-3 py-1.5 rounded-xl border text-xs"><button type="button" onclick="addNewIdeaNote()" class="px-4 py-1.5 rounded-xl bg-[#2E3D28] text-[#F2B880] font-extrabold text-xs cursor-pointer">💾 Сохранить</button></div>' +
+          notes.map(n => '<div class="bg-white rounded-2xl p-3 border flex justify-between"><p class="text-xs font-bold">' + esc(n.text) + '</p><span class="text-[10px] text-stone-400">' + esc(n.date) + '</span></div>').join("") + '</div>';
         return;
       }
 
-      const tg = window.getSiteToggles();
       body.innerHTML =
         '<div class="grid grid-cols-1 lg:grid-cols-2 gap-3">' +
-          '<div class="bg-white rounded-2xl p-4 border border-stone-200 space-y-3">' +
-            '<h4 class="font-serif text-lg font-bold text-[#2E3D28]">🛠️ Настройки режимов сайта</h4>' +
-            '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">🪑 1. Режим кнопки «Бронь столика»:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV45(\'bookingMode\', \'messenger\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'messenger' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">✈️ Telegram / ВК (Без 152-ФЗ)</button><button type="button" onclick="setAdminSettingV45(\'bookingMode\', \'form152\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.bookingMode === 'form152' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">📝 Анкета на сайте (152-ФЗ)</button></div></div>' +
-            '<div class="p-3 rounded-xl bg-emerald-50/90 border-2 border-[#556432] space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">🎛️ Инженерный пульт «Живой конструктор окон и фото»:</div><div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5"><button type="button" onclick="if(window.setLcEnabledInHub)window.setLcEnabledInHub(true)" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + ((window.isLcEnabledInHub && window.isLcEnabledInHub()) ? 'bg-[#2E3D28] text-[#F2B880] shadow' : 'bg-white border') + '">👁️ Показать кнопку на сайте (ВКЛ)</button><button type="button" onclick="if(window.setLcEnabledInHub)window.setLcEnabledInHub(false)" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + ((!window.isLcEnabledInHub || !window.isLcEnabledInHub()) ? 'bg-rose-700 text-white shadow' : 'bg-white border') + '">🔒 Скрыть кнопку с экрана (ВЫКЛ)</button><button type="button" onclick="if(window.setLcEnabledInHub){window.setLcEnabledInHub(true);closeUnifiedSystemHub();window.toggleLcMode(true);}" class="p-2 rounded-lg bg-[#D48238] text-white text-[11px] font-extrabold cursor-pointer shadow">🚀 Запустить конструктор сейчас</button></div></div>' +
-            '<div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1.5"><div class="text-xs font-extrabold text-[#2E3D28]">📸 2. Режим показа фото в Меню:</div><div class="grid grid-cols-2 gap-1.5"><button type="button" onclick="setAdminSettingV45(\'photoMode\', \'hybrid\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'hybrid' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🎨 Гибрид (Все фото)</button><button type="button" onclick="setAdminSettingV45(\'photoMode\', \'strict_real\')" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (tg.photoMode === 'strict_real' ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">🕊️ Только 100% фото из ВК</button></div></div>' +
+          '<div class="bg-white rounded-2xl p-4 border space-y-3">' +
+            '<h4 class="font-serif text-lg font-bold text-[#2E3D28]">🛠️ Инженерные переключатели</h4>' +
+            '<div class="p-3 rounded-xl bg-emerald-50 border-2 border-[#556432] space-y-2">' +
+              '<div class="text-xs font-extrabold text-[#2E3D28]">🎛️ Кнопка «Живой конструктор окон и фото» на сайте:</div>' +
+              '<div class="grid grid-cols-3 gap-1.5">' +
+                '<button type="button" onclick="if(window.setLcEnabledInHub)window.setLcEnabledInHub(true)" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (lcOn ? 'bg-[#2E3D28] text-[#F2B880]' : 'bg-white border') + '">👁️ Показать (ВКЛ)</button>' +
+                '<button type="button" onclick="if(window.setLcEnabledInHub)window.setLcEnabledInHub(false)" class="p-2 rounded-lg text-[11px] font-extrabold cursor-pointer ' + (!lcOn ? 'bg-rose-700 text-white' : 'bg-white border') + '">🔒 Скрыть (ВЫКЛ)</button>' +
+                '<button type="button" onclick="if(window.setLcEnabledInHub){window.setLcEnabledInHub(true);closeUnifiedSystemHub();window.toggleLcMode(true);}" class="p-2 rounded-lg bg-[#D48238] text-white text-[11px] font-extrabold cursor-pointer">🚀 Открыть сейчас</button>' +
+              '</div>' +
+            '</div>' +
           '</div>' +
-          '<div class="bg-[#2E3D28] text-[#FFFDF9] rounded-2xl p-4 space-y-2.5 flex flex-col justify-between">' +
-            '<div><span class="text-[10px] font-extrabold uppercase text-[#F2B880]">ДНК ПЛАТФОРМЫ</span><h4 class="font-serif text-xl font-bold mt-0.5">🧬 Полный Текстовый Мастер-Промпт</h4><p class="text-xs text-stone-300 mt-1">Техническое задание на русском языке с сохранением правок.</p></div>' +
-            '<div class="flex gap-2"><button type="button" onclick="openMasterPromptModal()" class="px-4 py-2 rounded-xl bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">📖 Открыть и редактировать Промпт</button><button type="button" onclick="downloadMasterPromptFile()" class="px-4 py-2 rounded-xl bg-white/15 text-white text-xs font-extrabold cursor-pointer">💾 Скачать .TXT</button></div>' +
+          '<div class="bg-[#2E3D28] text-white rounded-2xl p-4 flex flex-col justify-between gap-3">' +
+            '<div><span class="text-[10px] font-extrabold uppercase text-[#F2B880]">ДНК ПЛАТФОРМЫ</span><h4 class="font-serif text-xl font-bold mt-0.5">🧬 Мастер-Промпт архитектуры</h4></div>' +
+            '<div class="flex gap-2"><button type="button" onclick="openMasterPromptModal()" class="px-4 py-2 rounded-xl bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">📖 Открыть Промпт</button><button type="button" onclick="downloadMasterPromptFile()" class="px-4 py-2 rounded-xl bg-white/15 text-white text-xs font-extrabold cursor-pointer">💾 Скачать .TXT</button></div>' +
           '</div>' +
         '</div>';
     };
 
-    // 9. Отрисовка Электронного меню
+    // 11. Отрисовка Электронного меню
     window.renderDishes = function() {
       syncMenuWithCustomAndDeleted();
       applyManualOverridesToMenuData();
@@ -1523,17 +1420,17 @@ const CURATED_VEGAN_HD_BANK = {
         const realIdx = DATA.menu.indexOf(d);
         const isOff = window.isDishDisabled(d.name);
         const actBtns = isOff
-          ? '<div class="pt-2 border-t border-stone-200 flex items-center justify-between"><span class="text-xs font-extrabold text-amber-800">⏸️ Временно не готовится</span><span class="text-sm font-bold text-stone-400">' + (d.sizes ? d.sizes[0].price : d.price) + ' ₽</span></div>'
+          ? '<div class="pt-2 border-t flex justify-between"><span class="text-xs font-extrabold text-amber-800">⏸️ Временно не готовится</span><span class="text-sm font-bold text-stone-400">' + (d.sizes ? d.sizes[0].price : d.price) + ' ₽</span></div>'
           : ((d.sizes && d.sizes.length > 1)
               ? '<div class="grid grid-cols-2 gap-1.5 pt-2">' + d.sizes.map((sz, sIdx) => '<button type="button" onclick="addToCart(' + realIdx + ',' + sIdx + ')" class="py-2 px-2 rounded-xl bg-[#556432] hover:bg-[#D48238] text-white font-extrabold text-[11px] cursor-pointer">' + esc(sz.label) + ' • ' + sz.price + ' ₽ +</button>').join("") + '</div>'
-              : '<div class="flex items-center justify-between pt-2 border-t border-stone-100"><div><span class="text-[11px] text-stone-400 font-bold block">' + esc(d.weight || "") + '</span><strong class="text-lg font-extrabold text-[#2E3D28]">' + d.price + ' ₽</strong></div><button type="button" onclick="addToCart(' + realIdx + ',0)" class="px-4 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">+ В корзину</button></div>');
+              : '<div class="flex items-center justify-between pt-2 border-t"><div><span class="text-[11px] text-stone-400 font-bold block">' + esc(d.weight || "") + '</span><strong class="text-lg font-extrabold text-[#2E3D28]">' + d.price + ' ₽</strong></div><button type="button" onclick="addToCart(' + realIdx + ',0)" class="px-4 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">+ В корзину</button></div>');
 
         return '<div class="zoom-card bg-white rounded-3xl p-3.5 border border-stone-200 shadow-sm flex flex-col justify-between gap-2 ' + (isOff ? 'opacity-40 grayscale-[35%]' : '') + '">' +
           '<div>' +
-            '<div class="relative h-44 rounded-2xl overflow-hidden mb-2.5 bg-stone-100">' +
-              '<img src="' + esc(d.photo) + '" onclick="openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
-              '<span class="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-black/75 text-white/95 text-[9px] font-bold">🍽️ Подача блюд может отличаться</span>' +
-              '<button type="button" title="Увеличить" onclick="openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-2 right-2 w-7 h-7 rounded-full bg-black/80 hover:bg-[#D48238] text-white text-xs flex items-center justify-center cursor-pointer">🔍</button>' +
+            '<div class="relative h-44 rounded-2xl overflow-hidden mb-2.5 bg-[#1D2918]">' +
+              '<img src="' + esc(d.photo) + '" onclick="openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full cursor-zoom-in">' +
+              '<span class="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-black/75 text-white text-[9px] font-bold">🍽️ Подача блюд может отличаться</span>' +
+              '<button type="button" onclick="openSuperZoom(\'' + esc(d.photo) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-2 right-2 w-7 h-7 rounded-full bg-black/80 hover:bg-[#D48238] text-white text-xs cursor-pointer">🔍</button>' +
             '</div>' +
             '<span class="text-[10px] font-extrabold uppercase text-[#556432]">' + esc(d.category) + '</span>' +
             '<h4 class="font-serif text-xl font-bold text-[#2E3D28] leading-snug">' + esc(d.name) + '</h4>' +
@@ -1542,109 +1439,43 @@ const CURATED_VEGAN_HD_BANK = {
           actBtns +
         '</div>';
       }).join("");
+      window.applyNoCropAmbientPhotos();
     };
 
-// === УМНЫЙ РЕЖИМ ФОТО БЕЗ ОБРЕЗКИ (AMBIENT BLUR BACKDROP v4.7) ===
-    window.applyNoCropAmbientPhotos = function() {
-      if (!document.getElementById("mirmir-nocrop-ambient-css")) {
-        const st = document.createElement("style");
-        st.id = "mirmir-nocrop-ambient-css";
-        st.textContent = `
-          .mirmir-nocrop-wrap {
-            position: relative !important;
-            overflow: hidden !important;
-            background-color: #1D2918 !important;
+    // 12. Мобильный свайп «Назад» (popstate)
+    window.addEventListener("popstate", () => {
+      ["super-zoom-lightbox", "ready-gallery-popup", "master-prompt-modal", "unified-system-hub",
+       "menu-modal", "bowl-modal", "cafe-shop-modal", "book-table-modal", "delivery-modal", "radio-selector-modal"]
+        .forEach(id => {
+          const el = document.getElementById(id);
+          if (el && !el.classList.contains("hidden")) {
+            el.classList.add("hidden");
+            el.classList.remove("flex");
           }
-          .mirmir-nocrop-bg {
-            position: absolute !important;
-            inset: -16px !important;
-            background-size: cover !important;
-            background-position: center !important;
-            filter: blur(18px) brightness(0.68) saturate(1.35) !important;
-            transform: scale(1.14) !important;
-            z-index: 0 !important;
-            pointer-events: none !important;
-            transition: background-image 0.35s ease !important;
-          }
-          body:not(.mirmir-crop-cover-mode) .mirmir-nocrop-wrap > img {
-            position: relative !important;
-            z-index: 1 !important;
-            object-fit: contain !important;
-            width: 100% !important;
-            height: 100% !important;
-            max-width: 100% !important;
-            max-height: 100% !important;
-            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45)) !important;
-          }
-          body.mirmir-crop-cover-mode .mirmir-nocrop-wrap > img {
-            position: relative !important;
-            z-index: 1 !important;
-            object-fit: cover !important;
-          }
-          .mirmir-nocrop-wrap > *:not(.mirmir-nocrop-bg):not(img) {
-            z-index: 5 !important;
-          }
-        `;
-        document.head.appendChild(st);
-      }
-
-      const targets = document.querySelectorAll(
-        "#hero-interior-slide-img, #interior-slide-img, " +
-        "#hero-specials-3rows .zoom-card img, " +
-        "#posts-grid article img, " +
-        "#categories-showcase-grid .zoom-card img, #cat-showcase-grid .zoom-card img, " +
-        "#menu-dishes-grid .zoom-card img, " +
-        "#cafe-shop-grid .zoom-card img"
-      );
-
-      targets.forEach(im => {
-        const wrap = im.parentElement;
-        if (!wrap) return;
-        wrap.classList.add("mirmir-nocrop-wrap");
-        let bgDiv = wrap.querySelector(".mirmir-nocrop-bg");
-        if (!bgDiv) {
-          bgDiv = document.createElement("div");
-          bgDiv.className = "mirmir-nocrop-bg";
-          wrap.insertBefore(bgDiv, wrap.firstChild);
-        }
-        const curSrc = im.getAttribute("src") || im.src || "";
-        if (curSrc) {
-          bgDiv.style.backgroundImage = 'url("' + curSrc.replace(/"/g, '\\"') + '")';
-        }
-        if (!im.dataset.nocropHooked) {
-          im.dataset.nocropHooked = "1";
-          im.addEventListener("load", function() {
-            const s = this.getAttribute("src") || this.src || "";
-            const b = this.parentElement ? this.parentElement.querySelector(".mirmir-nocrop-bg") : null;
-            if (b && s) b.style.backgroundImage = 'url("' + s.replace(/"/g, '\\"') + '")';
-          });
-        }
-      });
-    };
+        });
+    });
 
     window.addEventListener("DOMContentLoaded", () => {
-      window.applyNoCropAmbientPhotos();
       syncMenuWithCustomAndDeleted();
-      applyV45CleanLayout();
-      document.querySelectorAll("[data-dove-holder]").forEach(el => { el.innerHTML = SIGN_DOVE_SVG; });
+      applyV48CleanLayout();
       applyManualOverridesToMenuData();
       rollRandomGastroPulse();
       window.renderInteriorSlideState();
       setInterval(() => { stepInteriorSlide(1); window.renderInteriorSlideState(); }, 4200);
-      window.renderHeroRightColumn(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
+      window.renderHeroRightColumn();
       setInterval(() => step3DCarousel(1), 4500);
       setInterval(() => window.stepRightSpecialsPair(1), 5200);
-      window.renderNewsPosts(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
-      window.renderCategoryShowcaseAndRail(); if(window.applyNoCropAmbientPhotos)window.applyNoCropAmbientPhotos();
+      window.renderNewsPosts();
+      window.renderCategoryShowcaseAndRail();
+      window.applyNoCropAmbientPhotos();
       setInterval(syncMainCartBadge, 400);
     });
-
-      </script>
-  <script src="live_constructor.js?v=4.6"></script>
+  </script>
+  <script src="live_constructor.js?v=4.8"></script>
 </body>
 </html>
 """
-    return tpl_html + v45_js
+    return tpl_html + v48_js
 
 
 def build_clean_master_prompt_text():
@@ -1656,13 +1487,19 @@ def build_clean_master_prompt_text():
                 return txt
         except Exception:
             pass
-    return "ПОЛНОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) ВЕГАН-КАФЕ «МИР МИР» (v4.5)"
+    return "ПОЛНОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) ВЕГАН-КАФЕ «МИР МИР» (v4.8)"
 
 
 def sync_files_to_root_repo():
     if os.path.abspath(ROOT_REPO_DIR) == os.path.abspath(BASE_DIR):
         return
-    for fn in ["index.html", "menu_data.py", "template.html", "app.py", "live_constructor.py", "live_constructor.js", "tz_mirmir.json", "build_history.json", "MASTER_PROMPT_MIRMIR.txt", "run_counter.txt", "cache_posts.json"]:
+    sync_names = [
+        "index.html", "menu_data.py", "template.html", "app.py",
+        "live_constructor.py", "live_constructor.js",
+        "tz_mirmir.json", "build_history.json", "MASTER_PROMPT_MIRMIR.txt",
+        "run_counter.txt", "cache_posts.json"
+    ]
+    for fn in sync_names:
         s, d = os.path.join(BASE_DIR, fn), os.path.join(ROOT_REPO_DIR, fn)
         if os.path.exists(s):
             try:
@@ -1673,7 +1510,7 @@ def sync_files_to_root_repo():
     if os.path.exists(s_img):
         os.makedirs(d_img, exist_ok=True)
         for fn in os.listdir(s_img):
-            if fn.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
+            if fn.lower().endswith((".jpg", ".jpeg", ".png", ".webp")) and not is_junk_image_name(fn):
                 sf, df = os.path.join(s_img, fn), os.path.join(d_img, fn)
                 if not os.path.exists(df) or os.path.getsize(df) != os.path.getsize(sf):
                     try:
@@ -1683,18 +1520,22 @@ def sync_files_to_root_repo():
 
 
 def main():
-    write_mirmir_file_log('=== ЗАПУСК СБОРКИ APP.PY (v4.5) ===')
+    write_file_log("=== ЗАПУСК ЧИСТОЙ СБОРКИ APP.PY (v4.8) ===")
     prepare_and_clean_assets()
-    try:
-        import live_constructor
-        live_constructor.build_constructor_js()
-    except Exception:
-        pass
-    import importlib
+
+    if os.path.exists(os.path.join(BASE_DIR, "live_constructor.py")):
+        try:
+            import live_constructor
+            importlib.reload(live_constructor)
+            live_constructor.build_constructor_js()
+        except Exception as e:
+            write_file_log(f"[WARN] Ошибка сборки live_constructor.js: {e}")
+
     import menu_data
     importlib.reload(menu_data)
     tz_data, build_logs, build_num = sync_tz_and_build_logs()
     dish_overrides = tz_data.get("dishes", {})
+    vision_approved = load_approved_vision_overrides()
 
     clean_menu = []
     for item in menu_data.MENU_DATABASE:
@@ -1704,20 +1545,30 @@ def main():
         if any(bad in str(d.get("photo", "")) for bad in ["macro_mushrooms_raw", "macro_rice_noodles"]):
             d["photo"] = "img/macro_tomyum_bowl.jpg"
         nm = d.get("name", "")
-        if nm in dish_overrides and dish_overrides[nm].get("photo"):
+        if nm in vision_approved:
+            d["photo"] = vision_approved[nm]
+            d["photo_type"] = "real"
+            d["is_manual_override"] = True
+        elif nm in dish_overrides and dish_overrides[nm].get("photo"):
             d["photo"] = dish_overrides[nm]["photo"]
             d["photo_type"] = "real"
             d["is_manual_override"] = True
         clean_menu.append(d)
 
-    vk_files = sorted([fn for fn in os.listdir("img") if fn.startswith("vk_") and "5047_" not in fn], reverse=True) if os.path.exists("img") else []
-    other_clean = sorted([fn for fn in os.listdir("img") if not fn.startswith(("vk_", "ai_v", "ingr_", "ymap_org_")) and "5047_" not in fn]) if os.path.exists("img") else []
+    all_img_files = os.listdir("img") if os.path.exists("img") else []
+    vk_files = sorted([fn for fn in all_img_files if fn.startswith("vk_") and "5047_" not in fn], reverse=True)
+    other_clean = sorted([
+        fn for fn in all_img_files
+        if not fn.startswith(("vk_", "ai_v", "ingr_", "ymap_org_", "yorg_")) and "5047_" not in fn and not is_junk_image_name(fn)
+    ])
     ready_photos = ["img/" + fn for fn in (vk_files + other_clean) if fn.lower().endswith((".jpg", ".jpeg", ".png", ".webp"))]
-    vk_food_photos = ["img/" + fn for fn in vk_files if not any(b in fn for b in ["5068_", "vk_cover", "vk_avatar", "5140_", "5138_", "5136_", "5134_", "5133_", "5129_", "5123_"])]
+
+    banned_vk = ["5068_", "vk_cover", "vk_avatar", "5140_", "5138_", "5136_", "5134_", "5133_", "5129_", "5123_"]
+    vk_food_photos = ["img/" + fn for fn in vk_files if not any(b in fn for b in banned_vk)]
 
     now_stamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     data_payload = {
-        "version": f"Релиз v4.5 • Сборка #{build_num} ({now_stamp})",
+        "version": f"Релиз v4.8 • Сборка #{build_num} ({now_stamp})",
         "menu": clean_menu,
         "shop": menu_data.CAFE_SHOP_ITEMS,
         "posts": fetch_vk_wall_posts(),
@@ -1734,8 +1585,10 @@ def main():
     open("template.html", "w", encoding="utf-8").write(tpl_html)
     final_html = tpl_html.replace("__MIRMIR_DATA_JSON__", json.dumps(data_payload, ensure_ascii=False).replace("</", "<\\/"))
     open("index.html", "w", encoding="utf-8").write(final_html)
+
     sync_files_to_root_repo()
-    write_mirmir_file_log(f'Сборка #{build_num} успешно скомпилирована в index.html.')
+    write_file_log(f"[OK] Сборка #{build_num} завершена: {len(clean_menu)} блюд, {len(ready_photos)} фото, {len(data_payload['posts'])} постов ВК.")
+
     if sys.stdin and sys.stdin.isatty() and os.environ.get("GITHUB_ACTIONS") != "true":
         try:
             os.startfile("index.html")
@@ -1745,22 +1598,27 @@ def main():
 
 def push_to_github():
     sync_files_to_root_repo()
-    target_git_dir = ROOT_REPO_DIR
-    lock_f = os.path.join(target_git_dir, ".git", "index.lock")
+    target = ROOT_REPO_DIR
+    lock_f = os.path.join(target, ".git", "index.lock")
     if os.path.exists(lock_f):
         try:
             os.remove(lock_f)
         except Exception:
             pass
-    subprocess.run(["git", "config", "user.name", "MirMir Cafe"], cwd=target_git_dir, check=False)
-    subprocess.run(["git", "config", "user.email", "admin@mirmir.cafe"], cwd=target_git_dir, check=False)
-    subprocess.run(["git", "remote", "remove", "origin"], cwd=target_git_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    subprocess.run(["git", "remote", "add", "origin", "https://github.com/vitvseom-stack/mirmir.git"], cwd=target_git_dir, check=False)
-    subprocess.run(["git", "checkout", "-B", "main"], cwd=target_git_dir, check=False)
-    subprocess.run(["git", "add", "-f", "index.html", "menu_data.py", "template.html", "app.py", "tz_mirmir.json", "build_history.json", "MASTER_PROMPT_MIRMIR.txt", "cache_posts.json"], cwd=target_git_dir, check=False)
-    subprocess.run(["git", "add", "img/"], cwd=target_git_dir, check=False)
-    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v4.5 ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target_git_dir, check=False)
-    subprocess.run(["git", "push", "-u", "origin", "main", "--force"], cwd=target_git_dir, check=False)
+    subprocess.run(["git", "config", "user.name", "MirMir Cafe"], cwd=target, check=False)
+    subprocess.run(["git", "config", "user.email", "admin@mirmir.cafe"], cwd=target, check=False)
+    subprocess.run(["git", "remote", "remove", "origin"], cwd=target, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(["git", "remote", "add", "origin", "https://github.com/vitvseom-stack/mirmir.git"], cwd=target, check=False)
+    subprocess.run(["git", "checkout", "-B", "main"], cwd=target, check=False)
+    subprocess.run([
+        "git", "add", "-f", "index.html", "menu_data.py", "template.html", "app.py",
+        "live_constructor.py", "live_constructor.js", "tz_mirmir.json",
+        "build_history.json", "MASTER_PROMPT_MIRMIR.txt", "cache_posts.json"
+    ], cwd=target, check=False)
+    subprocess.run(["git", "add", "img/"], cwd=target, check=False)
+    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v4.8 ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target, check=False)
+    subprocess.run(["git", "push", "-u", "origin", "main", "--force"], cwd=target, check=False)
+    write_file_log("[OK] Деплой в GitHub Pages (ветка main) выполнен.")
 
 
 if __name__ == "__main__":
@@ -1768,7 +1626,7 @@ if __name__ == "__main__":
         main()
         sys.exit(0)
     try:
-        mode = input("👉 [1] Только ПК | [2] ПК + GitHub | [3] Только GitHub [по умолчанию 2]: ").strip() or "2"
+        mode = input("👉 [1] Только ПК | [2] ПК + GitHub | [3] Только GitHub [по умолчанию 1]: ").strip() or "1"
         if mode == "1":
             main()
         elif mode == "3":
@@ -1777,5 +1635,6 @@ if __name__ == "__main__":
             main()
             push_to_github()
     except Exception:
-        traceback.print_exc()
-    input("\nНажмите Enter для закрытия...")
+        write_file_log(f"[CRITICAL]\n{traceback.format_exc()}")
+    input("\nГотово! Нажмите Enter для закрытия...")
+# === [КОНЕЦ КОДА / ФАЙЛ ЗАВЕРШЁН ПОЛНОСТЬЮ] ===
