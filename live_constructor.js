@@ -1,10 +1,10 @@
 // ============================================================================
-// АВТОНОМНЫЙ КОНСТРУКТОР ОКОН И ФОТО (live_constructor.js — v4.8)
-// Без MutationObserver. Кнопки +/-, сдвиг, ресайз мышью и «✅ Применить».
+// АВТОНОМНЫЙ КОНСТРУКТОР ОКОН И ФОТО (live_constructor.js — v4.9)
+// Без MutationObserver. Рабочие +/- , сдвиг, ресайз мышью и «✅ Применить».
 // ============================================================================
 (function() {
-  const LS_STATE_KEY = "mirmir_lc_state_v48";
-  const LS_ENABLED_KEY = "mirmir_lc_enabled_v48";
+  const LS_STATE_KEY = "mirmir_lc_state_v49";
+  const LS_ENABLED_KEY = "mirmir_lc_enabled_v49";
   const DEFAULT_SITE_WIDTH = 1320;
 
   window.lcActive = false;
@@ -99,10 +99,10 @@
   }
 
   function injectStyles() {
-    let st = document.getElementById("mirmir-lc-v48-css");
+    let st = document.getElementById("mirmir-lc-v49-css");
     if (!st) {
       st = document.createElement("style");
-      st.id = "mirmir-lc-v48-css";
+      st.id = "mirmir-lc-v49-css";
       document.head.appendChild(st);
     }
     const w = window.lcState.siteWidth || DEFAULT_SITE_WIDTH;
@@ -276,8 +276,8 @@
         bar.innerHTML =
           '<button type="button" data-a="pick" class="px-2 py-1 rounded-lg bg-[#D48238] text-white text-[10px] font-extrabold cursor-pointer">📸 Фото</button>' +
           '<div class="flex items-center gap-1">' +
-            '<button type="button" data-a="up" title="Вверх" class="w-6 h-6 rounded bg-white/15 hover:bg-white/30 text-white text-[10px] cursor-pointer">⬆️</button>' +
-            '<button type="button" data-a="down" title="Вниз" class="w-6 h-6 rounded bg-white/15 hover:bg-white/30 text-white text-[10px] cursor-pointer">⬇️</button>' +
+            '<button type="button" data-a="up" title="Сдвиг вверх" class="w-6 h-6 rounded bg-white/15 hover:bg-white/30 text-white text-[10px] cursor-pointer">⬆️</button>' +
+            '<button type="button" data-a="down" title="Сдвиг вниз" class="w-6 h-6 rounded bg-white/15 hover:bg-white/30 text-white text-[10px] cursor-pointer">⬇️</button>' +
             '<button type="button" data-a="zout" title="Масштаб −" class="w-6 h-6 rounded bg-white/15 hover:bg-[#D48238] text-white text-[11px] font-extrabold cursor-pointer">➖</button>' +
             '<button type="button" data-a="zin" title="Масштаб +" class="w-6 h-6 rounded bg-white/15 hover:bg-[#D48238] text-white text-[11px] font-extrabold cursor-pointer">➕</button>' +
             '<button type="button" data-a="fit" title="Целиком / Обрезать" class="px-1.5 h-6 rounded bg-white/15 hover:bg-teal-700 text-[#F2B880] text-[9px] font-extrabold cursor-pointer">🖼️ Фон</button>' +
@@ -310,6 +310,7 @@
       { sel: "#cat-showcase-grid .zoom-card", grp: "cat_cards" },
       { sel: "#menu-dishes-grid .zoom-card", grp: "menu_cards" },
       { sel: "#cafe-shop-grid .zoom-card", grp: "shop_cards" },
+      { sel: "#mirmir-live-map-wrap", grp: "" },
       { sel: "#menu-modal > div, #cafe-shop-modal > div, #bowl-modal > div", grp: "" }
     ];
 
@@ -457,6 +458,12 @@
       setTimeout(() => el.classList.remove("lc-box-saved"), 1200);
     }
     if (typeof showToast === "function") showToast("✅ " + (msg || "Применено!"));
+  };
+
+  window.lcSaveAndClose = function() {
+    saveState(window.lcState);
+    window.toggleLcMode(false);
+    if (typeof showToast === "function") showToast("✅ Все изменения применены и сохранены!");
   };
 
   function startDragResize(startEv, box, bid) {
@@ -616,7 +623,7 @@
             '<strong id="lc-site-width-lbl" class="font-mono text-[#F2B880] px-1">' + w + ' px</strong>' +
             '<button type="button" onclick="window.lcStepSiteWidth(40)" class="px-2 py-0.5 rounded bg-white/20 hover:bg-[#D48238] font-extrabold cursor-pointer">+</button>' +
           '</div>' +
-          '<button type="button" onclick="saveState(window.lcState);window.toggleLcMode(false);if(typeof showToast===\'function\')showToast(\'✅ Изменения применены!\')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold cursor-pointer shadow">✅ Применить</button>' +
+          '<button type="button" onclick="window.lcSaveAndClose()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold cursor-pointer shadow">✅ Применить</button>' +
           '<button type="button" onclick="window.lcResetAll()" class="px-2.5 py-1 rounded-xl bg-rose-800 text-white font-extrabold text-[11px] cursor-pointer">🔄 Сброс</button>' +
           '<button type="button" onclick="window.setLcEnabledInHub(false)" class="px-2 py-1 rounded-xl bg-white/10 text-stone-300 font-bold text-[11px] cursor-pointer">🔒 Выкл</button>' +
         '</div>';
@@ -626,7 +633,7 @@
   function hookRenders() {
     ["openMenu", "openCafeShopModal", "renderDishes", "renderRightTwoPictureFields", "renderCategoryShowcaseAndRail", "renderNewsPosts"].forEach(fn => {
       const orig = window[fn];
-      if (typeof orig === "function" && !orig._lcV48) {
+      if (typeof orig === "function" && !orig._lcV49) {
         const w = function() {
           const r = orig.apply(this, arguments);
           setTimeout(() => {
@@ -635,7 +642,7 @@
           }, 45);
           return r;
         };
-        w._lcV48 = true;
+        w._lcV49 = true;
         window[fn] = w;
       }
     });

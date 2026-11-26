@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-КОМПИЛЯТОР ПЛАТФОРМЫ «МИР МИР» (app.py — Полная чистая сборка v4.8)
-- Защита Hero от перезаписи блоком адреса/карты.
+КОМПИЛЯТОР ПЛАТФОРМЫ «МИР МИР» (app.py — Полная сборка v4.9)
+- Живая Яндекс.Карта с наложенными стеклянными плашками-подсказками и кнопкой скрытия надписей.
+- Жёсткая защита Hero от перезаписи блоком адреса.
 - Умный режим фото без обрезки (Ambient Blur Backdrop).
-- Чистая карточка маршрута без рекламы внутри Яндекс.Карт.
 - Точный поиск/генерация фото блюд (Flux/Turbo AI, Openverse, Wikimedia, чистый GastroBank).
-- Интеграция с live_constructor.py, vision_parser (approved_menu_photos.json) и логами logs/.
+- Интеграция с live_constructor.py, approved_menu_photos.json и логами logs/.
 """
 import os
 import sys
@@ -39,18 +39,18 @@ OLD_DIRS_TO_CHECK = [DEFAULT_MIRMIR_ROOT, PARENT_DIR]
 
 MASTER_TASKS_DEFAULT = [
     {"id": "t_1", "date": "08.11.2026 12:10", "title": "1. Трёхмодульная архитектура (menu_data.py + template.html + app.py) и деплой", "done": True, "comment": "Сборка и синхронизация с GitHub Pages работают штатно."},
-    {"id": "t_2", "date": "19.11.2026 10:00", "title": "2. Первый экран слева: слайдер зала (5 фото) с умным фоном без обрезки", "done": True, "comment": "Диван и вывеска видны целиком на размытом фоне в тон."},
-    {"id": "t_3", "date": "09.11.2026 15:05", "title": "3. Первый экран справа: 3D-карусель бланков меню + 2 карточки спешлов", "done": True, "comment": "Сбалансированная карусель + 2 крупных карточки спешлов."},
+    {"id": "t_2", "date": "26.11.2026 10:00", "title": "2. Первый экран слева: слайдер зала (5 фото) с умным фоном без обрезки", "done": True, "comment": "Диван и вывеска видны целиком на размытом фоне в тон."},
+    {"id": "t_3", "date": "09.11.2026 15:05", "title": "3. Первый экран справа: 3D-карусель бланков меню + 2 карточки спешлов", "done": True, "comment": "Сбалансированная карусель + 2 крупные карточки спешлов."},
     {"id": "t_4", "date": "09.11.2026 16:30", "title": "4. Плашка «Подача блюд может отличаться» на карточках и в лайтбоксе", "done": True, "comment": "Отображается на миниатюрах и при увеличении 🔍."},
     {"id": "t_5", "date": "10.11.2026 11:15", "title": "5. Обработка системной кнопки «Назад» (popstate) на смартфонах", "done": True, "comment": "Закрывает открытое модальное окно без выхода с сайта."},
     {"id": "t_6", "date": "12.11.2026 10:15", "title": "6. Автоскролл новостей влево + кнопки ◀ ▶ + «⏮️ К последним постам»", "done": True, "comment": "Плавный тикер с паузой при наведении и клике по стрелкам."},
-    {"id": "t_7", "date": "19.11.2026 10:05", "title": "7. Сбалансированная ширина (1320px), крестики ✕ справа вверху и значок 🔍", "done": True, "comment": "Убрано растягивание до 1640px, кулисы видны ровно."},
-    {"id": "t_8", "date": "19.11.2026 10:10", "title": "8. Чистая карточка маршрута Ильинская, 45 без рекламы в Яндекс.Картах", "done": True, "comment": "Интерактивная карта загружается по кнопке без дублирования в Hero."},
-    {"id": "t_9", "date": "19.11.2026 10:15", "title": "9. Автономный Конструктор окон и фото (включается строго в Шестерёнке)", "done": True, "comment": "Вынесен в live_constructor.py, рабочие кнопки +/- и «Применить»."},
-    {"id": "t_10", "date": "19.11.2026 10:20", "title": "10. Точный поиск/генерация фото блюд (Flux/Turbo AI, Openverse, Wikimedia)", "done": True, "comment": "Убраны случайные подмены, очищен GastroBank HD по категориям."},
-    {"id": "t_11", "date": "19.11.2026 10:25", "title": "11. Витрина «Меню кафе по разделам» (9 карточек) с правильными фото", "done": True, "comment": "Исправлены обложки Лапши, Барного меню и Десертов."},
+    {"id": "t_7", "date": "26.11.2026 10:05", "title": "7. Сбалансированная ширина (1320px), крестики ✕ справа вверху и значок 🔍", "done": True, "comment": "Убрано растягивание до 1640px, кулисы видны ровно."},
+    {"id": "t_8", "date": "26.11.2026 10:10", "title": "8. Живая Яндекс.Карта с наложенными плашками-подсказками без рекламного баннера", "done": True, "comment": "Карта загружается сразу, поверх неё — ориентиры, GPS и кнопки маршрута."},
+    {"id": "t_9", "date": "26.11.2026 10:15", "title": "9. Автономный Конструктор окон и фото (включается строго в Шестерёнке)", "done": True, "comment": "Вынесен в live_constructor.py, рабочие +/- и «✅ Применить»."},
+    {"id": "t_10", "date": "26.11.2026 10:20", "title": "10. Точный поиск/генерация фото блюд (Flux/Turbo AI, Openverse, Wikimedia)", "done": True, "comment": "Очищен GastroBank HD по категориям, точные промпты и поиск."},
+    {"id": "t_11", "date": "26.11.2026 10:25", "title": "11. Витрина «Меню кафе по разделам» (9 карточек) с правильными фото", "done": True, "comment": "Исправлены обложки Лапши, Барного меню и Десертов."},
     {"id": "t_12", "date": "11.11.2026 15:20", "title": "12. Временное отключение блюд и удаление с 3 подтверждениями", "done": True, "comment": "Доступно в карточке каждого блюда в Шестерёнке."},
-    {"id": "t_13", "date": "19.11.2026 10:30", "title": "13. Файловые логи logs/logs_*.txt и привязка утверждённых фото из vision_parser", "done": True, "comment": "Подхватывается approved_menu_photos.json и пишутся логи."}
+    {"id": "t_13", "date": "26.11.2026 10:30", "title": "13. Файловые логи logs/logs_*.txt и привязка фото из vision_parser", "done": True, "comment": "Подхватывается approved_menu_photos.json и пишутся логи."}
 ]
 
 
@@ -268,10 +268,10 @@ def sync_tz_and_build_logs():
     logs = json.load(open("build_history.json", "r", encoding="utf-8")) if os.path.exists("build_history.json") else []
     now_str = datetime.now().strftime("%d.%m.%Y %H:%M")
     logs.insert(0, {
-        "version": f"Релиз v4.8 • Сборка #{cnt}",
+        "version": f"Релиз v4.9 • Сборка #{cnt}",
         "timestamp": now_str,
-        "model": "Полная чистая пересборка v4.8 (Hero + Умный фон фото + Карточка маршрута + Точный ИИ-поиск)",
-        "status": "Защищён Hero, устранены ошибки JS, включён режим фото без обрезки, починены Конструктор и генератор блюд.",
+        "model": "Полная сборка v4.9: Живая Яндекс.Карта с наложенными плашками + Умный фон фото + Точный ИИ-поиск",
+        "status": "Возвращена живая карта с наложенными ориентирами и кнопкой скрытия, защищён Hero, обновлены Конструктор и генератор блюд.",
         "stats": f"Дата сборки: {now_str}"
     })
     json.dump(logs[:60], open("build_history.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
@@ -279,7 +279,7 @@ def sync_tz_and_build_logs():
 
 
 def load_approved_vision_overrides():
-    """Подхватывает утверждённые фото блюд из approved_menu_photos.json (если созданы в vision_parser)."""
+    """Подхватывает утверждённые фото блюд из approved_menu_photos.json (vision_parser)."""
     overrides = {}
     for d in [BASE_DIR, PARENT_DIR, os.path.join(PARENT_DIR, "vision_sandbox")]:
         ap = os.path.join(d, "approved_menu_photos.json")
@@ -315,8 +315,8 @@ def upgrade_template_html_in_place(tpl_html):
         if brace_pos != -1:
             tpl_html = tpl_html[: brace_pos + 1] + "\n"
 
-    v48_js = r"""
-    // === ЧИСТОЕ КЛИЕНТСКОЕ ЯДРО ПЛАТФОРМЫ «МИР МИР» (v4.8) ===
+    v49_js = r"""
+    // === ЧИСТОЕ КЛИЕНТСКОЕ ЯДРО ПЛАТФОРМЫ «МИР МИР» (v4.9) ===
     const NTFY_SYNC_URL = "https://ntfy.sh/mirmir_tz_sync_nn45_v30";
     window.hubActiveTab = window.hubActiveTab || "dishes72";
     window.hubDishCategoryFilter = window.hubDishCategoryFilter || "Все";
@@ -489,7 +489,7 @@ def upgrade_template_html_in_place(tpl_html):
       lb.classList.add("flex");
     };
 
-    // 4. Слайдер интерьера (5 проверенных кадров, синхронизирован с #hero-interior-slide-img)
+    // 4. Слайдер интерьера (5 проверенных кадров)
     window.getInteriorSlidesList = function() {
       return [
         { src: "img/ymap_org_0.jpg", title: "🏛️ Исторический кирпичный свод и уютный зал", tag: "Интерьер зала" },
@@ -507,9 +507,13 @@ def upgrade_template_html_in_place(tpl_html):
       if (imgEl && imgEl.parentElement) {
         imgEl.parentElement.style.height = "300px";
         imgEl.parentElement.style.minHeight = "300px";
-        setTimeout(() => {
-          window.applyNoCropAmbientPhotos();
-        }, 180);
+        const slides = window.getInteriorSlidesList();
+        const activeSlide = slides[curInteriorSlide] || slides[0];
+        const bgDiv = imgEl.parentElement.querySelector(".mirmir-nocrop-bg");
+        if (bgDiv && activeSlide) {
+          bgDiv.style.backgroundImage = 'url("' + activeSlide.src + '")';
+        }
+        setTimeout(() => { window.applyNoCropAmbientPhotos(); }, 180);
       }
     };
 
@@ -607,39 +611,67 @@ def upgrade_template_html_in_place(tpl_html):
       if (stage3d) stage3d.style.height = "290px";
     };
 
-    // 7. Чистая карточка маршрута (без сторонней рекламы Яндекс.Карт)
-    window.loadInteractiveYandexMap = function() {
-      const box = document.getElementById("mirmir-clean-map-box");
-      if (!box) return;
-      box.classList.remove("p-5");
-      const ifr = document.createElement("iframe");
-      ifr.src = "https://yandex.ru/map-widget/v1/?ll=43.990383%2C56.322355&z=17&oid=7309581265&ol=biz";
-      ifr.className = "w-full h-full min-h-[300px] border-0";
-      ifr.setAttribute("allowfullscreen", "");
-      box.innerHTML = "";
-      box.appendChild(ifr);
+    // 7. Живая Яндекс.Карта с наложенными стеклянными плашками-подсказками
+    window.mapOverlaysVisible = true;
+    window.toggleMapOverlays = function() {
+      window.mapOverlaysVisible = !window.mapOverlaysVisible;
+      const topInfo = document.getElementById("mirmir-map-top-info");
+      const botCard = document.getElementById("mirmir-map-bottom-overlay");
+      const btn = document.getElementById("mirmir-map-toggle-btn");
+      if (topInfo) topInfo.classList.toggle("hidden", !window.mapOverlaysVisible);
+      if (botCard) botCard.classList.toggle("hidden", !window.mapOverlaysVisible);
+      if (btn) btn.textContent = window.mapOverlaysVisible ? "👁️ Скрыть надписи" : "ℹ️ Показать надписи";
     };
 
-    window.buildCleanMapHtml = function() {
+    window.buildLiveMapWithOverlaysHtml = function() {
       return [
-        '<div class="lg:col-span-7 min-h-[280px] sm:min-h-[320px] rounded-2xl overflow-hidden border border-[#F2B880]/40 bg-[#1B2616] relative flex flex-col justify-between p-5" id="mirmir-clean-map-box">',
-        '  <div class="flex items-start justify-between gap-3">',
-        '    <div class="space-y-1">',
-        '      <span class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-800/80 text-[#F2B880] text-[10px] font-extrabold uppercase tracking-wider">🗺️ Схема проезда • Без сторонней рекламы</span>',
-        '      <h3 class="font-serif text-2xl sm:text-3xl font-bold text-white">ул. Ильинская, 45 — Исторический центр</h3>',
-        '      <p class="text-xs text-stone-300">5 минут пешком от ул. Большой Покровской • GPS: <span class="font-mono text-[#F2B880]">56.322355, 43.990383</span></p>',
+        '<div id="mirmir-live-map-wrap" class="lg:col-span-7 min-h-[380px] sm:min-h-[420px] rounded-2xl overflow-hidden border-2 border-[#F2B880]/45 bg-[#1B2616] relative shadow-2xl">',
+        '  <iframe',
+        '    src="https://yandex.ru/map-widget/v1/?ll=43.990383%2C56.322355&z=17&oid=7309581265&ol=biz"',
+        '    class="absolute top-0 left-0 w-full h-[calc(100%+72px)] border-0 z-0"',
+        '    allowfullscreen loading="lazy" title="Карта проезда Мир Мир Ильинская 45">',
+        '  </iframe>',
+
+        '  <div class="absolute top-3 left-3 right-3 z-10 pointer-events-none flex items-start justify-between gap-2">',
+        '    <div id="mirmir-map-top-info" class="pointer-events-auto bg-[#1B2616]/88 backdrop-blur-md border border-[#F2B880]/45 rounded-2xl px-3.5 py-2 shadow-xl max-w-[78%]">',
+        '      <div class="flex items-center gap-1.5 flex-wrap">',
+        '        <span class="px-2 py-0.5 rounded-full bg-emerald-800/90 text-[#F2B880] text-[9px] font-extrabold uppercase tracking-wider">🗺️ Схема проезда</span>',
+        '        <span class="text-[10px] font-mono text-[#F2B880]/90 font-bold">GPS: 56.322355, 43.990383</span>',
+        '      </div>',
+        '      <div class="font-serif text-lg sm:text-xl font-bold text-white leading-tight mt-0.5">ул. Ильинская, 45 — Исторический центр</div>',
+        '      <div class="text-[10px] text-stone-200">5 минут пешком от ул. Большой Покровской</div>',
         '    </div>',
-        '    <div class="w-12 h-12 rounded-full flex-shrink-0 shadow-lg" data-dove-holder></div>',
+        '    <div class="pointer-events-auto flex items-center gap-1.5">',
+        '      <button id="mirmir-map-toggle-btn" type="button" onclick="window.toggleMapOverlays()"',
+        '        class="px-2.5 py-1.5 rounded-xl bg-[#1B2616]/90 hover:bg-[#D48238] text-[#F2B880] hover:text-white border border-[#F2B880]/45 text-[10px] font-extrabold cursor-pointer shadow-lg transition whitespace-nowrap">',
+        '        👁️ Скрыть надписи',
+        '      </button>',
+        '      <div class="w-10 h-10 rounded-full flex-shrink-0 shadow-lg hidden sm:block" data-dove-holder></div>',
+        '    </div>',
         '  </div>',
-        '  <div class="my-3 p-4 rounded-2xl bg-black/35 border border-white/10 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">',
-        '    <div><span class="text-[#F2B880] font-extrabold block">🚶 Пешком от центра</span><span class="text-stone-300">От ст. м. Горьковская или ул. Б. Покровской по ул. Ильинской.</span></div>',
-        '    <div><span class="text-[#F2B880] font-extrabold block">🏛️ Ориентир входа</span><span class="text-stone-300">Кирпичный дом № 45, кованая вывеска с белой Голубкой мира.</span></div>',
-        '    <div><span class="text-[#F2B880] font-extrabold block">🅿️ Парковка</span><span class="text-stone-300">Парковочные карманы вдоль ул. Ильинской и Сергиевской.</span></div>',
-        '  </div>',
-        '  <div class="flex flex-wrap items-center gap-2.5">',
-        '    <a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="px-4 py-2.5 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs shadow-lg cursor-pointer transition">🗺️ Открыть в Яндекс.Картах ↗</a>',
-        '    <a href="https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=auto" target="_blank" class="px-4 py-2.5 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white font-extrabold text-xs border border-[#F2B880]/30 cursor-pointer transition">🧭 Построить маршрут ↗</a>',
-        '    <button type="button" onclick="window.loadInteractiveYandexMap()" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-[#F2B880] font-extrabold text-xs cursor-pointer transition">🌐 Загрузить интерактивную карту</button>',
+
+        '  <div id="mirmir-map-bottom-overlay" class="absolute bottom-2.5 left-2.5 right-2.5 z-10 pointer-events-auto bg-[#1B2616]/90 backdrop-blur-md border border-[#F2B880]/40 rounded-2xl p-3 shadow-2xl space-y-2">',
+        '    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] leading-snug">',
+        '      <div class="bg-black/30 rounded-xl p-2 border border-white/10">',
+        '        <span class="text-[#F2B880] font-extrabold block">🚶 Пешком от центра</span>',
+        '        <span class="text-stone-200">От ст. м. Горьковская или ул. Б. Покровской по ул. Ильинской.</span>',
+        '      </div>',
+        '      <div class="bg-black/30 rounded-xl p-2 border border-white/10">',
+        '        <span class="text-[#F2B880] font-extrabold block">🏛️ Ориентир входа</span>',
+        '        <span class="text-stone-200">Кирпичный дом № 45, кованая вывеска с белой Голубкой мира.</span>',
+        '      </div>',
+        '      <div class="bg-black/30 rounded-xl p-2 border border-white/10">',
+        '        <span class="text-[#F2B880] font-extrabold block">🅿️ Парковка</span>',
+        '        <span class="text-stone-200">Городские парковочные карманы вдоль ул. Ильинской и Сергиевской.</span>',
+        '      </div>',
+        '    </div>',
+        '    <div class="flex flex-wrap items-center justify-between gap-2">',
+        '      <div class="flex flex-wrap items-center gap-2">',
+        '        <a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="px-3.5 py-2 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-[11px] shadow cursor-pointer transition">🗺️ Открыть в Яндекс.Картах ↗</a>',
+        '        <a href="https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=auto" target="_blank" class="px-3.5 py-2 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white font-extrabold text-[11px] border border-[#F2B880]/30 cursor-pointer transition">🧭 Построить маршрут ↗</a>',
+        '      </div>',
+        '      <span class="text-[10px] text-stone-300 font-semibold hidden md:inline">Нажмите «Скрыть надписи», чтобы свободно листать карту</span>',
+        '    </div>',
         '  </div>',
         '</div>'
       ].join("");
@@ -661,10 +693,10 @@ def upgrade_template_html_in_place(tpl_html):
       }
     }
 
-    function applyV48CleanLayout() {
-      if (!document.getElementById("mirmir-v48-styles")) {
+    function applyV49CleanLayout() {
+      if (!document.getElementById("mirmir-v49-styles")) {
         const st = document.createElement("style");
-        st.id = "mirmir-v48-styles";
+        st.id = "mirmir-v49-styles";
         st.textContent = `
           html, body { min-height: auto !important; height: auto !important; }
           header { display: none !important; }
@@ -733,7 +765,7 @@ def upgrade_template_html_in_place(tpl_html):
         document.body.appendChild(fl);
       }
 
-      // Чистка дублей внутри левой колонки Hero (не трогая саму Hero-секцию!)
+      // Чистка дублей внутри левой колонки Hero (сама Hero-секция не трогается)
       const heroLeft = document.getElementById("hero-left-col");
       if (heroLeft) {
         heroLeft.querySelectorAll("div").forEach(el => {
@@ -755,12 +787,12 @@ def upgrade_template_html_in_place(tpl_html):
         });
       }
 
-      // Перестраиваем СТРОГО нижний блок адреса/карты (Hero полностью защищён!)
+      // Перестраиваем СТРОГО нижний блок адреса/карты (Hero полностью защищён)
       document.querySelectorAll("main section").forEach(sec => {
         if (sec.id === "v45-main-topbar" || sec.id === "news-section-wrap") return;
         if (sec.querySelector("#hero-left-col, #hero-interior-slide-img, #stage-3d-box")) return;
-        if (sec.textContent.includes("Нижний Новгород, ул. Ильинская, 45") && !sec.dataset.v48MapRebuilt) {
-          sec.dataset.v48MapRebuilt = "1";
+        if (sec.textContent.includes("Нижний Новгород, ул. Ильинская, 45") && !sec.dataset.v49MapRebuilt) {
+          sec.dataset.v49MapRebuilt = "1";
           const taxiUrl = "https://3.redirect.appmetrica.yandex.com/route?end-lat=56.322355&end-lon=43.990383&appmetrica_tracking_id=1178268795219780156";
           sec.className = "bg-[#23311E] text-[#FFFDF9] rounded-[32px] p-5 sm:p-7 border-2 border-[#F2B880]/35 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mt-4 mb-4";
           sec.innerHTML =
@@ -785,7 +817,7 @@ def upgrade_template_html_in_place(tpl_html):
                 '</div>' +
               '</div>' +
             '</div>' +
-            window.buildCleanMapHtml();
+            window.buildLiveMapWithOverlaysHtml();
         }
       });
 
@@ -1102,7 +1134,7 @@ def upgrade_template_html_in_place(tpl_html):
       window.renderUnifiedSystemHub();
     };
 
-    window.selectReadyPhotoV48 = function(dishIdx, photoPath) {
+    window.selectReadyPhotoV49 = function(dishIdx, photoPath) {
       const d = DATA.menu[dishIdx];
       if (!d) return;
       d.photo = photoPath;
@@ -1120,7 +1152,7 @@ def upgrade_template_html_in_place(tpl_html):
 
     window.approveDishCandidate = function(idx) {
       const c = window.pendingDishCandidates[idx];
-      if (c && c.url) window.selectReadyPhotoV48(idx, c.url);
+      if (c && c.url) window.selectReadyPhotoV49(idx, c.url);
     };
 
     window.openReadyGalleryPopup = function(dishIdx) {
@@ -1140,9 +1172,10 @@ def upgrade_template_html_in_place(tpl_html):
               '<div class="bg-white rounded-2xl p-2 border border-stone-200 flex flex-col justify-between gap-1.5">' +
                 '<div class="relative h-32 rounded-xl overflow-hidden bg-stone-100">' +
                   '<img src="' + esc(ph) + '" loading="lazy" onclick="openSuperZoom(this.src, \'' + esc(d.name) + '\')" class="w-full h-full object-cover cursor-zoom-in">' +
+                  '<button type="button" onclick="openSuperZoom(\'' + esc(ph) + '\', \'' + esc(d.name) + '\')" class="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-black/75 text-white text-[10px] cursor-pointer">🔍</button>' +
                 '</div>' +
                 '<div class="text-[10px] font-mono text-stone-500 truncate">' + esc(ph) + '</div>' +
-                '<button type="button" onclick="selectReadyPhotoV48(' + dishIdx + ', \'' + esc(ph) + '\')" class="w-full py-1.5 rounded-xl bg-emerald-700 hover:bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">✅ Утвердить</button>' +
+                '<button type="button" onclick="selectReadyPhotoV49(' + dishIdx + ', \'' + esc(ph) + '\')" class="w-full py-1.5 rounded-xl bg-emerald-700 hover:bg-[#D48238] text-white text-xs font-extrabold cursor-pointer">✅ Утвердить</button>' +
               '</div>'
             ).join("") +
           '</div>';
@@ -1154,31 +1187,31 @@ def upgrade_template_html_in_place(tpl_html):
     function getMasterTasksList() {
       const srv = (DATA.tz_synced && Array.isArray(DATA.tz_synced.tasks)) ? DATA.tz_synced.tasks : [];
       try {
-        const loc = JSON.parse(localStorage.getItem("mirmir_tasks_v48") || "null");
+        const loc = JSON.parse(localStorage.getItem("mirmir_tasks_v49") || "null");
         if (Array.isArray(loc) && loc.length >= srv.length) return loc;
       } catch (e) {}
       return srv;
     }
     function saveMasterTasksList(arr) {
       try {
-        localStorage.setItem("mirmir_tasks_v48", JSON.stringify(arr));
+        localStorage.setItem("mirmir_tasks_v49", JSON.stringify(arr));
         fetch(NTFY_SYNC_URL, { method: "POST", body: JSON.stringify({ type: "tz_tasks_sync", tasks: arr, ts: Date.now() }) }).catch(() => {});
       } catch (e) {}
     }
-    window.toggleTaskDoneV48 = function(i) {
+    window.toggleTaskDoneV49 = function(i) {
       const l = getMasterTasksList();
       if (!l[i]) return;
       l[i].done = !l[i].done;
       saveMasterTasksList(l);
       window.renderUnifiedSystemHub();
     };
-    window.updateTaskCommentV48 = function(i, val) {
+    window.updateTaskCommentV49 = function(i, val) {
       const l = getMasterTasksList();
       if (!l[i]) return;
       l[i].comment = val;
       saveMasterTasksList(l);
     };
-    window.addNewTaskV48 = function() {
+    window.addNewTaskV49 = function() {
       const t = (document.getElementById("new-tz-task-inp")?.value || "").trim();
       if (!t) return;
       const c = (document.getElementById("new-tz-comment-inp")?.value || "Проверить").trim();
@@ -1282,7 +1315,7 @@ def upgrade_template_html_in_place(tpl_html):
                 '<div class="grid grid-cols-1 sm:grid-cols-4 gap-2 text-stone-900">' +
                   '<input id="new-dish-name" placeholder="Название блюда" class="px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold">' +
                   '<select id="new-dish-cat" class="px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold">' + cats.filter(c => c !== "Все").map(c => '<option>' + esc(c) + '</option>').join("") + '</select>' +
-                  '<div class="grid grid-cols-2 gap-1"><input id="new-dish-price" type="number" placeholder="450" class="px-2 py-1.5 rounded-lg bg-white text-xs font-bold"><input id="new-dish-weight" placeholder="260 г" class="px-2 py-1.5 rounded-lg bg-white text-xs font-bold"></div>' +
+                  '<div class="grid grid-cols-2 gap-1"><input id="new-dish-price" type="number" placeholder="450" class="px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold"><input id="new-dish-weight" placeholder="260 г" class="px-2.5 py-1.5 rounded-lg bg-white text-xs font-bold"></div>' +
                   '<input id="new-dish-photo" placeholder="img/vk_5128_1.jpg" class="px-2.5 py-1.5 rounded-lg bg-white text-xs">' +
                 '</div>' +
                 '<div class="flex gap-2"><input id="new-dish-desc" placeholder="Состав..." class="flex-1 px-2.5 py-1.5 rounded-lg bg-white text-stone-900 text-xs"><button type="button" onclick="addNewCustomDishFromHub()" class="px-4 py-1.5 rounded-lg bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">✅ Сохранить</button></div>' +
@@ -1358,12 +1391,12 @@ def upgrade_template_html_in_place(tpl_html):
             '<div class="bg-white rounded-2xl p-3 border grid grid-cols-1 sm:grid-cols-12 gap-2">' +
               '<input id="new-tz-task-inp" placeholder="➕ Новая задача..." class="sm:col-span-5 px-3 py-2 rounded-xl border text-xs font-bold">' +
               '<input id="new-tz-comment-inp" placeholder="💬 Комментарий..." class="sm:col-span-5 px-3 py-2 rounded-xl border text-xs">' +
-              '<button type="button" onclick="addNewTaskV48()" class="sm:col-span-2 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">+ Добавить</button>' +
+              '<button type="button" onclick="addNewTaskV49()" class="sm:col-span-2 py-2 rounded-xl bg-[#D48238] text-white font-extrabold text-xs cursor-pointer">+ Добавить</button>' +
             '</div>' +
             '<div class="bg-white rounded-2xl border overflow-x-auto"><table class="w-full text-left border-collapse min-w-[780px]">' +
               '<thead class="bg-[#2E3D28] text-[#F2B880] text-[10px] uppercase"><tr><th class="p-3 w-32">Дата</th><th class="p-3">Задача</th><th class="p-3 w-28 text-center">Статус</th><th class="p-3 w-[40%]">Комментарий</th></tr></thead>' +
               '<tbody class="divide-y text-xs">' + tasks.map((t, i) =>
-                '<tr><td class="p-3 font-mono text-[10px]">' + esc(t.date || "") + '</td><td class="p-3 font-bold">' + esc(t.title) + '</td><td class="p-3 text-center"><button type="button" onclick="toggleTaskDoneV48(' + i + ')" class="px-2.5 py-1 rounded-xl font-extrabold text-[11px] text-white cursor-pointer ' + (t.done ? 'bg-emerald-700' : 'bg-rose-600') + '">' + (t.done ? '✅ Сделано' : '❌ Нет') + '</button></td><td class="p-3"><input value="' + esc(t.comment || "") + '" oninput="updateTaskCommentV48(' + i + ',this.value)" class="w-full px-2.5 py-1.5 rounded-lg border text-xs"></td></tr>'
+                '<tr><td class="p-3 font-mono text-[10px]">' + esc(t.date || "") + '</td><td class="p-3 font-bold">' + esc(t.title) + '</td><td class="p-3 text-center"><button type="button" onclick="toggleTaskDoneV49(' + i + ')" class="px-2.5 py-1 rounded-xl font-extrabold text-[11px] text-white cursor-pointer ' + (t.done ? 'bg-emerald-700' : 'bg-rose-600') + '">' + (t.done ? '✅ Сделано' : '❌ Нет') + '</button></td><td class="p-3"><input value="' + esc(t.comment || "") + '" oninput="updateTaskCommentV49(' + i + ',this.value)" class="w-full px-2.5 py-1.5 rounded-lg border text-xs"></td></tr>'
               ).join("") + '</tbody></table></div>' +
           '</div>';
         return;
@@ -1457,7 +1490,7 @@ def upgrade_template_html_in_place(tpl_html):
 
     window.addEventListener("DOMContentLoaded", () => {
       syncMenuWithCustomAndDeleted();
-      applyV48CleanLayout();
+      applyV49CleanLayout();
       applyManualOverridesToMenuData();
       rollRandomGastroPulse();
       window.renderInteriorSlideState();
@@ -1471,11 +1504,11 @@ def upgrade_template_html_in_place(tpl_html):
       setInterval(syncMainCartBadge, 400);
     });
   </script>
-  <script src="live_constructor.js?v=4.8"></script>
+  <script src="live_constructor.js?v=4.9"></script>
 </body>
 </html>
 """
-    return tpl_html + v48_js
+    return tpl_html + v49_js
 
 
 def build_clean_master_prompt_text():
@@ -1487,7 +1520,7 @@ def build_clean_master_prompt_text():
                 return txt
         except Exception:
             pass
-    return "ПОЛНОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) ВЕГАН-КАФЕ «МИР МИР» (v4.8)"
+    return "ПОЛНОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) ВЕГАН-КАФЕ «МИР МИР» (v4.9)"
 
 
 def sync_files_to_root_repo():
@@ -1520,7 +1553,7 @@ def sync_files_to_root_repo():
 
 
 def main():
-    write_file_log("=== ЗАПУСК ЧИСТОЙ СБОРКИ APP.PY (v4.8) ===")
+    write_file_log("=== ЗАПУСК ЧИСТОЙ СБОРКИ APP.PY (v4.9) ===")
     prepare_and_clean_assets()
 
     if os.path.exists(os.path.join(BASE_DIR, "live_constructor.py")):
@@ -1568,7 +1601,7 @@ def main():
 
     now_stamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     data_payload = {
-        "version": f"Релиз v4.8 • Сборка #{build_num} ({now_stamp})",
+        "version": f"Релиз v4.9 • Сборка #{build_num} ({now_stamp})",
         "menu": clean_menu,
         "shop": menu_data.CAFE_SHOP_ITEMS,
         "posts": fetch_vk_wall_posts(),
@@ -1616,7 +1649,7 @@ def push_to_github():
         "build_history.json", "MASTER_PROMPT_MIRMIR.txt", "cache_posts.json"
     ], cwd=target, check=False)
     subprocess.run(["git", "add", "img/"], cwd=target, check=False)
-    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v4.8 ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target, check=False)
+    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v4.9 ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target, check=False)
     subprocess.run(["git", "push", "-u", "origin", "main", "--force"], cwd=target, check=False)
     write_file_log("[OK] Деплой в GitHub Pages (ветка main) выполнен.")
 
