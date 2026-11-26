@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-КОМПИЛЯТОР ПЛАТФОРМЫ «МИР МИР» (app.py — Релиз v5.0)
+КОМПИЛЯТОР ПЛАТФОРМЫ «МИР МИР» (app.py — Релиз v5.1)
 - Адаптивная мобильная шапка без висящих кнопок.
 - Чистая Яндекс.Карта (pm2gnm) с контрастными плашками без белой карточки и рекламы.
 - Двусторонняя синхронизация задач (tz_mirmir.json <-> ntfy.sh <-> localStorage).
@@ -320,9 +320,9 @@ def sync_tz_and_build_logs():
     logs = json.load(open("build_history.json", "r", encoding="utf-8")) if os.path.exists("build_history.json") else []
     now_str = datetime.now().strftime("%d.%m.%Y %H:%M")
     logs.insert(0, {
-        "version": f"Релиз v5.0 • Сборка #{cnt}",
+        "version": f"Релиз v5.1 • Сборка #{cnt}",
         "timestamp": now_str,
-        "model": "Релиз v5.0: Мобильная шапка + Чистая карта с меткой + Синхронизация ТЗ + Wikimedia/AI фикс",
+        "model": "Релиз v5.1: Мобильная шапка + Чистая карта с меткой + Синхронизация ТЗ + Wikimedia/AI фикс",
         "status": "Выровнены кнопки на мобильной версии, убрана белая карточка и реклама на карте, починены ТЗ, поиск фото и меню run.bat.",
         "stats": f"Дата сборки: {now_str}"
     })
@@ -368,7 +368,7 @@ def upgrade_template_html_in_place(tpl_html):
             tpl_html = tpl_html[: brace_pos + 1] + "\n"
 
     v50_js = r"""
-    // === ЧИСТОЕ КЛИЕНТСКОЕ ЯДРО ПЛАТФОРМЫ «МИР МИР» (v5.0) ===
+    // === ЧИСТОЕ КЛИЕНТСКОЕ ЯДРО ПЛАТФОРМЫ «МИР МИР» (v5.1) ===
     const NTFY_SYNC_URL = "https://ntfy.sh/mirmir_tz_sync_nn45_v30";
     window.hubActiveTab = window.hubActiveTab || "dishes72";
     window.hubDishCategoryFilter = window.hubDishCategoryFilter || "Все";
@@ -678,57 +678,57 @@ def upgrade_template_html_in_place(tpl_html):
       const btn = document.getElementById("mirmir-map-toggle-btn");
       if (topInfo) topInfo.classList.toggle("hidden", !window.mapOverlaysVisible);
       if (botCard) botCard.classList.toggle("hidden", !window.mapOverlaysVisible);
-      if (btn) btn.textContent = window.mapOverlaysVisible ? "👁️ Скрыть надписи" : "ℹ️ Показать надписи";
+      if (btn) btn.textContent = window.mapOverlaysVisible ? "👁️ Скрыть" : "ℹ️ Инфо";
     };
 
     window.buildLiveMapWithOverlaysHtml = function() {
       return [
-        '<div id="mirmir-live-map-wrap" class="lg:col-span-7 min-h-[400px] sm:min-h-[440px] rounded-2xl overflow-hidden border-2 border-[#F2B880]/50 bg-[#1B2616] relative shadow-2xl">',
-        '  <iframe',
-        '    src="https://yandex.ru/map-widget/v1/?ll=43.990383%2C56.322355&z=17&pt=43.990383,56.322355,pm2gnm"',
-        '    class="absolute top-0 left-0 w-full h-[calc(100%+125px)] border-0 z-0"',
-        '    allowfullscreen loading="lazy" title="Карта проезда Мир Мир Ильинская 45">',
-        '  </iframe>',
-
-        '  <div class="absolute top-3 left-3 right-3 z-10 pointer-events-none flex items-start justify-between gap-2">',
-        '    <div id="mirmir-map-top-info" class="pointer-events-auto bg-[#1B2616]/95 backdrop-blur-md border border-[#F2B880]/60 rounded-2xl px-3.5 py-2.5 shadow-2xl max-w-[74%]">',
-        '      <div class="flex items-center gap-1.5 flex-wrap">',
-        '        <span class="px-2 py-0.5 rounded-full bg-[#556432] text-[#FFFDF9] text-[9px] font-extrabold uppercase tracking-wider">🗺️ Схема проезда</span>',
-        '        <span class="text-[10px] font-mono text-[#F2B880] font-bold">56.322355, 43.990383</span>',
+        '<div id="mirmir-live-map-wrap" class="lg:col-span-7 lg:col-start-6 lg:row-start-1 lg:row-span-2 rounded-2xl overflow-hidden border border-[#F2B880]/40 bg-[#1B2616]/85 relative shadow-2xl flex flex-col">',
+        '  <div class="relative w-full h-[250px] sm:h-[300px] lg:h-full lg:min-h-[410px] overflow-hidden bg-[#162012]">',
+        '    <iframe',
+        '      src="https://yandex.ru/map-widget/v1/?ll=43.990383%2C56.322355&z=17&pt=43.990383,56.322355,pm2gnm"',
+        '      class="absolute top-0 left-0 w-full h-[calc(100%+125px)] border-0 z-0"',
+        '      allowfullscreen loading="lazy" title="Карта проезда Мир Мир Ильинская 45">',
+        '    </iframe>',
+        '    <div class="absolute top-2.5 left-2.5 right-2.5 z-10 pointer-events-none flex items-start justify-between gap-2">',
+        '      <div id="mirmir-map-top-info" class="pointer-events-auto bg-[#1B2616]/82 backdrop-blur-md border border-[#F2B880]/45 rounded-xl px-2.5 py-1.5 shadow-xl max-w-[68%] sm:max-w-[74%]">',
+        '        <div class="flex items-center gap-1.5 flex-wrap">',
+        '          <span class="px-1.5 py-0.5 rounded-full bg-[#556432]/90 text-[#FFFDF9] text-[8px] sm:text-[9px] font-extrabold uppercase tracking-wider">🗺️ На карте</span>',
+        '          <span class="hidden sm:inline text-[10px] font-mono text-[#F2B880] font-bold">56.322355, 43.990383</span>',
+        '        </div>',
+        '        <div class="font-serif text-sm sm:text-lg font-bold text-white leading-tight mt-0.5 truncate">ул. Ильинская, 45</div>',
+        '        <div class="hidden sm:block text-[10px] text-stone-200">5 минут пешком от ул. Большой Покровской</div>',
         '      </div>',
-        '      <div class="font-serif text-lg sm:text-xl font-bold text-white leading-tight mt-0.5">ул. Ильинская, 45 — Исторический центр</div>',
-        '      <div class="text-[11px] text-stone-200">5 минут пешком от ул. Большой Покровской</div>',
-        '    </div>',
-        '    <div class="pointer-events-auto flex items-center gap-1.5">',
-        '      <button id="mirmir-map-toggle-btn" type="button" onclick="window.toggleMapOverlays()"',
-        '        class="px-3 py-1.5 rounded-xl bg-[#1B2616]/95 hover:bg-[#D48238] text-[#F2B880] hover:text-white border border-[#F2B880]/60 text-[10px] font-extrabold cursor-pointer shadow-xl transition whitespace-nowrap">',
-        '        👁️ Скрыть надписи',
-        '      </button>',
-        '      <div class="w-10 h-10 rounded-full flex-shrink-0 shadow-xl hidden sm:block" data-dove-holder></div>',
+        '      <div class="pointer-events-auto flex items-center gap-1.5 flex-shrink-0">',
+        '        <button id="mirmir-map-toggle-btn" type="button" onclick="window.toggleMapOverlays()"',
+        '          class="px-2.5 py-1.5 rounded-xl bg-[#1B2616]/82 hover:bg-[#D48238]/90 backdrop-blur-md text-[#F2B880] hover:text-white border border-[#F2B880]/45 text-[10px] font-extrabold cursor-pointer shadow-lg transition whitespace-nowrap">',
+        '          👁️ Скрыть',
+        '        </button>',
+        '        <div class="w-9 h-9 rounded-full flex-shrink-0 shadow-lg hidden sm:block" data-dove-holder></div>',
+        '      </div>',
         '    </div>',
         '  </div>',
-
-        '  <div id="mirmir-map-bottom-overlay" class="absolute bottom-0 left-0 right-0 z-10 pointer-events-auto bg-[#1B2616]/95 backdrop-blur-md border-t border-[#F2B880]/45 rounded-b-2xl p-3 sm:p-3.5 shadow-2xl space-y-2.5">',
-        '    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] leading-snug">',
-        '      <div class="bg-white/5 rounded-xl p-2 border border-white/10">',
-        '        <span class="text-[#F2B880] font-extrabold block">🚶 Пешком от центра</span>',
-        '        <span class="text-stone-200">От ст. м. Горьковская или ул. Б. Покровской по ул. Ильинской.</span>',
+        '  <div id="mirmir-map-bottom-overlay" class="relative lg:absolute lg:bottom-0 lg:left-0 lg:right-0 z-10 pointer-events-auto bg-[#1B2616]/90 lg:bg-[#1B2616]/85 backdrop-blur-md border-t border-white/15 p-2.5 sm:p-3 space-y-2">',
+        '    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 text-[10px] sm:text-[11px] leading-snug">',
+        '      <div class="bg-white/5 rounded-lg px-2.5 py-1.5 border border-white/10">',
+        '        <span class="text-[#F2B880] font-extrabold sm:block">🚶 Пешком: </span>',
+        '        <span class="text-stone-200">5 мин от Б. Покровской и м. Горьковская.</span>',
         '      </div>',
-        '      <div class="bg-white/5 rounded-xl p-2 border border-white/10">',
-        '        <span class="text-[#F2B880] font-extrabold block">🏛️ Ориентир входа</span>',
-        '        <span class="text-stone-200">Кирпичный дом № 45, кованая вывеска с белой Голубкой мира.</span>',
+        '      <div class="bg-white/5 rounded-lg px-2.5 py-1.5 border border-white/10">',
+        '        <span class="text-[#F2B880] font-extrabold sm:block">🏛️ Вход: </span>',
+        '        <span class="text-stone-200">дом № 45, кованая вывеска с голубкой.</span>',
         '      </div>',
-        '      <div class="bg-white/5 rounded-xl p-2 border border-white/10">',
-        '        <span class="text-[#F2B880] font-extrabold block">🅿️ Парковка</span>',
-        '        <span class="text-stone-200">Парковочные карманы вдоль ул. Ильинской и Сергиевской.</span>',
+        '      <div class="bg-white/5 rounded-lg px-2.5 py-1.5 border border-white/10">',
+        '        <span class="text-[#F2B880] font-extrabold sm:block">🅿️ Парковка: </span>',
+        '        <span class="text-stone-200">карманы вдоль Ильинской и Сергиевской.</span>',
         '      </div>',
         '    </div>',
-        '    <div class="flex flex-wrap items-center justify-between gap-2">',
-        '      <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">',
-        '        <a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="py-2 px-3.5 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-[11px] text-center shadow cursor-pointer transition">🗺️ Яндекс.Карты ↗</a>',
-        '        <a href="https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=auto" target="_blank" class="py-2 px-3.5 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white font-extrabold text-[11px] text-center border border-[#F2B880]/30 cursor-pointer transition">🧭 Маршрут ↗</a>',
+        '    <div class="grid grid-cols-2 sm:flex sm:items-center sm:justify-between gap-2">',
+        '      <div class="col-span-2 grid grid-cols-2 sm:flex items-center gap-1.5">',
+        '        <a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="py-1.5 px-3 rounded-xl bg-[#D48238]/85 hover:bg-[#D48238] backdrop-blur-sm border border-[#F2B880]/40 text-white font-extrabold text-[11px] text-center whitespace-nowrap shadow cursor-pointer transition">🗺️ Карты ↗</a>',
+        '        <a href="https://yandex.ru/maps/?rtext=~56.322355,43.990383&rtt=auto" target="_blank" class="py-1.5 px-3 rounded-xl bg-white/10 hover:bg-[#556432]/90 backdrop-blur-sm border border-white/20 text-[#FFFDF9] font-extrabold text-[11px] text-center whitespace-nowrap cursor-pointer transition">🧭 Маршрут ↗</a>',
         '      </div>',
-        '      <span class="text-[10px] text-stone-300 font-semibold hidden md:inline">Кнопка «Скрыть надписи» открывает полную навигацию по карте</span>',
+        '      <span class="text-[10px] text-stone-300/80 font-semibold hidden lg:inline">«Скрыть» открывает всю карту</span>',
         '    </div>',
         '  </div>',
         '</div>'
@@ -786,40 +786,40 @@ def upgrade_template_html_in_place(tpl_html):
         const hr = new Date().getHours();
         const isOpen = hr >= 12 && hr < 21;
         const statusHtml = isOpen
-          ? '<span class="px-2 py-0.5 rounded-full bg-emerald-700 text-white text-[10px] sm:text-[11px] font-extrabold whitespace-nowrap">🟢 Открыто до 21:00</span>'
-          : '<span class="px-2 py-0.5 rounded-full bg-rose-700 text-white text-[10px] sm:text-[11px] font-extrabold whitespace-nowrap">🔴 Закрыто до 12:00</span>';
+          ? '<span class="px-2 py-0.5 rounded-full bg-emerald-700 text-white text-[10px] sm:text-[11px] font-extrabold whitespace-nowrap">🟢 До 21:00</span>'
+          : '<span class="px-2 py-0.5 rounded-full bg-rose-700 text-white text-[10px] sm:text-[11px] font-extrabold whitespace-nowrap">🔴 До 12:00</span>';
 
         const topBar = document.createElement("section");
         topBar.id = "v45-main-topbar";
-        topBar.className = "bg-[#FFFDF9] rounded-3xl p-3 sm:p-4 border border-[#556432]/25 shadow-sm space-y-2.5 mb-3";
+        topBar.className = "bg-[#FFFDF9]/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 border border-[#556432]/25 shadow-sm space-y-2 mb-3";
         topBar.innerHTML =
-          '<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5">' +
-            '<div class="flex items-center gap-2.5 min-w-0">' +
-              '<div class="w-11 h-11 rounded-full flex-shrink-0 shadow-xs" data-dove-holder></div>' +
-              '<div class="min-w-0 flex-1 space-y-1">' +
-                '<div class="flex items-baseline flex-wrap gap-x-2 gap-y-0.5">' +
-                  '<span class="font-serif text-2xl font-bold text-[#1F2B1A] leading-none">Мир Мир</span>' +
-                  '<a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="text-xs font-bold text-[#556432] hover:underline whitespace-nowrap">📍 Ильинская, 45</a>' +
+          '<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">' +
+            '<div class="flex items-center gap-2 min-w-0">' +
+              '<div class="w-9 h-9 sm:w-11 sm:h-11 rounded-full flex-shrink-0 shadow-xs" data-dove-holder></div>' +
+              '<div class="min-w-0 flex-1 space-y-0.5">' +
+                '<div class="flex items-baseline flex-wrap gap-x-2">' +
+                  '<span class="font-serif text-xl sm:text-2xl font-bold text-[#1F2B1A] leading-none">Мир Мир</span>' +
+                  '<a href="https://yandex.ru/maps/org/mir_mir/7309581265/" target="_blank" class="text-[11px] sm:text-xs font-bold text-[#556432] hover:underline whitespace-nowrap">📍 Ильинская, 45</a>' +
                 '</div>' +
-                '<div class="flex items-center flex-wrap gap-1.5">' +
+                '<div class="flex items-center flex-wrap gap-1">' +
                   statusHtml +
-                  '<span class="px-2 py-0.5 rounded-full bg-[#D48238] text-white text-[10px] sm:text-[11px] font-extrabold whitespace-nowrap">🔥 Ланч −30% (12:00–16:00)</span>' +
+                  '<span class="px-2 py-0.5 rounded-full bg-[#D48238]/90 text-white text-[10px] font-extrabold whitespace-nowrap">🔥 −30% (12–16)</span>' +
                 '</div>' +
               '</div>' +
             '</div>' +
-            '<div class="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full lg:w-auto">' +
-              '<button type="button" onclick="openMenu(\'Все\')" class="col-span-2 sm:col-span-1 py-2.5 sm:py-2 px-4 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 cursor-pointer shadow transition">' +
-                '<span>📖</span><span>Открыть Меню (' + DATA.menu.length + ')</span>' +
+            '<div class="grid grid-cols-12 sm:flex sm:items-center gap-1.5 sm:gap-2 w-full lg:w-auto">' +
+              '<button type="button" onclick="openMenu(\'Все\')" class="col-span-5 sm:w-auto py-1.5 sm:py-2 px-2 sm:px-4 rounded-xl bg-[#D48238] hover:opacity-95 text-white font-extrabold text-[11px] sm:text-sm flex items-center justify-center gap-1 cursor-pointer shadow-xs transition whitespace-nowrap">' +
+                '<span>📖</span><span><span class="hidden sm:inline">Открыть </span>Меню (' + DATA.menu.length + ')</span>' +
               '</button>' +
-              '<button type="button" onclick="openCafeShopModal()" class="py-2 px-3 rounded-xl bg-[#556432] hover:bg-[#2E3D28] text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition">' +
-                '<span>🛍️</span><span>Магазин кафе</span>' +
+              '<button type="button" onclick="openCafeShopModal()" class="col-span-4 sm:w-auto py-1.5 sm:py-2 px-2 sm:px-3.5 rounded-xl bg-[#556432]/90 hover:bg-[#2E3D28] text-white font-extrabold text-[11px] sm:text-sm flex items-center justify-center gap-1 cursor-pointer transition whitespace-nowrap">' +
+                '<span>🛍️</span><span>Магазин<span class="hidden sm:inline"> кафе</span></span>' +
               '</button>' +
-              '<button type="button" onclick="toggleCart()" class="py-2 px-3 rounded-xl bg-[#2E3D28] hover:bg-black text-[#F2B880] font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition">' +
-                '<span>🛒</span><span>Корзина</span><span id="v45-main-cart-count" class="px-1.5 py-0.5 rounded-full bg-[#D48238] text-white text-[11px]">0</span>' +
+              '<button type="button" onclick="toggleCart()" class="col-span-3 sm:w-auto py-1.5 sm:py-2 px-2 sm:px-3.5 rounded-xl bg-[#2E3D28]/95 hover:bg-black text-[#F2B880] font-extrabold text-[11px] sm:text-sm flex items-center justify-center gap-1 cursor-pointer transition whitespace-nowrap">' +
+                '<span>🛒</span><span class="hidden sm:inline">Корзина</span><span id="v45-main-cart-count" class="px-1.5 py-0.5 rounded-full bg-[#D48238] text-white text-[10px] leading-none">0</span>' +
               '</button>' +
             '</div>' +
           '</div>' +
-          '<div id="v45-quick-cats-strip" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-2 border-t border-stone-200/70"></div>';
+          '<div id="v45-quick-cats-strip" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1.5 border-t border-stone-200/70"></div>';
         mainEl.insertBefore(topBar, mainEl.firstChild);
       }
 
@@ -858,33 +858,31 @@ def upgrade_template_html_in_place(tpl_html):
       document.querySelectorAll("main section").forEach(sec => {
         if (sec.id === "v45-main-topbar" || sec.id === "news-section-wrap") return;
         if (sec.querySelector("#hero-left-col, #hero-interior-slide-img, #stage-3d-box")) return;
-        if (sec.textContent.includes("Нижний Новгород, ул. Ильинская, 45") && !sec.dataset.v50MapRebuilt) {
-          sec.dataset.v50MapRebuilt = "1";
+        if (sec.textContent.includes("Нижний Новгород, ул. Ильинская, 45") && !sec.dataset.v51MapRebuilt) {
+          sec.dataset.v51MapRebuilt = "1";
           const taxiUrl = "https://3.redirect.appmetrica.yandex.com/route?end-lat=56.322355&end-lon=43.990383&appmetrica_tracking_id=1178268795219780156";
-          sec.className = "bg-[#23311E] text-[#FFFDF9] rounded-[32px] p-5 sm:p-7 border-2 border-[#F2B880]/35 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mt-4 mb-4";
+          sec.className = "bg-[#23311E] text-[#FFFDF9] rounded-[28px] sm:rounded-[32px] p-4 sm:p-7 border-2 border-[#F2B880]/35 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-stretch mt-4 mb-4";
           sec.innerHTML =
-            '<div class="lg:col-span-5 flex flex-col justify-between space-y-4">' +
-              '<div class="space-y-3">' +
-                '<span class="inline-block px-3 py-1 rounded-full bg-white/10 text-[#F2B880] text-[10px] font-extrabold uppercase tracking-widest">📍 Ждём вас в гости каждый день</span>' +
-                '<h2 class="font-serif text-3xl sm:text-4xl font-bold text-white leading-tight">Нижний Новгород, ул. Ильинская, 45</h2>' +
-                '<p class="text-xs sm:text-sm text-stone-200 leading-relaxed">Ежедневно с 12:00 до 21:00. По будням с 12:00 до 16:00 действует скидка −30% на Комбо-Ланч (Суп + Основное блюдо + Напиток).</p>' +
-                '<div class="pt-1"><a href="tel:+79200282858" class="inline-flex items-center gap-2 text-sm sm:text-base font-extrabold text-[#F2B880] hover:underline">📞 Телефон кафе: +7 (920) 028-28-58</a></div>' +
-              '</div>' +
-              '<div class="pt-4 border-t border-white/15 space-y-2.5">' +
-                '<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">' +
-                  '<button type="button" onclick="openBookTableModal()" class="py-2.5 px-3 rounded-xl bg-[#556432] hover:bg-[#D48238] text-[#FFFDF9] font-extrabold text-xs cursor-pointer transition border border-[#F2B880]/25">🪑 Бронь</button>' +
-                  '<a href="' + taxiUrl + '" target="_blank" class="py-2.5 px-3 rounded-xl bg-[#3A4A2E] hover:bg-[#D48238] text-[#F2B880] hover:text-white font-extrabold text-xs text-center transition border border-[#F2B880]/25">🚕 Такси</a>' +
-                  '<button type="button" onclick="openDeliveryModal()" class="py-2.5 px-3 rounded-xl bg-[#556432] hover:bg-[#D48238] text-[#FFFDF9] font-extrabold text-xs cursor-pointer transition border border-[#F2B880]/25">🛵 Доставка</button>' +
-                  '<button type="button" onclick="openRadioSelectorModal()" class="py-2.5 px-3 rounded-xl bg-[#FFFDF9] hover:bg-amber-50 text-[#2E3D28] font-extrabold text-xs cursor-pointer transition">📻 Радио</button>' +
-                '</div>' +
-                '<div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5">' +
-                  '<button disabled class="py-1.5 px-2 rounded-lg bg-white/10 text-white/70 font-extrabold text-[10px] uppercase cursor-not-allowed border border-white/10">👥 КОМАНДА <span class="px-1 rounded bg-black/40 text-[#F2B880] text-[8px]">Скоро</span></button>' +
-                  '<button disabled class="py-1.5 px-2 rounded-lg bg-white/10 text-white/70 font-extrabold text-[10px] uppercase cursor-not-allowed border border-white/10">🏛️ ИСТОРИЯ <span class="px-1 rounded bg-black/40 text-[#F2B880] text-[8px]">Скоро</span></button>' +
-                  '<button disabled class="py-1.5 px-2 rounded-lg bg-white/10 text-white/70 font-extrabold text-[10px] uppercase cursor-not-allowed border border-white/10">🌿 ЦЕННОСТИ <span class="px-1 rounded bg-black/40 text-[#F2B880] text-[8px]">Скоро</span></button>' +
-                '</div>' +
-              '</div>' +
+            '<div class="lg:col-span-5 lg:col-start-1 lg:row-start-1 space-y-2.5">' +
+              '<span class="inline-block px-2.5 py-0.5 rounded-full bg-white/10 text-[#F2B880] text-[10px] font-extrabold uppercase tracking-widest">📍 Ждём вас каждый день</span>' +
+              '<h2 class="font-serif text-2xl sm:text-4xl font-bold text-white leading-tight">Нижний Новгород, ул. Ильинская, 45</h2>' +
+              '<p class="text-xs sm:text-sm text-stone-200/90 leading-relaxed">Ежедневно с 12:00 до 21:00. По будням с 12:00 до 16:00 скидка −30% на Комбо-Ланч (Суп + Основное + Напиток).</p>' +
+              '<div class="pt-0.5"><a href="tel:+79200282858" class="inline-flex items-center gap-1.5 text-sm sm:text-base font-extrabold text-[#F2B880] hover:underline">📞 +7 (920) 028-28-58</a></div>' +
             '</div>' +
-            window.buildLiveMapWithOverlaysHtml();
+            window.buildLiveMapWithOverlaysHtml() +
+            '<div class="lg:col-span-5 lg:col-start-1 lg:row-start-2 lg:self-end pt-3 lg:pt-4 border-t border-white/15 space-y-2">' +
+              '<div class="grid grid-cols-4 gap-1.5 sm:gap-2">' +
+                '<button type="button" onclick="openBookTableModal()" class="py-2 px-1.5 rounded-xl bg-white/10 hover:bg-[#D48238]/85 backdrop-blur-md text-[#FFFDF9]/95 font-bold text-[10px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 cursor-pointer transition border border-white/15"><span>🪑</span><span>Бронь</span></button>' +
+                '<a href="' + taxiUrl + '" target="_blank" class="py-2 px-1.5 rounded-xl bg-white/10 hover:bg-[#D48238]/85 backdrop-blur-md text-[#F2B880] hover:text-white font-bold text-[10px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 transition border border-white/15"><span>🚕</span><span>Такси</span></a>' +
+                '<button type="button" onclick="openDeliveryModal()" class="py-2 px-1.5 rounded-xl bg-white/10 hover:bg-[#D48238]/85 backdrop-blur-md text-[#FFFDF9]/95 font-bold text-[10px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 cursor-pointer transition border border-white/15"><span>🛵</span><span>Доставка</span></button>' +
+                '<button type="button" onclick="openRadioSelectorModal()" class="py-2 px-1.5 rounded-xl bg-white/10 hover:bg-[#D48238]/85 backdrop-blur-md text-[#FFFDF9]/95 font-bold text-[10px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-1 cursor-pointer transition border border-white/15"><span>📻</span><span>Радио</span></button>' +
+              '</div>' +
+              '<div class="grid grid-cols-3 gap-1.5">' +
+                '<button disabled class="py-1 px-1.5 rounded-lg bg-white/5 text-white/50 font-bold text-[9px] uppercase cursor-not-allowed border border-white/10 truncate" title="Раздел скоро откроется">👥 Команда</button>' +
+                '<button disabled class="py-1 px-1.5 rounded-lg bg-white/5 text-white/50 font-bold text-[9px] uppercase cursor-not-allowed border border-white/10 truncate" title="Раздел скоро откроется">🏛️ История</button>' +
+                '<button disabled class="py-1 px-1.5 rounded-lg bg-white/5 text-white/50 font-bold text-[9px] uppercase cursor-not-allowed border border-white/10 truncate" title="Раздел скоро откроется">🌿 Ценности</button>' +
+              '</div>' +
+            '</div>';
         }
       });
 
@@ -1648,7 +1646,7 @@ def build_clean_master_prompt_text():
                 return txt
         except Exception:
             pass
-    return "ПОЛНОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) ВЕГАН-КАФЕ «МИР МИР» (v5.0)"
+    return "ПОЛНОЕ ТЕХНИЧЕСКОЕ ЗАДАНИЕ (МАСТЕР-ПРОМПТ) ВЕГАН-КАФЕ «МИР МИР» (v5.1)"
 
 
 def sync_files_to_root_repo():
@@ -1681,7 +1679,7 @@ def sync_files_to_root_repo():
 
 
 def main():
-    write_file_log("=== ЗАПУСК СБОРКИ APP.PY (v5.0) ===")
+    write_file_log("=== ЗАПУСК СБОРКИ APP.PY (v5.1) ===")
     prepare_and_clean_assets()
 
     if os.path.exists(os.path.join(BASE_DIR, "live_constructor.py")):
@@ -1729,7 +1727,7 @@ def main():
 
     now_stamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     data_payload = {
-        "version": f"Релиз v5.0 • Сборка #{build_num} ({now_stamp})",
+        "version": f"Релиз v5.1 • Сборка #{build_num} ({now_stamp})",
         "menu": clean_menu,
         "shop": menu_data.CAFE_SHOP_ITEMS,
         "posts": fetch_vk_wall_posts(),
@@ -1777,7 +1775,7 @@ def push_to_github():
         "build_history.json", "MASTER_PROMPT_MIRMIR.txt", "cache_posts.json"
     ], cwd=target, check=False)
     subprocess.run(["git", "add", "img/"], cwd=target, check=False)
-    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v5.0 ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target, check=False)
+    subprocess.run(["git", "commit", "-m", f"Deploy MirMir v5.1 ({datetime.now().strftime('%d.%m.%Y %H:%M:%S')})"], cwd=target, check=False)
     subprocess.run(["git", "push", "-u", "origin", "main", "--force"], cwd=target, check=False)
     write_file_log("[OK] Деплой в GitHub Pages (ветка main) выполнен.")
 
@@ -1788,7 +1786,7 @@ if __name__ == "__main__":
         sys.exit(0)
     try:
         print("=" * 64)
-        print("  СБОРЩИК ПЛАТФОРМЫ «МИР МИР» (v5.0)")
+        print("  СБОРЩИК ПЛАТФОРМЫ «МИР МИР» (v5.1)")
         print("=" * 64)
         mode = input("👉 [1] Только ПК | [2] ПК + GitHub | [3] Только GitHub [по умолчанию 1]: ").strip() or "1"
         if mode == "1":
